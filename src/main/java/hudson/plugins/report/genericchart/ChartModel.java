@@ -40,6 +40,7 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
     private String resultsWhiteList;
     private String chartColor;
     private int rangeAroundWlist;
+    private String unstableCondition; //30%<  or !=  or < 1.5 ...
 
     @DataBoundConstructor
     public ChartModel(String title, String fileNameGlob, String key, int limit, String chartColor, int rangeAroundWlist) {
@@ -150,5 +151,14 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
             return ColorChanger.shiftColorBy(chartColor, 64, 64, 32);
         }
         return chartColor;
+    }
+
+    public String getUnstableCondition() {
+        return unstableCondition;
+    }
+
+    @DataBoundSetter
+    public void setUnstableCondition(String unstableCondition) {
+        this.unstableCondition = unstableCondition;
     }
 }

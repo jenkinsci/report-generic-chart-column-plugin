@@ -30,10 +30,13 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +60,23 @@ public class GenericChartPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
+            try {
+                if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().isEmpty()) {
+                    List<ChartPoint> points = chart.getPoints();
+                    if (points.size() > 1) {
+                        BigDecimal last = new BigDecimal(points.get(points.size() - 1).getValue());
+                        BigDecimal oneBeforeLast = new BigDecimal(points.get(points.size() - 2).getValue());
+                        if (oneBeforeLast.compareTo(last) != 0) {//todo add proper interpreter
+                            build.setResult(Result.UNSTABLE);
+                            return true; //you can not go back, nothing is going worse here, so lets quit
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
         return true;
     }
 

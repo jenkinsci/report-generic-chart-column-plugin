@@ -35,11 +35,13 @@ public class ReportChart {
     private final List<String> wlist;
     private final int rangeAroundWlist;
     private final int whiteListSizeWithoutSurroundings;
+    private final String unstableCondition;
 
-    private ReportChart(String title, String color, List<ChartPoint> points, List<String> blist, List<String> wlist, int rangeAroundWlist, int whiteListSizeWithoutSurroundings) {
+    private ReportChart(String title, String color, String unstableCondition, List<ChartPoint> points, List<String> blist, List<String> wlist, int rangeAroundWlist, int whiteListSizeWithoutSurroundings) {
         this.blist = blist;
         this.title = title;
         this.color = color;
+        this.unstableCondition = unstableCondition;
         this.points = points;
         this.wlist = wlist;
         this.rangeAroundWlist = rangeAroundWlist;
@@ -51,6 +53,7 @@ public class ReportChart {
         return new ReportChart(
                 m.getTitle(),
                 m.getChartColor(),
+                m.getUnstableCondition(),
                 points.getPoints(),
                 points.getBlacklist(),
                 points.getWhitelist(),
@@ -78,4 +81,7 @@ public class ReportChart {
         return whiteListSizeWithoutSurroundings;
     }
 
+    public String getUnstableCondition() {
+        return unstableCondition;
+    }
 }
