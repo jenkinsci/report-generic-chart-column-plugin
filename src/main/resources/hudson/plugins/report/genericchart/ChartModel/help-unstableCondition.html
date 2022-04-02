@@ -1,0 +1,38 @@
+<div>
+	This allows you to specify a mathematical expression which, if true, will turn the job to unstbale<br/>
+	First the  expression is split by |(or) and &(and)<br/>
+	Then it it is split by &gt;,&lt;, ==, !=, <=, >= <br/>
+	each of the remaining parts is calcualted as mathematical expression. as powerfull as https://github.com/gbenroscience/ParserNG, with few extensions:<br/>
+	you can use L0 to access value of just finished build. L1 as value of last one before, L2 as two before and so on...Negative id on L is not allowed nowhere<br/>
+	points in chart chart with 4 bullets, wehich fifth build jsut finished  would be L4 L3 L2 L1 L0<br/>
+	you can use ranges by `..`. Eg ..L1 is all before L0 (thus Ln...L2,L1). Similarly, L3.. would be L3,L2,L1. You can use also both limits - eg: L1..L3  o<br/>
+	On top of functions in ParseNG, geom, gsum and count functions are provided are available<br/>
+    So eg:L0 &lt; avg(..L1) | L0 &gt; L1*5 <br/>
+	would be evaluated for jsut finished build three with results of 2 4 8 (L2 L1 L0) as follows<br/>
+	(1)<br/>
+	L0 &lt; avg(..L1)<br/>
+	|                 <br/>
+	L0 &gt; L1*5      <br/>
+	(2a)<br/>
+	L0           <br/>
+	&lt;         <br/>
+	avg(..L1)    <br/>
+	(2b)  <br/>
+	L0    <br/>
+	&gt;  <br/>
+	L1*5  <br/>
+	(2aI)<br/>
+	8               <br/>
+	avg(2,4) =&gt;3 <br/>
+	(2aII)<br/>
+	8 &lt; 3 =&gt; false
+	(2bI)<br/>
+	4*5 =&gt; 20 <br/>
+	(2bII)<br/>
+	8>20 =&gt; false <br/>
+	(3)<br/>
+	false | false =&gt; false <br/>
+	(4) false , thus job will NOT be turned to unstable<br/>
+	Max number in L (and thus also in functions) is 99<br/>
+	The parser is far from being perfect, be nice to it.
+</div>

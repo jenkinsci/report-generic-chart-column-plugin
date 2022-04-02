@@ -31,15 +31,17 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.plugins.report.genericchart.math.ExpandingExpressionParser;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -64,13 +66,14 @@ public class GenericChartPublisher extends Publisher {
             try {
                 if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().isEmpty()) {
                     List<ChartPoint> points = chart.getPoints();
-                    if (points.size() > 1) {
-                        BigDecimal last = new BigDecimal(points.get(points.size() - 1).getValue());
-                        BigDecimal oneBeforeLast = new BigDecimal(points.get(points.size() - 2).getValue());
-                        if (oneBeforeLast.compareTo(last) != 0) {//todo add proper interpreter
-                            build.setResult(Result.UNSTABLE);
-                            return true; //you can not go back, nothing is going worse here, so lets quit
-                        }
+                    List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
+                    //the points are returned as first = oldest = 0, last == current == newest == N.
+                    //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
+                    Collections.reverse(pointsValues);
+                    ExpandingExpressionParser lep = new ExpandingExpressionParser(chart.getUnstableCondition(), pointsValues);
+                    if (lep.evaluate()) {
+                        build.setResult(Result.UNSTABLE);
+                        return true; //you can not go back, nothing is going worse here, so lets quit
                     }
                 }
             } catch (Exception ex) {
