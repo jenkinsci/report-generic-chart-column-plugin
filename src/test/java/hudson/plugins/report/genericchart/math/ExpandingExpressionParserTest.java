@@ -3,6 +3,8 @@ package hudson.plugins.report.genericchart.math;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 class ExpandingExpressionParserTest {
 
@@ -79,16 +81,27 @@ class ExpandingExpressionParserTest {
 
     }
 
+    private List<String> revert(List<String> l){
+        Collections.reverse(l);
+        return l;
+    }
     @org.junit.jupiter.api.Test
+    /**
+     * The difference here is that we use real conditions
+     * and the revert, so L.. and ..L make now sense
+     * the revert is here (and in main imp in GenericChartPublisher),
+     * as the chart draw points as Lx...L2...L1..L0, not naturay,
+     * as the ExpandingExpressionParser expects)
+     */
     void testRealLive() {
         ExpandingExpressionParser comp;
-        comp = new ExpandingExpressionParser("L1 < L0", Arrays.asList("545", "453", "628"));
+        comp = new ExpandingExpressionParser("L1 < L0", revert(Arrays.asList("628", "453", "545")));
         Assertions.assertTrue(comp.evaluate());
-        comp = new ExpandingExpressionParser("avg(..L1) < L0", Arrays.asList("545", "453", "628, 5"));
+        comp = new ExpandingExpressionParser("avg(..L1) < L0", revert(Arrays.asList("5", "628", "453", "545")));
         Assertions.assertTrue(comp.evaluate());
-        comp = new ExpandingExpressionParser("max(..L1) < L0 || 500 < L0", Arrays.asList("545", "453", "628, 5"));
+        comp = new ExpandingExpressionParser("max(..L1) < L0 || 500 < L0",  revert(Arrays.asList("5", "628", "453", "545")));
         Assertions.assertTrue(comp.evaluate());
-        comp = new ExpandingExpressionParser("500 < L0 && 600 > L0", Arrays.asList("545", "453", "628, 5"));
+        comp = new ExpandingExpressionParser("500 < L0 && 600 > L0",  revert(Arrays.asList("5", "628", "453", "545")));
         Assertions.assertTrue(comp.evaluate());
     }
 }
