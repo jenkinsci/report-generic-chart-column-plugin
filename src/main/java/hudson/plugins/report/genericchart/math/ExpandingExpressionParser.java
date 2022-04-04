@@ -16,12 +16,21 @@ public class ExpandingExpressionParser {
     private final String originalExpression;
     private final List<String> points;
     private final LogicalExpressionParser logicalExpressionParser;
+    private final ExpressionLogger log;
+    private final String expanded;
 
-    public ExpandingExpressionParser(String expression, List<String> points) {
+    public ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log) {
+        this.log = log;
         this.points = points;
         originalExpression = expression;
-        String expanded = expandALL(expression);
-        logicalExpressionParser = new LogicalExpressionParser(expanded);
+        log.log("Expression : " + originalExpression);
+        List<String> naturalisedOrder = new ArrayList<>(points);
+        Collections.reverse(naturalisedOrder);
+        log.log("Upon       : " + naturalisedOrder.stream().collect(Collectors.joining(",")));
+        log.log("As         : Ln...L1,L0");
+        expanded = expandALL(expression);
+        log.log("Expanded as: " + expanded);
+        logicalExpressionParser = new LogicalExpressionParser(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
     }
 
     String expandALL(String expression) {
@@ -55,7 +64,7 @@ public class ExpandingExpressionParser {
                 break;
             }
             String group = m.group();
-            expression = expression.replace(group, createRange("0", group.replace("..L", "")));
+            expression = expression.replace(group, createRange( (points.size() - 1) + "", group.replace("..L", "")));
         }
         return expression;
     }
@@ -68,7 +77,7 @@ public class ExpandingExpressionParser {
                 break;
             }
             String group = m.group();
-            expression = expression.replace(group, createRange(group.replace("L", "").replaceAll("\\.\\..*", ""), (points.size() - 1) + ""));
+            expression = expression.replace(group, createRange(group.replace("L", "").replaceAll("\\.\\..*", ""), "0"));
         }
         return expression;
     }
@@ -117,6 +126,12 @@ public class ExpandingExpressionParser {
     }
 
     public boolean evaluate() {
-        return logicalExpressionParser.evaluate();
+        boolean r = logicalExpressionParser.evaluate();
+        log.log("is: " + r);
+        return r;
+    }
+
+     String getExpanded() {
+        return expanded;
     }
 }

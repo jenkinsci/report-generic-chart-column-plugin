@@ -32,6 +32,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.plugins.report.genericchart.math.ExpandingExpressionParser;
+import hudson.plugins.report.genericchart.math.ExpressionLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -70,7 +71,12 @@ public class GenericChartPublisher extends Publisher {
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    ExpandingExpressionParser lep = new ExpandingExpressionParser(chart.getUnstableCondition(), pointsValues);
+                    ExpandingExpressionParser lep = new ExpandingExpressionParser(chart.getUnstableCondition(), pointsValues, new ExpressionLogger() {
+                        @Override
+                        public void log(String s) {
+                            listener.getLogger().println(s);
+                        }
+                    });
                     if (lep.evaluate()) {
                         build.setResult(Result.UNSTABLE);
                         return true; //you can not go back, nothing is going worse here, so lets quit

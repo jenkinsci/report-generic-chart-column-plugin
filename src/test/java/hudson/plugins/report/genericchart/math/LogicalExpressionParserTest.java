@@ -2,36 +2,34 @@ package hudson.plugins.report.genericchart.math;
 
 import org.junit.jupiter.api.Assertions;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LogicalExpressionParserTest {
 
+    private static PrintingExpressionLogger log = new PrintingExpressionLogger();
 
     @org.junit.jupiter.api.Test
     void splitTest1() {
         List<String> s;
-        s = new LogicalExpressionParser("not important now").split("1+2+3 < 5");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3 < 5");
         Assertions.assertEquals(1, s.size());
         Assertions.assertEquals("1+2+3 < 5", s.get(0));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 & 2+5>7");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 & 2+5>7");
         Assertions.assertEquals(3, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("&", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5    &&&&2+5>7");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5    &&&&2+5>7");
         Assertions.assertEquals(3, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("&", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 | 2+5>7");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 | 2+5>7");
         Assertions.assertEquals(3, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("|", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5||||    2+5>7");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5||||    2+5>7");
         Assertions.assertEquals(3, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("|", s.get(1));
@@ -41,38 +39,38 @@ class LogicalExpressionParserTest {
     @org.junit.jupiter.api.Test
     void splitTest2() {
         List<String> s;
-        s = new LogicalExpressionParser("not important now").split("1+2+3 < 5");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3 < 5");
         Assertions.assertEquals(1, s.size());
         Assertions.assertEquals("1+2+3 < 5", s.get(0));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 & 2+5>7 | 5<6");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 & 2+5>7 | 5<6");
         Assertions.assertEquals(5, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("&", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
         Assertions.assertEquals("|", s.get(3));
         Assertions.assertEquals("5<6", s.get(4));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 & 2+5>7 & 5<6");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 & 2+5>7 & 5<6");
         Assertions.assertEquals(5, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("&", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
         Assertions.assertEquals("&", s.get(3));
         Assertions.assertEquals("5<6", s.get(4));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 | 2+5>7 & 5<6");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 | 2+5>7 & 5<6");
         Assertions.assertEquals(5, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("|", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
         Assertions.assertEquals("&", s.get(3));
         Assertions.assertEquals("5<6", s.get(4));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5 | 2+5>7 | 5<6");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5 | 2+5>7 | 5<6");
         Assertions.assertEquals(5, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("|", s.get(1));
         Assertions.assertEquals("2+5>7", s.get(2));
         Assertions.assertEquals("|", s.get(3));
         Assertions.assertEquals("5<6", s.get(4));
-        s = new LogicalExpressionParser("not important now").split("1+2+3<5    &&&&2+5>7 & 5<7 & 1+2+3<5||||    2+5>7");
+        s = new LogicalExpressionParser("not important now", log).split("1+2+3<5    &&&&2+5>7 & 5<7 & 1+2+3<5||||    2+5>7");
         Assertions.assertEquals(9, s.size());
         Assertions.assertEquals("1+2+3<5", s.get(0));
         Assertions.assertEquals("&", s.get(1));
@@ -88,13 +86,13 @@ class LogicalExpressionParserTest {
     @org.junit.jupiter.api.Test
     void evalTest() {
         LogicalExpressionParser comp;
-        comp = new LogicalExpressionParser("1+2+3 >= 7");
+        comp = new LogicalExpressionParser("1+2+3 >= 7", log);
         Assertions.assertFalse(comp.evaluate());
-        comp = new LogicalExpressionParser("1+2+3 >= 5");
+        comp = new LogicalExpressionParser("1+2+3 >= 5", log);
         Assertions.assertTrue(comp.evaluate());
-        comp = new LogicalExpressionParser("1+2+3 >= 7 | 1+2+3 >= 5");
+        comp = new LogicalExpressionParser("1+2+3 >= 7 | 1+2+3 >= 5", log);
         Assertions.assertTrue(comp.evaluate());
-        comp = new LogicalExpressionParser("6 >= 7 & 6 >= 5");
+        comp = new LogicalExpressionParser("6 >= 7 & 6 >= 5", log);
         Assertions.assertFalse(comp.evaluate());
     }
 }

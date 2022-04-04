@@ -9,8 +9,8 @@ public class ComparingExpressionParser extends AbstractSplittinParser {
     private static final String[] primaryChars = new String[]{"!=", "==", ">=", "<="};
     private static final String[] secondaryChars = new String[]{"<", ">"};
 
-    public ComparingExpressionParser(String expression) {
-        super(expression);
+    public ComparingExpressionParser(String expression, ExpressionLogger log) {
+        super(expression, log);
 
     }
 
@@ -24,24 +24,40 @@ public class ComparingExpressionParser extends AbstractSplittinParser {
     }
 
     public boolean evaluate() {
+        log.log("evaluating: " + getOriginal());
         if (split.size() == 1) {
-            return Boolean.parseBoolean(split.get(0).trim());
+            boolean r =  Boolean.parseBoolean(split.get(0).trim());
+            log.log("is: " + r);
+            return r;
         } else if (split.size() == 3) {
-            BigDecimal result1 = new AlgebraExpressionParser(split.get(0)).evaluate();
-            BigDecimal result2 = new AlgebraExpressionParser(split.get(2)).evaluate();
+            BigDecimal result1 = new AlgebraExpressionParser(split.get(0), new ExpressionLogger.InheritingExpressionLogger(log)).evaluate();
+            BigDecimal result2 = new AlgebraExpressionParser(split.get(2), new ExpressionLogger.InheritingExpressionLogger(log)).evaluate();
             String op = split.get(1);
+            log.log("... " + result1.toString() + " " + op + " " + result2.toString());
             if (">".equals(op)) {
-                return result1.compareTo(result2) > 0;
+                boolean r =   result1.compareTo(result2) > 0;
+                log.log("is: " + r);
+                return r;
             } else if ("<".equals(op)) {
-                return result1.compareTo(result2) < 0;
+                boolean r =   result1.compareTo(result2) < 0;
+                log.log("is: " + r);
+                return r;
             } else if (">=".equals(op)) {
-                return result1.compareTo(result2) >= 0;
+                boolean r =   result1.compareTo(result2) >= 0;
+                log.log("is: " + r);
+                return r;
             } else if ("<=".equals(op)) {
-                return result1.compareTo(result2) <= 0;
+                boolean r =   result1.compareTo(result2) <= 0;
+                log.log("is: " + r);
+                return r;
             } else if ("!=".equals(op)) {
-                return result1.compareTo(result2) != 0;
+                boolean r =   result1.compareTo(result2) != 0;
+                log.log("is: " + r);
+                return r;
             } else if ("==".equals(op)) {
-                return result1.compareTo(result2) == 0;
+                boolean r =   result1.compareTo(result2) == 0;
+                log.log("is: " + r);
+                return r;
             } else {
                 throw new ArithmeticException("unknow comparsion operator" + op);
             }

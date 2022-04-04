@@ -13,8 +13,10 @@ public abstract class AbstractSplittinParser {
     private final Pattern pattern2;
     private final String original;
     protected final List<String> split;
+    protected final ExpressionLogger log;
 
-    public AbstractSplittinParser(String expression) {
+    public AbstractSplittinParser(String expression, ExpressionLogger log) {
+        this.log = log;
         pattern1 = toPattern(getPrimaryChars());
         if (getSecondaryChars().length > 0) {
             pattern2 = toPattern(getSecondaryChars());
