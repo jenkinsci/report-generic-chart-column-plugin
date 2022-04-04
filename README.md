@@ -6,6 +6,7 @@ The plugin reads properties file in your archive, specified by glob, and use one
 * [Properties file](#properties-file)
 * [Project summary](#project-summary)
 * [View summary](#view-summary)
+* [Changing build result](#changing-build-result)
 * [Blacklist and Whitelist](#blacklist-and-whitelist)
 * [Project Settings](#project-settings)
 * [View Settings](#view-settings)
@@ -46,6 +47,19 @@ You can of course mix it with other propertis or other plugins
 The results in view are sortable - they are sort by last valid result shown in chart.
 
 Comparing individual projects was never ever more simple:)
+
+## Changing build result
+Each chart (there can be several by project) can have its own  condition, on which result it can turn the build to unstable, if the condition is met.
+The mathematic part is handled by https://github.com/gbenroscience/ParserNG/, the logic part is internal. Examplar expression:
+```
+avg(..L1)*1.1 <  L0 | L1*1.3 <  L0
+```
+The expression can be read as: If value of key in last build is bigger then avarage value of all builds before multiplied by 1.1 , or  the last build is bigger then previous build multiplied by 1.3, turn the build to unstable
+
+You can read how it is evaluated here: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L10
+
+The built which just ended is L0.  Previous build is L1 and so on... You can use ranges - eg L5..L1 will return values of given **key** for build N-5,N-4-N-3,N-2,N-1  where N is current build - L0.  Ranges can go withot limit - eg L3..  will exapnd as L3,L2,L1,L0. So obviously mmost used is ..L1 which returns you values  of all except latests (L0) build.  
+See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L2
 
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
