@@ -88,7 +88,19 @@ public abstract class AbstractSplittinParser {
 
     public abstract boolean evaluate();
 
+    /**
+     * Primary characters are processed first. Seondary second.
+     * The reason is, if some char is substring of another. Then first msut go the longer ones (which may contain secondary as substring)
+     * the goes secondary. Yah. it can be done bette.. by sorting by lenght and so on... but maybe next tim
+     * @return strings which are substituted first
+     */
     public abstract String[] getPrimaryChars();
 
+    /**
+     * Primary characters are processed first. Seondary second.
+     * The reason is, if some char is substring of another. Then first msut go the longer ones (which may contain secondary as substring)
+     * the goes secondary. Yah. it can be done bette.. by sorting by lenght and so on... but maybe next tim
+     * @return characters which are subsituted second
+     */
     public abstract String[] getSecondaryChars();
 }

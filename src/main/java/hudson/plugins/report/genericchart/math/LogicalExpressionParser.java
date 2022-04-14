@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class LogicalExpressionParser extends AbstractSplittinParser {
 
-    private static final String[] chars = new String[]{"|", "&"};
+    private static final String[] chars = new String[]{"imp", "eq", "or", "and", "|", "&"};
 
     public LogicalExpressionParser(String expression, ExpressionLogger log) {
         super(expression, log);
@@ -13,11 +13,11 @@ public class LogicalExpressionParser extends AbstractSplittinParser {
 
 
     public String[] getPrimaryChars() {
-        return Arrays.copyOf(chars, chars.length);
+        return new String[]{"impl", "xor"};
     }
 
     public String[] getSecondaryChars() {
-        return new String[0];
+        return Arrays.copyOf(chars, chars.length);
     }
 
     public boolean evaluate() {
@@ -28,10 +28,20 @@ public class LogicalExpressionParser extends AbstractSplittinParser {
             ComparingExpressionParser comp2 = new ComparingExpressionParser(split.get(i + 1),new ExpressionLogger.InheritingExpressionLogger(log));
             boolean r2 = comp2.evaluate();
             log.log("... " + result + " " + op + " " + r2);
-            if ("&".equals(op)) {
+            if ("&".equals(op) || "and".equals(op)) {
                 result = result && r2;
-            } else if ("|".equals(op)) {
+            } else if ("|".equals(op) || "or".equals(op)) {
                 result = result || r2;
+            } else if ("impl".equals(op) || "imp".equals(op)) {
+                if (result && !r2) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else if ("eq".equals(op)) {
+                result = result == r2;
+            } else if ("xor".equals(op)) {
+                result = (result != r2);
             } else {
                 throw new ArithmeticException("invalid operator " + op);
             }

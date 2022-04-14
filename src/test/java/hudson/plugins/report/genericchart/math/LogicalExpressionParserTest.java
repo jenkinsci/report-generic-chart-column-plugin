@@ -95,4 +95,58 @@ class LogicalExpressionParserTest {
         comp = new LogicalExpressionParser("6 >= 7 & 6 >= 5", log);
         Assertions.assertFalse(comp.evaluate());
     }
+
+    @org.junit.jupiter.api.Test
+    void andTable() {
+        Assertions.assertTrue(new LogicalExpressionParser("true and true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false and true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false and false", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("true and false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true & true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false && true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false &&& false", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("true &&&& false", log).evaluate());
+    }
+
+    @org.junit.jupiter.api.Test
+    void orTable() {
+        Assertions.assertTrue(new LogicalExpressionParser("true or true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false or true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false or false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true or false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true | true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false || true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false ||| false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true |||| false", log).evaluate());
+    }
+
+    @org.junit.jupiter.api.Test
+    void xorTable() {
+        Assertions.assertFalse(new LogicalExpressionParser("true xor true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false xor true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false xor false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true xor false", log).evaluate());
+    }
+
+    @org.junit.jupiter.api.Test
+    void eqTable() {
+        Assertions.assertTrue(new LogicalExpressionParser("true eq true", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("false eq true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false eq false", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("true eq false", log).evaluate());
+    }
+
+    @org.junit.jupiter.api.Test
+    void implTable() {
+        Assertions.assertTrue(new LogicalExpressionParser("true imp true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false imp true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false imp false", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("true imp false", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("true impl true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false impl true", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("false impl false", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("true impl false", log).evaluate());
+    }
+
+
 }
