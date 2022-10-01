@@ -1,6 +1,7 @@
 package hudson.plugins.report.genericchart.math;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import parser.logical.PrintingExpressionLogger;
 
 import java.util.Arrays;
@@ -127,6 +128,14 @@ class ExpandingExpressionParserTest {
         comp = new ExpandingExpressionParser("500 < L0 && 600 > L0",  revert(Arrays.asList("5", "628", "453", "545")), log);
         Assertions.assertTrue(comp.evaluate());
         comp = new ExpandingExpressionParser("avg(..L1)*1.1 <  L0 | L1*1.3 <  L0 ", revert(Arrays.asList("60", "20", "45", "70")), log);
+        Assertions.assertTrue(comp.evaluate());
+
+    }
+
+    @Test
+    void testRealLiveWithBrackets() {
+        ExpandingExpressionParser comp;
+        comp = new ExpandingExpressionParser(" [[ avg(..L1)*1.1 <  L0 ] || [L1*1.3 <  L0 ]] || [ avgN(count(..L0)/4, ..L1)*1.1<L0 ] ", revert(Arrays.asList("60", "20", "45", "70")), log);
         Assertions.assertTrue(comp.evaluate());
 
     }

@@ -1,46 +1,99 @@
 <div>
 	This allows you to specify a mathematical expression which, if true, will turn the job to unstbale<br/>
 	First the  expression is split by logical operands of |,or,&,and,impl,imp,eq<br/>
-	Then it it is split by &gt;,&lt;, ==, !=, <=, >= <br/>
+	Then it it is split by &gt;,&lt;, ==, !=, <=, >=, lt, gt, eq, neq, le, ge <br/>
 	each of the remaining parts is calcualted as mathematical expression. as powerfull as https://github.com/gbenroscience/ParserNG, with few extensions:<br/>
 	you can use L0 to access value of just finished build. L1 as value of last one before, L2 as two before and so on...Negative id on L is not allowed nowhere<br/>
 	points in chart chart with 4 bullets, wehich fifth build jsut finished  would be L4 L3 L2 L1 L0<br/>
 	you can use ranges by `..`. Eg ..L1 is all before L0 (thus Ln...L2,L1). Similarly, L3.. would be L3,L2,L1. You can use also both limits - eg: L1..L3  o<br/>
-	Note, that the evaluation counts with what it see - if you blacklist/whitelist, the points are filtered before given to formula. Simialrly, if you show just last two point, you will get access only to L0 and L1. So show more :)<br/>
+	Note, that the evaluation counts with what it see - if you blacklist/whitelist, the points are filtered before given to formula. Similarly, if you show just last two point, you will get access only to L0 and L1. So show more :)<br/>
 	<blockquote>
-		Expression : avg(..L1)*1.1 <  L0 | L1*1.3 <  L0<br/>
-		Upon       : 60,20,80,70<br/>
-		As         : Ln...L1,L0<br/>
-		Expanded as: avg(60,20,80)*1.1 <  70 | 80*1.3 <  70
+		Expression :  [[ avg(..L1)*1.1 <  L0 ] || [L1*1.3 <  L0 ]] || [ avgN(count(..L0)/4, ..L1)*1.1<L0 ]
+		Upon       : 60,20,45,70
+		As         : Ln...L1,L0
+		Expanded as:  [[ avg(60,20,45)*1.1 <  70 ] || [45*1.3 <  70 ]] || [ avgN(count(60,20,45,70)/4, 60,20,45)*1.1<70 ]
 		<blockquote>
-			evaluating: avg(60,20,80)*1.1 <  70 | 80*1.3 <  70
+			brackets:  [[ avg(60,20,45)*1.1 <  70 ] || [45*1.3 <  70 ]] || [ avgN(count(60,20,45,70)/4, 60,20,45)*1.1<70 ]
 			<blockquote>
-				evaluating: avg(60,20,80)*1.1 <  70
+				brackets: [ avg(60,20,45)*1.1 <  70 ] || [45*1.3 <  70 ]
 				<blockquote>
-					evaluating: avg(60,20,80)*1.1<br/>
-					is: 58.66666666666667<br/>
-					evaluating: 70<br/>
-					is: 70
+					evaluating:  avg(60,20,45)*1.1 <  70
+					<blockquote>
+						evaluating:  avg(60,20,45)*1.1 <  70
+						<blockquote>
+							evaluating:  avg(60,20,45)*1.1
+							is: 45.833333333333336
+							evaluating: 70
+							is: 70
+						</blockquote>
+						... 45.833333333333336 < 70
+						is: true
+					</blockquote>
+					is: true
 				</blockquote>
-				... 58.66666666666667 < 70<br/>
-				is: true<br/>
-				evaluating: 80*1.3 <  70
+				to:  true  || [45*1.3 <  70 ]
 				<blockquote>
-					evaluating: 80*1.3<br/>
-					is: 104.0<br/>
-					evaluating: 70<br/>
-					is: 70
+					evaluating: 45*1.3 <  70
+					<blockquote>
+						evaluating: 45*1.3 <  70
+						<blockquote>
+							evaluating: 45*1.3
+							is: 58.5
+							evaluating: 70
+							is: 70
+						</blockquote>
+						... 58.5 < 70
+						is: true
+					</blockquote>
+					is: true
 				</blockquote>
-				... 104.0 < 70<br/>
-				is: false
+				to:  true  ||  true
+				<blockquote>
+					evaluating:  true  ||  true
+					<blockquote>
+						evaluating:  true
+						is: true
+						evaluating: true
+						is: true
+					</blockquote>
+					... true | true
+					is: true
+				</blockquote>
+				to:   true  || [ avgN(count(60,20,45,70)/4, 60,20,45)*1.1<70 ]
+				<blockquote>
+					evaluating:  avgN(count(60,20,45,70)/4, 60,20,45)*1.1<70
+					<blockquote>
+						evaluating:  avgN(count(60,20,45,70)/4, 60,20,45)*1.1<70
+						<blockquote>
+							evaluating:  avgN(count(60,20,45,70)/4, 60,20,45)*1.1
+							is: 45.833333337
+							evaluating: 70
+							is: 70
+						</blockquote>
+						... 45.833333337 < 70
+						is: true
+					</blockquote>
+					is: true
+				</blockquote>
+				to:   true  ||  true
+				<blockquote>
+					evaluating:   true  ||  true
+					<blockquote>
+						evaluating:   true
+						is: true
+						evaluating: true
+						is: true
+					</blockquote>
+					... true | true
+					is: true
+				</blockquote>
+				is: true
 			</blockquote>
-			... true | false<br/>
-			is: true
-		</blockquote>
-		is: true
-	</blockquote>
 	TRUE , thus job WILL be turned to unstable<br/>
 	Max number in L (and thus also in functions) is 99<br/>
 	The parser is far from being perfect, be nice to it.<br/>
-	The brackets are avialable onmly iside math expressions. The Logical part is only sequential<br/>
+	The () brackets are avaiable only in side math expressions. The Logical part is using [] as separators. Eg:<br/>
+	<blockquote>
+		1+1 < (2+0)*1 impl [ [5 == 6 || 33<(22-20)*2 ]xor [ [  5-3 < 2 or 7*(5+2)<=5 ] and 1+1 == 2]] eq [ true && false ]
+	</blockquote>
 </div>
