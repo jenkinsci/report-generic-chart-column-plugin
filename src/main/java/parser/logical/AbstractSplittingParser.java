@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.logical;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class AbstractSplittinParser {
+public abstract class AbstractSplittingParser {
 
     private final Pattern pattern1;
     private final Pattern pattern2;
@@ -15,7 +15,7 @@ public abstract class AbstractSplittinParser {
     protected final List<String> split;
     protected final ExpressionLogger log;
 
-    public AbstractSplittinParser(String expression, ExpressionLogger log) {
+    public AbstractSplittingParser(String expression, ExpressionLogger log) {
         this.log = log;
         pattern1 = toPattern(getPrimaryChars());
         if (getSecondaryChars().length > 0) {
@@ -24,12 +24,11 @@ public abstract class AbstractSplittinParser {
             pattern2 = null;
         }
         this.original = expression;
-        //todo, add brackets support
         split = split(original);
     }
 
     private static Pattern toPattern(String[] chars) {
-        return Pattern.compile("\\s*(" + join(escape(chars)) + ")\\s*");
+        return Pattern.compile("\\s*(" + joinAsOr1n(escape(chars)) + ")\\s*");
     }
 
     List<String> split(String expression) {
@@ -62,7 +61,7 @@ public abstract class AbstractSplittinParser {
         return r;
     }
 
-    private static String join(String[] chars) {
+    private static String joinAsOr1n(String[] chars) {
         return Arrays.stream(chars).collect(Collectors.joining("+|")) + "+";
     }
 
@@ -92,6 +91,7 @@ public abstract class AbstractSplittinParser {
      * Primary characters are processed first. Seondary second.
      * The reason is, if some char is substring of another. Then first msut go the longer ones (which may contain secondary as substring)
      * the goes secondary. Yah. it can be done bette.. by sorting by lenght and so on... but maybe next tim
+     *
      * @return strings which are substituted first
      */
     public abstract String[] getPrimaryChars();
@@ -100,7 +100,16 @@ public abstract class AbstractSplittinParser {
      * Primary characters are processed first. Seondary second.
      * The reason is, if some char is substring of another. Then first msut go the longer ones (which may contain secondary as substring)
      * the goes secondary. Yah. it can be done bette.. by sorting by lenght and so on... but maybe next tim
+     *
      * @return characters which are subsituted second
      */
     public abstract String[] getSecondaryChars();
+
+    public String getHelp() {
+        return this.getName() + ": " +
+                Arrays.stream(getPrimaryChars()).collect(Collectors.joining(", ")) + ", " +
+                Arrays.stream(getSecondaryChars()).collect(Collectors.joining(", "));
+    }
+
+    public abstract String getName();
 }

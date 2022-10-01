@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.logical;
 
 public class PrintingExpressionLogger implements  ExpressionLogger {
 

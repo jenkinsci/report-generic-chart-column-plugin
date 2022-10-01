@@ -1,5 +1,8 @@
 package hudson.plugins.report.genericchart.math;
 
+import parser.LogicalExpression;
+import parser.logical.ExpressionLogger;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +18,7 @@ public class ExpandingExpressionParser {
     private static final Pattern bothRange = Pattern.compile("L\\d+\\.\\.L\\d+");
     private final String originalExpression;
     private final List<String> points;
-    private final LogicalExpressionParser logicalExpressionParser;
+    private final LogicalExpression logicalExpressionParser;
     private final ExpressionLogger log;
     private final String expanded;
 
@@ -30,7 +33,7 @@ public class ExpandingExpressionParser {
         log.log("As         : Ln...L1,L0");
         expanded = expandALL(expression);
         log.log("Expanded as: " + expanded);
-        logicalExpressionParser = new LogicalExpressionParser(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
+        logicalExpressionParser = new LogicalExpression(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
     }
 
     String expandALL(String expression) {
@@ -126,8 +129,9 @@ public class ExpandingExpressionParser {
     }
 
     public boolean evaluate() {
-        boolean r = logicalExpressionParser.evaluate();
-        log.log("is: " + r);
+        String rs = logicalExpressionParser.solve();
+        log.log("is: " + rs);
+        Boolean r = Boolean.parseBoolean(rs);
         return r;
     }
 

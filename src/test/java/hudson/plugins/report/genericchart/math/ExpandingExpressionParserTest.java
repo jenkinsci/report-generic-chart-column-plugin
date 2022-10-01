@@ -1,6 +1,7 @@
 package hudson.plugins.report.genericchart.math;
 
 import org.junit.jupiter.api.Assertions;
+import parser.logical.PrintingExpressionLogger;
 
 import java.util.Arrays;
 import java.util.Collections;

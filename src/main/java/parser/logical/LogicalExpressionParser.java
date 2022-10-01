@@ -1,9 +1,9 @@
-package hudson.plugins.report.genericchart.math;
+package parser.logical;
 
 
 import java.util.Arrays;
 
-public class LogicalExpressionParser extends AbstractSplittinParser {
+public class LogicalExpressionParser extends AbstractSplittingParser {
 
     private static final String[] chars = new String[]{"imp", "eq", "or", "and", "|", "&"};
 
@@ -48,5 +48,10 @@ public class LogicalExpressionParser extends AbstractSplittinParser {
         }
         log.log("is: " + result);
         return result;
+    }
+
+    @Override
+    public String getName() {
+        return "Logical operators";
     }
 }

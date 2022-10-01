@@ -32,7 +32,6 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.plugins.report.genericchart.math.ExpandingExpressionParser;
-import hudson.plugins.report.genericchart.math.ExpressionLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -46,6 +45,7 @@ import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import parser.logical.ExpressionLogger;
 
 public class GenericChartPublisher extends Publisher {
 

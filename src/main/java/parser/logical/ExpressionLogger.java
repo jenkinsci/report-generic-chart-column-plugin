@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.logical;
 
 public interface ExpressionLogger {
 
@@ -15,7 +15,11 @@ public interface ExpressionLogger {
             parent.log("  " + s);
         }
     }
-    public static ExpressionLogger DEV_NULL = s -> {};
+    public static ExpressionLogger DEV_NULL = new ExpressionLogger() {
+        @Override
+        public void log(String s) {
+        }
+    };
 
     public void log(String s);
 }
