@@ -108,7 +108,7 @@ public class ExpandingExpressionParser {
         if (tto >= points.size()) {
             tto = points.size() - 1;
         }
-        List<String> l = new ArrayList(to - from + 5);
+        List<String> l = new ArrayList(tto - ffrom + 5);
         for (int i = ffrom; i <= tto; i++) {
             l.add(points.get(i));
         }
