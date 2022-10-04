@@ -110,10 +110,10 @@ public class LogicalExpression implements Solvable {
                new LogicalExpressionParser(" 1 == 1", ExpressionLogger.DEV_NULL).getHelp() + "\n" +
                 "As Mathematical parts are using () as brackets, Logical parts must be grouped by [] eg: " + "\n" +
                 "1+1 < (2+0)*1 impl [ [5 == 6 || 33<(22-20)*2 ]xor [ [  5-3 < 2 or 7*(5+2)<=5 ] and 1+1 == 2]] eq [ true && false ]" + "\n" +
-                "Note, that logical parsser supports only dual operators, so 1<2<3  or true|false|true are invalid!" + "\n" +
-                "Thus:  [1<2]<3   or   [[true|false]<true] must be used, otherwise exception is thrown. " + "\n" +
+                "Note, that logical parsser supports only dual operators, so where true|false|true is valid, 1<2<3  is invalid!" + "\n" +
+                "Thus:  [1<2]<3   is necessary and  even  [[true|false]|true]is recomeded to be used, For 1<2<3  exception is thrown. " + "\n" +
                 "Single letter can logical operands can be used in row. So eg | have same meaning as ||. But also unluckily also eg < is same as <<" + "\n" +
-                "Negation can be done by single ! strictly close attached to [; eg ![true]  is ... false\n";
+                "Negation can be done by single ! strictly close attached to [; eg ![true]  is ... false. Some spaces like ! [ are actually ok to\n";
 
     }
 }
