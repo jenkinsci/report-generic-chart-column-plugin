@@ -149,4 +149,39 @@ class LogicalExpressionParserTest {
     }
 
 
+    @org.junit.jupiter.api.Test
+    void eqTableWithEq() {
+        Assertions.assertTrue(new LogicalExpressionParser("0 == 0  eq 0 == 0", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("0 != 0 eq 0 == 0", log).evaluate());
+        Assertions.assertTrue(new LogicalExpressionParser("0 != 0  eq 0 != 0 ", log).evaluate());
+        Assertions.assertFalse(new LogicalExpressionParser("0 == 0  eq 0 != 0 ", log).evaluate());
+/**
+ * For a hwile, there were eq/neq and -eq/-neq operators
+ * But those colidate with logical eq and thus were removed
+ * workarounds to make avaiblable both were sucide
+ */
+        int ex = 0;
+        try {
+            new LogicalExpressionParser("0 -eq 0 eq 0 -eq 0", log).evaluate();
+        } catch (Exception e) {
+            ex++;
+        }
+        try {
+            new LogicalExpressionParser("0 -neq 0 eq 0 -eq 0", log).evaluate();
+        } catch (Exception e) {
+            ex++;
+        }
+        try {
+            new LogicalExpressionParser("0 neq 0  eq 0 neq 0 ", log).evaluate();
+        } catch (Exception e) {
+            ex++;
+        }
+        try {
+            new LogicalExpressionParser("0 eq 0  eq 0 neq 0 ", log).evaluate();
+        } catch (Exception e) {
+            ex++;
+        }
+        Assertions.assertEquals(4, ex, "four exceptions expected");
+    }
+
 }
