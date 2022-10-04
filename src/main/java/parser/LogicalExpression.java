@@ -49,6 +49,10 @@ public class LogicalExpression implements Solvable {
         logger.log("brackets: " + ex);
         for (int x = 0; x < ex.length(); x++) {
             if (ex.charAt(x) == '[') {
+                boolean neg=false;
+                if (x>0 && ex.charAt(x-1)=='!') {
+                    neg=true;
+                }
                 int c = 1;
                 for (int y = x + 1; y < ex.length(); y++) {
                     if (ex.charAt(y) == '[') {
@@ -64,16 +68,27 @@ public class LogicalExpression implements Solvable {
                             } else {
                                 eval = evalDirect(s, new ExpressionLogger.InheritingExpressionLogger(logger));
                             }
+                            if (neg){
+                                x = x - 1;//!!!!
+                                ExpressionLogger tmpl = new ExpressionLogger.InheritingExpressionLogger(logger);
+                                tmpl.log("!" + eval);
+                                boolean b = !ComparingExpressionParser.parseBooleanStrict(eval.trim());
+                                tmpl.log("..." + b);
+                                eval = ""+b;
+                            }
                             String s1 = ex.substring(0, x);
                             String s2 = ex.substring(y + 1);
                             ex = s1 + " " + eval + " " + s2;
                             logger.log("to: " + ex);
+                            break;
                         }
                     }
                 }
             }
         }
-        return evalDirect(ex, new ExpressionLogger.InheritingExpressionLogger(logger));
+        String r = evalDirect(ex, new ExpressionLogger.InheritingExpressionLogger(logger));
+        logger.log(r);
+        return r;
     }
 
     private String evalDirect(String s, ExpressionLogger logger) {
@@ -88,8 +103,9 @@ public class LogicalExpression implements Solvable {
                 "As Mathematical parts are using () as brackets, Logical parts must be grouped by [] eg: " + "\n" +
                 "1+1 < (2+0)*1 impl [ [5 == 6 || 33<(22-20)*2 ]xor [ [  5-3 < 2 or 7*(5+2)<=5 ] and 1+1 == 2]] eq [ true && false ]" + "\n" +
                 "Note, that logical parsser supports only dual operators, so 1<2<3  or true|false|true are invalid!" + "\n" +
-                "Thus:  [1<2]<3   or   [[true|false]<true] must be used. " + "\n" +
-                "Single letter can logical operands can be used in row. So eg | have same meaning as ||. But also unluckily also eg < is same as <<" + "\n";
+                "Thus:  [1<2]<3   or   [[true|false]<true] must be used, otherwise exception is thrown. " + "\n" +
+                "Single letter can logical operands can be used in row. So eg | have same meaning as ||. But also unluckily also eg < is same as <<" + "\n" +
+                "Negation can be done by single ! strictly close attached to [; eg ![true]  is ... false\n";
 
     }
 }
