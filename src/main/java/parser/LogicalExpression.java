@@ -49,9 +49,17 @@ public class LogicalExpression implements Solvable {
         logger.log("brackets: " + ex);
         for (int x = 0; x < ex.length(); x++) {
             if (ex.charAt(x) == '[') {
-                boolean neg=false;
-                if (x>0 && ex.charAt(x-1)=='!') {
-                    neg=true;
+                int neg = -1;
+                int steps = 0;
+                for (int z = x - 1; z >= 0; z--) {
+                    steps++;
+                    if (ex.charAt(z) == '!') {
+                        neg = steps;
+                        break;
+                    }
+                    if (ex.charAt(z) != ' ' && ex.charAt(z) != '\n' && ex.charAt(z) != '\t') {
+                        break;
+                    }
                 }
                 int c = 1;
                 for (int y = x + 1; y < ex.length(); y++) {
@@ -68,13 +76,13 @@ public class LogicalExpression implements Solvable {
                             } else {
                                 eval = evalDirect(s, new ExpressionLogger.InheritingExpressionLogger(logger));
                             }
-                            if (neg){
-                                x = x - 1;//!!!!
+                            if (neg >= 0) {
+                                x = x - neg;//!!!!
                                 ExpressionLogger tmpl = new ExpressionLogger.InheritingExpressionLogger(logger);
                                 tmpl.log("!" + eval);
                                 boolean b = !ComparingExpressionParser.parseBooleanStrict(eval.trim());
                                 tmpl.log("..." + b);
-                                eval = ""+b;
+                                eval = "" + b;
                             }
                             String s1 = ex.substring(0, x);
                             String s2 = ex.substring(y + 1);

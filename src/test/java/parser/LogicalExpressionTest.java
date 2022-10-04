@@ -46,24 +46,55 @@ class LogicalExpressionTest {
     }
 
     @Test
+    void notWithSpaces() {
+        LogicalExpression expr = new LogicalExpression("[ true]  ", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression(" ! [ true ]", log);
+        Assertions.assertEquals("false", expr.solve());
+        expr = new LogicalExpression("[false]", log);
+        Assertions.assertEquals("false", expr.solve());
+        expr = new LogicalExpression(" !   [false]", log);
+        Assertions.assertEquals("true", expr.solve());
+    }
+
+    @Test
     void notMore() {
         LogicalExpression expr;
         expr = new LogicalExpression("![true] || ![false] ", log);
-        Assertions.assertEquals("true",expr.solve());
+        Assertions.assertEquals("true", expr.solve());
         expr = new LogicalExpression("![ true && false ]", log);
-        Assertions.assertEquals("true",expr.solve());
+        Assertions.assertEquals("true", expr.solve());
 
         expr = new LogicalExpression("![![true] || ![false] ]", log);
         Assertions.assertEquals("false",expr.solve());
         expr = new LogicalExpression("![![ true && false ]]", log);
-        Assertions.assertEquals("false",expr.solve());
+        Assertions.assertEquals("false", expr.solve());
 
         expr = new LogicalExpression("![true] || ![false]  eq  ![ true && false ]", log);
-        Assertions.assertEquals("true",expr.solve());
+        Assertions.assertEquals("true", expr.solve());
         expr = new LogicalExpression("![![true] || ![false]]  eq  ![![ true && false ]]", log);
-        Assertions.assertEquals("true",expr.solve());
+        Assertions.assertEquals("true", expr.solve());
         expr = new LogicalExpression("![![![true] || ![false]]  eq  ![![ true && false ]]]", log);
-        Assertions.assertEquals("false",expr.solve());
+        Assertions.assertEquals("false", expr.solve());
+    }
 
+    void notMoreWithSpaces() {
+        LogicalExpression expr;
+        expr = new LogicalExpression("![true] || !    [false] ", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression("  !   [ true && false ]", log);
+        Assertions.assertEquals("true", expr.solve());
+
+        expr = new LogicalExpression("! [ ! [true] ||  ! [false] ]", log);
+        Assertions.assertEquals("false", expr.solve());
+        expr = new LogicalExpression("!   [![ true && false ]]", log);
+        Assertions.assertEquals("false", expr.solve());
+
+        expr = new LogicalExpression("   ![true] ||   ! [false]  eq  ! [ true && false ]", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression("!   [ ! [true] || ![false]]  eq  !    [![ true && false ]]", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression("![ ! [! [true] || ![false]]  eq  ![  ! [ true && false ]]]", log);
+        Assertions.assertEquals("false", expr.solve());
     }
 }
