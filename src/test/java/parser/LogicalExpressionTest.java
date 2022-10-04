@@ -97,4 +97,20 @@ class LogicalExpressionTest {
         expr = new LogicalExpression("![ ! [! [true] || ![false]]  eq  ![  ! [ true && false ]]]", log);
         Assertions.assertEquals("false", expr.solve());
     }
+
+    void variablesWorks() {
+        LogicalExpression expr;
+        expr = new LogicalExpression("r=3;r<r+1", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression("[r<r+1 || [r=3;r<5]]", log);
+        Assertions.assertEquals("true", expr.solve());
+        expr = new LogicalExpression("[r=3;r<1] || [r<r+1 || [r<5]]", log);
+        Assertions.assertEquals("true", expr.solve());
+    }
+
+    void variablesDoNotWorks(){
+        LogicalExpression expr;
+        expr = new LogicalExpression("[r=3;r<r+1 || [r<5]", log);
+        Assertions.assertEquals("Character r is neither a decimal digit number, decimal point, nor \"e\" notation exponential mark.", expr.solve());
+    }
 }

@@ -113,7 +113,11 @@ public class LogicalExpression implements Solvable {
                 "Note, that logical parsser supports only dual operators, so where true|false|true is valid, 1<2<3  is invalid!" + "\n" +
                 "Thus:  [1<2]<3   is necessary and  even  [[true|false]|true]is recomeded to be used, For 1<2<3  exception is thrown. " + "\n" +
                 "Single letter can logical operands can be used in row. So eg | have same meaning as ||. But also unluckily also eg < is same as <<" + "\n" +
-                "Negation can be done by single ! strictly close attached to [; eg ![true]  is ... false. Some spaces like ! [ are actually ok to\n";
+                "Negation can be done by single ! strictly close attached to [; eg ![true]  is ... false. Some spaces like ! [ are actually ok too\n" +
+                "Note, that variables works, but must be included in first evaluated expression. Which is obvious for \"r=3;r<r+1\"\n" +
+                "But much less for [r=3;r<r+1 || [r<5]]\", which fails and must be declared as \"[r<r+1 || [r=3;r<5]]\" \n" +
+                "To avoid this, you can declare all in first dummy expression: \"[r=3;r<1] || [r<r+1 || [r<5]]\" which ensure theirs allocation ahead of time and do not affect the rest\n" +
+                "If you modify the variables, in the subseqet calls, results maybe funny. Use verbose mode to debug order";
 
     }
 }
