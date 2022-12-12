@@ -67,7 +67,7 @@ public class ExpandingExpressionParser {
                 break;
             }
             String group = m.group();
-            expression = expression.replace(group, createRange( (points.size() - 1) + "", group.replace("..L", "")));
+            expression = expression.replace(group, createRange((points.size() - 1) + "", group.replace("..L", "")));
         }
         return expression;
     }
@@ -128,14 +128,18 @@ public class ExpandingExpressionParser {
         return i;
     }
 
-    public boolean evaluate() {
+    public String solve() {
         String rs = logicalExpressionParser.solve();
         log.log("is: " + rs);
-        Boolean r = Boolean.parseBoolean(rs);
+        return rs;
+    }
+
+    public boolean evaluate() {
+        Boolean r = Boolean.parseBoolean(solve());
         return r;
     }
 
-     String getExpanded() {
+    String getExpanded() {
         return expanded;
     }
 }
