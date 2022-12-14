@@ -1,7 +1,6 @@
 package hudson.plugins.report.genericchart.math;
 
 import parser.LogicalExpression;
-import parser.MathExpression;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
@@ -24,15 +23,21 @@ public class ExpandingExpressionParser {
     private final String expanded;
 
     public ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log) {
+        this(expression, points, log, true);
+    }
+
+    private ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log, boolean details) {
         this.log = log;
         this.points = points;
         originalExpression = expression;
-        log.log("Expression : " + originalExpression);
+        log.log("Expression : " + originalExpression.replaceAll("\\s*L\\s*", "L"));
         List<String> naturalisedOrder = new ArrayList<>(points);
         Collections.reverse(naturalisedOrder);
-        log.log("Upon       : " + naturalisedOrder.stream().collect(Collectors.joining(",")));
-        log.log("As         : Ln...L1,L0");
-        log.log("MN         = " + points.size());
+        if (details) {
+            log.log("Upon       : " + naturalisedOrder.stream().collect(Collectors.joining(",")));
+            log.log("As         : Ln...L1,L0");
+            log.log("MN         = " + points.size());
+        }
         expanded = expandALL(expression);
         log.log("Expanded as: " + expanded);
         logicalExpressionParser = new LogicalExpression(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
@@ -43,6 +48,8 @@ public class ExpandingExpressionParser {
         String expanded = expression;
         expanded = expandMN(expression);
         expanded = expandCurlyIndexes(expanded);
+        expanded = expanded.replaceAll("\\s*L\\s*", "L");
+        expanded = trimAllNumbers(expanded);
         expanded = expandLL(expanded);
         expanded = expandLd(expanded);
         expanded = expandLu(expanded);
@@ -56,11 +63,11 @@ public class ExpandingExpressionParser {
     }
 
     String expandCurlyIndexes(String expression) {
-        return expression;
+        return evalBrackets(expression, new ExpressionLogger.InheritingExpressionLogger(log), new int[]{0});
     }
 
     String expandMN(String expression) {
-        return expression.replace("MN", ""+points.size());
+        return expression.replace("MN", "" + points.size());
     }
 
     String expandLL(String expression) {
@@ -102,7 +109,32 @@ public class ExpandingExpressionParser {
         return expression;
     }
 
+    String trimAllNumbers(String expression) {
+        while (true) {
+            Matcher m = Pattern.compile("\\s+\\d+").matcher(expression);
+            boolean found = m.find();
+            if (!found) {
+                break;
+            }
+            String group = m.group();
+            expression = expression.replace(group, group.trim());
+        }
+        while (true) {
+            Matcher m = Pattern.compile("\\d+\\s+").matcher(expression);
+            boolean found = m.find();
+            if (!found) {
+                break;
+            }
+            String group = m.group();
+            expression = expression.replace(group, group.trim());
+        }
+        return expression;
+    }
+
     String expandL(String expression) {
+        for (int x = Math.min(9, MAX); x >= 0; x--) {
+            expression = expression.replace("L0" + x, points.get(limit(x)));
+        }
         for (int x = MAX; x >= 0; x--) {
             expression = expression.replace("L" + x, points.get(limit(x)));
         }
@@ -158,5 +190,61 @@ public class ExpandingExpressionParser {
 
     String getExpanded() {
         return expanded;
+    }
+
+
+    private String evalBrackets(String ex, ExpressionLogger logger, int[] depth) {
+        depth[0] = depth[0] + 1;
+        if (ex.contains("{")) {
+            logger.log("L indexes brackets: " + ex);
+        }
+        for (int x = 0; x < ex.length(); x++) {
+            if (ex.charAt(x) == '{') {
+                for (int z = x - 1; z >= 0; z--) {
+                    if (ex.charAt(z) != ' ' && ex.charAt(z) != '\n' && ex.charAt(z) != '\t') {
+                        break;
+                    }
+                }
+                int c = 1;
+                for (int y = x + 1; y < ex.length(); y++) {
+                    if (ex.charAt(y) == '{') {
+                        c++;
+                    }
+                    if (ex.charAt(y) == '}') {
+                        c--;
+                        if (c == 0) {
+                            String s = ex.substring(x + 1, y);
+                            String eval = null;
+                            if (s.contains("}")) {
+                                eval = evalBrackets(s, new ExpressionLogger.InheritingExpressionLogger(logger), depth);
+                            } else {
+                                eval = evalDirect(s, new ExpressionLogger.InheritingExpressionLogger(logger));
+                            }
+                            String s1 = ex.substring(0, x);
+                            String s2 = ex.substring(y + 1);
+                            ex = s1 + " " + eval + " " + s2;
+                            logger.log("to: " + ex);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        depth[0] = depth[0] - 1;
+        if (depth[0] > 0) {
+            String r = evalDirect(ex, new ExpressionLogger.InheritingExpressionLogger(logger));
+            return r;
+        } else {
+            return ex;
+        }
+
+    }
+
+    private String evalDirect(String s, ExpressionLogger logger) {
+        ExpandingExpressionParser lex = new ExpandingExpressionParser(s, points, logger, false);
+        String r = lex.solve();
+        int rr = new Double(r).intValue();//L2.0 is not valid value, but L2 is
+        logger.log(s + " = " + rr + " (" + r + ")");
+        return "" + rr;
     }
 }

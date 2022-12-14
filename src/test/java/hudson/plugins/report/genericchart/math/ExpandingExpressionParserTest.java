@@ -28,7 +28,7 @@ class ExpandingExpressionParserTest {
         String s = "avg(..L1)*1.1 <  L0 | L1*1.3 <  L0 ";
         ExpandingExpressionParser comp = new ExpandingExpressionParser(s, revert(Arrays.asList("60", "20", "80", "70")), log);
         String r = comp.getExpanded();
-        Assertions.assertEquals("avg(60,20,80)*1.1 <  70 | 80*1.3 <  70 ", r);
+        Assertions.assertEquals("avg(60,20,80)*1.1<70|80*1.3<70", r);
         Assertions.assertTrue(comp.evaluate());
     }
 
@@ -37,7 +37,7 @@ class ExpandingExpressionParserTest {
         String s = "avg(..L1)*1.1-MN <  L0 | L1*1.3 + MN<  L0 ";
         ExpandingExpressionParser comp = new ExpandingExpressionParser(s, revert(Arrays.asList("60", "20", "80", "70")), log);
         String r = comp.getExpanded();
-        Assertions.assertEquals("avg(60,20,80)*1.1-4 <  70 | 80*1.3 + 4<  70 ", r);
+        Assertions.assertEquals("avg(60,20,80)*1.1-4<70|80*1.3+4<70", r);
         Assertions.assertTrue(comp.evaluate());
 
     }
@@ -138,7 +138,19 @@ class ExpandingExpressionParserTest {
         Assertions.assertTrue(comp.evaluate());
         comp = new ExpandingExpressionParser("avg(..L1)*1.1 <  L0 | L1*1.3 <  L0 ", revert(Arrays.asList("60", "20", "45", "70")), log);
         Assertions.assertTrue(comp.evaluate());
+    }
 
+    @Test
+    void testRealLiveCurl() {
+        ExpandingExpressionParser comp;
+        comp = new ExpandingExpressionParser("avg(..L{MN/2}) < avg(L{MN/2}..)", revert(Arrays.asList("2", "4", "6")), log);
+        Assertions.assertEquals("true", comp.solve());
+        comp = new ExpandingExpressionParser("L{1+L{1+0}}+L{-2+MN/0.8}", revert(Arrays.asList("22", "0", "66")), log);
+        Assertions.assertEquals("0.0", comp.solve());
+        comp = new ExpandingExpressionParser("L{{1}}", revert(Arrays.asList("2", "4", "6")), log);
+        Assertions.assertEquals("4", comp.solve());
+        comp = new ExpandingExpressionParser("L{{MN/2}}", revert(Arrays.asList("2", "4", "6")), log);
+        Assertions.assertEquals("4", comp.solve());
     }
 
     @Test
