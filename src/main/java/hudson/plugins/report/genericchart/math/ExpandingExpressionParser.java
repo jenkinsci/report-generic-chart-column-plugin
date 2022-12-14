@@ -1,6 +1,7 @@
 package hudson.plugins.report.genericchart.math;
 
 import parser.LogicalExpression;
+import parser.MathExpression;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class ExpandingExpressionParser {
         Collections.reverse(naturalisedOrder);
         log.log("Upon       : " + naturalisedOrder.stream().collect(Collectors.joining(",")));
         log.log("As         : Ln...L1,L0");
+        log.log("MN         = " + points.size());
         expanded = expandALL(expression);
         log.log("Expanded as: " + expanded);
         logicalExpressionParser = new LogicalExpression(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
@@ -38,13 +40,28 @@ public class ExpandingExpressionParser {
 
     String expandALL(String expression) {
         //order metters!
-        String expanded = expandLL(expression);
+        String expanded = expression;
+        expanded = expandMN(expression);
+        expanded = expandCurlyIndexes(expanded);
+        expanded = expandLL(expanded);
         expanded = expandLd(expanded);
         expanded = expandLu(expanded);
-        expanded = expandL(expanded);
+        if (points.size() > 0) {
+            //maybe better to throw and die?
+            expanded = expandL(expanded);
+        } else {
+            log.log("Warning! no points in input!");
+        }
         return expanded;
     }
 
+    String expandCurlyIndexes(String expression) {
+        return expression;
+    }
+
+    String expandMN(String expression) {
+        return expression.replace("MN", ""+points.size());
+    }
 
     String expandLL(String expression) {
         while (true) {

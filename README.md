@@ -58,7 +58,7 @@ The expression can be read as: If value of key in last build is bigger then avar
 
 You can read how it is evaluated here: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L10
 
-The built which just ended is L0.  Previous build is L1 and so on... You can use ranges - eg L5..L1 will return values of given **key** for build N-5,N-4-N-3,N-2,N-1  where N is current build - L0.  Ranges can go withot limit - eg L3..  will exapnd as L3,L2,L1,L0. So obviously mmost used is ..L1 which returns you values  of all except latests (L0) build.  
+The built which just ended is L0.  Previous build is L1 and so on... You can use ranges - eg L5..L1 will return values of given **key** for build N-5,N-4-N-3,N-2,N-1  where N is current build - L0.  Ranges can go withot limit - eg L3..  will exapnd as L3,L2,L1,L0. So obviously mmost used is ..L1 which returns you values  of all except latests (L0) build. Count of points is MN.  
 See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L2
 
 ## Blacklist and Whitelist

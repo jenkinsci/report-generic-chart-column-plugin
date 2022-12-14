@@ -30,6 +30,15 @@ class ExpandingExpressionParserTest {
         String r = comp.getExpanded();
         Assertions.assertEquals("avg(60,20,80)*1.1 <  70 | 80*1.3 <  70 ", r);
         Assertions.assertTrue(comp.evaluate());
+    }
+
+    @org.junit.jupiter.api.Test
+    void expandAMN() {
+        String s = "avg(..L1)*1.1-MN <  L0 | L1*1.3 + MN<  L0 ";
+        ExpandingExpressionParser comp = new ExpandingExpressionParser(s, revert(Arrays.asList("60", "20", "80", "70")), log);
+        String r = comp.getExpanded();
+        Assertions.assertEquals("avg(60,20,80)*1.1-4 <  70 | 80*1.3 + 4<  70 ", r);
+        Assertions.assertTrue(comp.evaluate());
 
     }
 

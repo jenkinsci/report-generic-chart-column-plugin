@@ -47,15 +47,25 @@ public class ExpandingExpression implements Solvable {
         }
         List<String> values;
         if (values_png != null) {
-            values = new ArrayList<>(Arrays.asList(values_png.split("\\s+")));
-            Collections.reverse(values);
+            if (values_png.trim().isEmpty()) {
+                values = new ArrayList<>();
+            } else {
+                values = new ArrayList<>(Arrays.asList(values_png.split("\\s+")));
+                Collections.reverse(values);
+            }
         } else if (values_ipng != null) {
-            values = new ArrayList<>(Arrays.asList(values_ipng.split("\\s+")));
+            if (values_ipng.trim().isEmpty()) {
+                values = new ArrayList<>();
+            } else {
+                values = new ArrayList<>(Arrays.asList(values_ipng.split("\\s+")));
+            }
         } else {
             throw new RuntimeException("None of " + VALUES_PNG + " or " + VALUES_IPNG + " declared. Try help");
         }
+        if (values.isEmpty()) {
+            verboseStderrLogger.log("Warning, " + VALUES_PNG + " or " + VALUES_IPNG + " declared, but are empty!");
+        }
         System.out.println(new ExpandingExpression(in, values, verboseStderrLogger).solve());
-
     }//end method
 
     @Override
@@ -81,6 +91,13 @@ public class ExpandingExpression implements Solvable {
                 "Assume " + VALUES_PNG + "='5 9 3 8', then it is the same as " + VALUES_IPNG + "='8 3 9 5'; BUt be aware, with I the L.. and ..L are a bit oposite then expected" + "\n" +
                 "L0 then expand to 8; L2.. expands to 9,3,8; ' ..L2 expands to 5,9 " + "\n" +
                 "L2..L4 expands to 9,5; L4..L2 expands to 5,9" + "\n" +
+                "There is a special element MN, which represents count of input points, so you do not need to call `count(..L0)` arround and arround. So..." + "\n" +
+                "Expression : avg(..L1)*1.1-MN <  L0 | L1*1.3 + MN<  L0 \n" +
+                "Upon       : 60,20,80,70\n" +
+                "As         : Ln...L1,L0\n" +
+                "MN         = 4\n" +
+                "Expanded as: avg(60,20,80)*1.1-4 <  70 | 80*1.3 + 4<  70\n" +
+                "...indeed\n" +
                 "This parser by default uses LogicalExpression interpreter, but should work directly in" + "\n" +
                 "In verbose mode, the expanded expression is always printed";
 
