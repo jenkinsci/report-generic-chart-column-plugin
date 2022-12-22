@@ -68,7 +68,7 @@ public abstract class AbstractSplittingParser {
             for (String ch : chars) {
                 sanitizedGroup = sanitizedGroup.replaceAll("(" + escape(ch) + ")+", ch);
             }
-            r.add(part);
+            r.addAll(split(part));
             r.add(sanitizedGroup);
             expression = expression.substring(end);
         }
