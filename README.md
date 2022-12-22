@@ -64,6 +64,13 @@ The L indexes, can be calcualted. To do so, use `L{expression}`. Eg L{MN/2} upon
 
 See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L2
 
+### testing the expression
+The jar have a main method, which allows you to test the equations:
+```
+VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+```
+If all will go good, all changes will be moved to ParserNG and thus that will be enough for testing... But wea re not yet there
+
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
 
