@@ -49,7 +49,7 @@ public class ExpandingExpressionParser {
         expanded = expandMN(expression);
         expanded = expandCurlyIndexes(expanded);
         expanded = expanded.replaceAll("\\s*L\\s*", "L");
-        expanded = trimAllNumbers(expanded);
+        expanded = expanded.replaceAll("\\s*\\.\\.\\s*", "..");
         expanded = expandLL(expanded);
         expanded = expandLd(expanded);
         expanded = expandLu(expanded);
@@ -105,28 +105,6 @@ public class ExpandingExpressionParser {
             }
             String group = m.group();
             expression = expression.replace(group, createRange(group.replace("L", "").replaceAll("\\.\\..*", ""), "0"));
-        }
-        return expression;
-    }
-
-    String trimAllNumbers(String expression) {
-        while (true) {
-            Matcher m = Pattern.compile("\\s+\\d+").matcher(expression);
-            boolean found = m.find();
-            if (!found) {
-                break;
-            }
-            String group = m.group();
-            expression = expression.replace(group, group.trim());
-        }
-        while (true) {
-            Matcher m = Pattern.compile("\\d+\\s+").matcher(expression);
-            boolean found = m.find();
-            if (!found) {
-                break;
-            }
-            String group = m.group();
-            expression = expression.replace(group, group.trim());
         }
         return expression;
     }
