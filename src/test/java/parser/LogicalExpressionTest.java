@@ -112,11 +112,11 @@ class LogicalExpressionTest {
     @Test
     void variablesWorks() {
         LogicalExpression expr;
-        expr = new LogicalExpression("r=3;r<r+1", log);
+        expr = new LogicalExpression("q=3;q<q+1", log);
         Assertions.assertEquals("true", expr.solve());
-        expr = new LogicalExpression("[r<r+1 || [r=3;r<5]]", log);
+        expr = new LogicalExpression("[q<q+1 || [q=3;q<5]]", log);
         Assertions.assertEquals("true", expr.solve());
-        expr = new LogicalExpression("[r=3;r<1] || [r<r+1 || [r<5]]", log);
+        expr = new LogicalExpression("[q=3;q<1] || [q<q+1 || [q<5]]", log);
         Assertions.assertEquals("true", expr.solve());
     }
 
