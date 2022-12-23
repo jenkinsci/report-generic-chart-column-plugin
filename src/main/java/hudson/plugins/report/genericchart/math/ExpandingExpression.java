@@ -39,6 +39,7 @@ public class ExpandingExpression implements Solvable {
         verboseStderrLogger.log(in);
         if (in.trim().equalsIgnoreCase(Declarations.HELP)) {
             System.out.println(getHelp());
+            return;
         }
         String values_png = System.getenv(VALUES_PNG);
         String values_ipng = System.getenv(VALUES_IPNG);
@@ -98,6 +99,11 @@ public class ExpandingExpression implements Solvable {
                 "MN         = 4\n" +
                 "Expanded as: avg(60,20,80)*1.1-4 <  70 | 80*1.3 + 4<  70\n" +
                 "...indeed\n" +
+                "Dynamic calculation of L's indexes\n" +
+                "Sometimes, Lx, as number is not enough, and you need to calcualte it dynamically. To do so, you can use L{}\n" +
+                "Inisde {} can be mathematical formula (including Ls, MN. or even nested {}, which will evaluate itself as number, which will be used as Lx. Eg:\n" +
+                "'avg(..L{MN/2}) < avg(L{MN/2}..)' will go to 'avg(..L1) < avg(L1..)' will go on 1 2 3 to 'avg(1,2 ) < avg(2,3) will go to 1.5<2.5 ... true'\n" +
+                "For fun try eg: VALUES_PNG='1 2 3' on 'avg(..L{L{MN/2}}) < avg(L{L{MN/2}}..)'\n" +
                 "This parser by default uses LogicalExpression interpreter, but should work directly in" + "\n" +
                 "In verbose mode, the expanded expression is always printed";
 
