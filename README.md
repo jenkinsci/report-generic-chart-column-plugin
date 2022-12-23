@@ -64,6 +64,14 @@ The L indexes, can be calcualted. To do so, use `L{expression}`. Eg L{MN/2} upon
 
 See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L2
 
+While this work is based on ParserNG, and is slowly contributing functions, LogicalParser and also in future the Expanding parser, once it will be all finishied, the expressions will be possible to be tested directly in ParserNG.
+But that is slow process. Now, the Expanding (and thus also Logical) parsers can be teste donly via this plugin, thus main method was added. Try:
+```
+ VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+or
+VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-column.jar  hudson.plugins.report.genericchart.math.ExpandingExpression  "avg(..L{MN/2}) < avg(L{MN/2}..)"
+```
+
 ### testing the expression
 The jar have a main method, which allows you to test the equations:
 ```
