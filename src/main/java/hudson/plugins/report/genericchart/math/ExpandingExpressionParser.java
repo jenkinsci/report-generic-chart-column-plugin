@@ -48,7 +48,7 @@ public class ExpandingExpressionParser {
         String expanded = expression;
         expanded = expandMN(expression);
         expanded = expandCurlyIndexes(expanded);
-        expanded = expanded.replaceAll("\\s*L\\s*", "L");
+        expanded = expanded.replaceAll("L\\s*", "L");
         expanded = expanded.replaceAll("\\s*\\.\\.\\s*", "..");
         expanded = expandLL(expanded);
         expanded = expandLd(expanded);
