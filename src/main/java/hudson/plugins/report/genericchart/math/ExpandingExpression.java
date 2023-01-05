@@ -7,7 +7,9 @@ import java.util.List;
 
 import interfaces.Solvable;
 import math.Main;
+import parser.logical.ComparingExpressionParser;
 import parser.logical.ExpressionLogger;
+import parser.logical.LogicalExpressionMemberFactory;
 import parser.methods.Declarations;
 
 public class ExpandingExpression implements Solvable {
@@ -15,6 +17,7 @@ public class ExpandingExpression implements Solvable {
     private final String originalExpression;
     private final List<String> points;
     private final ExpressionLogger mainLogger;
+    private final LogicalExpressionMemberFactory logicalExpressionMemberFactory;
     public static final String VALUES_PNG = "VALUES_PNG";
     public static final String VALUES_IPNG = "VALUES_IPNG";
 
@@ -29,9 +32,14 @@ public class ExpandingExpression implements Solvable {
     };
 
     public ExpandingExpression(String s, List<String> points, ExpressionLogger logger) {
+        this(s, points, logger, new ComparingExpressionParser.ComparingExpressionParserFactory());
+    }
+
+    public ExpandingExpression(String s, List<String> points, ExpressionLogger logger, LogicalExpressionMemberFactory logicalExpressionMemberFactory) {
         this.originalExpression = s;
         this.mainLogger = logger;
         this.points = points;
+        this.logicalExpressionMemberFactory = logicalExpressionMemberFactory;
     }
 
     public static void main(String args[]) {
@@ -74,7 +82,7 @@ public class ExpandingExpression implements Solvable {
         if (originalExpression.trim().equalsIgnoreCase(Declarations.HELP)) {
             return getHelp();
         }
-        ExpandingExpressionParser eep = new ExpandingExpressionParser(originalExpression, points, mainLogger);
+        ExpandingExpressionParser eep = new ExpandingExpressionParser(originalExpression, points, mainLogger,  logicalExpressionMemberFactory);
         mainLogger.log(eep.getExpanded());
         String r = eep.solve();
         return r;
@@ -82,6 +90,7 @@ public class ExpandingExpression implements Solvable {
 
 
     public static String getHelp() {
+        //longterm todo, repalce this static help by better help using delegated help methods from logical parser
         return "This is abstraction which allows to set with slices, rows and subset of immutable known numbers." + "\n" +
                 "Instead of numbers, you can use literalls L0, L1...L99, which you can then call by:" + "\n" +
                 "Ln - vlaue of Nth number" + "\n" +

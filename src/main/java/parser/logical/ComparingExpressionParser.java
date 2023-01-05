@@ -3,7 +3,7 @@ package parser.logical;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-public class ComparingExpressionParser extends AbstractSplittingParser implements  LogicalExpressionMember {
+public class ComparingExpressionParser extends AbstractSplittingParser implements LogicalExpressionMemberFactory.LogicalExpressionMember {
 
     private static final String[] primaryChars1 = new String[]{"!=", "==", ">=", "<="};
     private static final String[] primaryChars2 = new String[]{"le", "ge", "lt", "gt"};

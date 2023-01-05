@@ -4,7 +4,8 @@ import interfaces.Solvable;
 import math.Main;
 import parser.logical.ComparingExpressionParser;
 import parser.logical.ExpressionLogger;
-import parser.logical.LogicalExpressionMember;
+import parser.logical.LogicalExpressionMemberFactory;
+import parser.logical.LogicalExpressionMemberFactory.LogicalExpressionMember;
 import parser.logical.LogicalExpressionParser;
 import parser.methods.Declarations;
 
@@ -14,7 +15,7 @@ public class LogicalExpression implements Solvable {
 
     private final String originalExpression;
     private final ExpressionLogger mainLogger;
-    private final LogicalExpressionMember.LogicalExpressionMemberFactory logicalExpressionMemberFactory;
+    private final LogicalExpressionMemberFactory logicalExpressionMemberFactory;
 
     public static final ExpressionLogger verboseStderrLogger = new ExpressionLogger() {
         @Override
@@ -29,7 +30,7 @@ public class LogicalExpression implements Solvable {
         this(s, logger, new ComparingExpressionParser.ComparingExpressionParserFactory());
     }
 
-    public LogicalExpression(String s, ExpressionLogger logger, LogicalExpressionMember.LogicalExpressionMemberFactory logicalExpressionMemberFactory) {
+    public LogicalExpression(String s, ExpressionLogger logger, LogicalExpressionMemberFactory logicalExpressionMemberFactory) {
         this.originalExpression = s;
         this.mainLogger = logger;
         this.logicalExpressionMemberFactory = logicalExpressionMemberFactory;
@@ -47,7 +48,7 @@ public class LogicalExpression implements Solvable {
         if (originalExpression.trim().equalsIgnoreCase(Declarations.HELP)) {
             return getHelp();
         }
-        if (new LogicalExpressionParser("", ExpressionLogger.DEV_NULL).isLogicalExpressionMember(originalExpression)) {
+        if (new LogicalExpressionParser("", ExpressionLogger.DEV_NULL, logicalExpressionMemberFactory).isLogicalExpressionMember(originalExpression)) {
             return evalBrackets(originalExpression, mainLogger);
         } else {
             return new MathExpression(originalExpression).solve();

@@ -1,7 +1,9 @@
 package hudson.plugins.report.genericchart.math;
 
 import parser.LogicalExpression;
+import parser.logical.ComparingExpressionParser;
 import parser.logical.ExpressionLogger;
+import parser.logical.LogicalExpressionMemberFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,17 +21,23 @@ public class ExpandingExpressionParser {
     private final String originalExpression;
     private final List<String> points;
     private final LogicalExpression logicalExpressionParser;
+    private final LogicalExpressionMemberFactory logicalExpressionMemberFactory;
     private final ExpressionLogger log;
     private final String expanded;
 
     public ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log) {
-        this(expression, points, log, true);
+        this(expression, points, log, true, new ComparingExpressionParser.ComparingExpressionParserFactory());
     }
 
-    private ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log, boolean details) {
+    public ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log, LogicalExpressionMemberFactory logicalExpressionMemberFactory) {
+        this(expression, points, log, true, logicalExpressionMemberFactory);
+    }
+
+    private ExpandingExpressionParser(String expression, List<String> points, ExpressionLogger log, boolean details, LogicalExpressionMemberFactory logicalExpressionMemberFactory) {
         this.log = log;
         this.points = points;
-        originalExpression = expression;
+        this.originalExpression = expression;
+        this.logicalExpressionMemberFactory = logicalExpressionMemberFactory;
         log.log("Expression : " + originalExpression.replaceAll("\\s*L\\s*", "L"));
         List<String> naturalisedOrder = new ArrayList<>(points);
         Collections.reverse(naturalisedOrder);
@@ -40,7 +48,7 @@ public class ExpandingExpressionParser {
         }
         expanded = expandALL(expression);
         log.log("Expanded as: " + expanded);
-        logicalExpressionParser = new LogicalExpression(expanded, new ExpressionLogger.InheritingExpressionLogger(log));
+        logicalExpressionParser = new LogicalExpression(expanded, new ExpressionLogger.InheritingExpressionLogger(log), logicalExpressionMemberFactory);
     }
 
     String expandALL(String expression) {
@@ -219,7 +227,7 @@ public class ExpandingExpressionParser {
     }
 
     private String evalDirect(String s, ExpressionLogger logger) {
-        ExpandingExpressionParser lex = new ExpandingExpressionParser(s, points, logger, false);
+        ExpandingExpressionParser lex = new ExpandingExpressionParser(s, points, logger, false, logicalExpressionMemberFactory);
         String r = lex.solve();
         int rr = new Double(r).intValue();//L2.0 is not valid value, but L2 is
         logger.log(s + " = " + rr + " (" + r + ")");

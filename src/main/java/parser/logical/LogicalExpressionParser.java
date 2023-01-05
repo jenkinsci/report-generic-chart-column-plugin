@@ -5,19 +5,19 @@ import java.util.Arrays;
 
 import parser.methods.Declarations;
 
-public class LogicalExpressionParser extends AbstractSplittingParser implements  LogicalExpressionMember{
+public class LogicalExpressionParser extends AbstractSplittingParser implements LogicalExpressionMemberFactory.LogicalExpressionMember {
 
     private static final String[] chars1 = new String[]{};
     private static final String[] chars2 = new String[]{"impl", "xor"};
     private static final String[] secchars1 = new String[]{"|", "&"};
     private static final String[] secchars2 = new String[]{"imp", "eq", "or", "and"};
-    private final LogicalExpressionMember.LogicalExpressionMemberFactory subexpressionFactory;
+    private final LogicalExpressionMemberFactory subexpressionFactory;
 
     public LogicalExpressionParser(String expression, ExpressionLogger log) {
         this(expression, log, new ComparingExpressionParser.ComparingExpressionParserFactory());
     }
 
-    public LogicalExpressionParser(String expression, ExpressionLogger log, LogicalExpressionMember.LogicalExpressionMemberFactory subexpressionFactory) {
+    public LogicalExpressionParser(String expression, ExpressionLogger log, LogicalExpressionMemberFactory subexpressionFactory) {
         super(expression, log);
         this.subexpressionFactory = subexpressionFactory;
     }
@@ -82,7 +82,7 @@ public class LogicalExpressionParser extends AbstractSplittingParser implements 
         boolean result = subexpressionFactory.createLogicalExpressionMember(split.get(0), new ExpressionLogger.InheritingExpressionLogger(log)).evaluate();
         for (int i = 1; i <= split.size() - 2; i = i + 2) {
             String op = split.get(i);
-            LogicalExpressionMember comp2 = subexpressionFactory.createLogicalExpressionMember(split.get(i + 1), new ExpressionLogger.InheritingExpressionLogger(log));
+            LogicalExpressionMemberFactory.LogicalExpressionMember comp2 = subexpressionFactory.createLogicalExpressionMember(split.get(i + 1), new ExpressionLogger.InheritingExpressionLogger(log));
             boolean r2 = comp2.evaluate();
             log.log("... " + result + " " + op + " " + r2);
             if ("&".equals(op) || "and".equals(op)) {

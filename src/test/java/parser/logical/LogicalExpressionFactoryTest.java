@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import parser.LogicalExpression;
 
-class LogicalExpressionMemberTest {
+public class LogicalExpressionFactoryTest {
 
     private static PrintingExpressionLogger log = new PrintingExpressionLogger();
 
-    private static class AlwaysTrueMemberFactory implements LogicalExpressionMember.LogicalExpressionMemberFactory {
+    private static class AlwaysTrueMemberFactory implements LogicalExpressionMemberFactory {
         @Override
         public LogicalExpressionMember createLogicalExpressionMember(String expression, ExpressionLogger log) {
             return new LogicalExpressionMember() {
@@ -32,7 +32,7 @@ class LogicalExpressionMemberTest {
         }
     }
 
-    private static class HogwartsMember implements LogicalExpressionMember {
+    public static class HogwartsMember implements LogicalExpressionMemberFactory.LogicalExpressionMember {
 
         private final String expression;
         private final ExpressionLogger log;
@@ -44,21 +44,21 @@ class LogicalExpressionMemberTest {
 
         @Override
         public String getHelp() {
-            return "Only Harry and Ron are true functions Tom is Voldemort!";
+            return "Only Harry and Ron are true Tom is Voldemort!";
         }
 
         @Override
         public boolean evaluate() {
             log.log("evaluating hogwarts members");
-            if (expression.trim().toLowerCase().equals("tom()")) {
+            if (expression.trim().toLowerCase().matches("tom(.*)")) {
                 return false;
-            } else if (expression.trim().toLowerCase().equals("ron()")) {
+            } else if (expression.trim().toLowerCase().matches("ron(.*)")) {
                 return true;
-            } else if (expression.trim().toLowerCase().equals("harry()")) {
+            } else if (expression.trim().toLowerCase().matches("harry(.*)")) {
                 return true;
-            } else if (expression.trim().toLowerCase().equals("true")) {
+            } else if (expression.trim().toLowerCase().matches("true")) {
                 return true;
-            } else if (expression.trim().toLowerCase().equals("false")) {
+            } else if (expression.trim().toLowerCase().matches("false")) {
                 return false;
             }else {
                 throw new RuntimeException("unknown member of hogwarts - " + expression);
@@ -67,13 +67,13 @@ class LogicalExpressionMemberTest {
 
         @Override
         public boolean isLogicalExpressionMember(String futureExpression) {
-            return (futureExpression.toLowerCase().contains("harry()")
-                    || futureExpression.toLowerCase().contains("tom()")
-                    || futureExpression.toLowerCase().contains("ron()"));
+            return (futureExpression.toLowerCase().matches("harry(.*)")
+                    || futureExpression.toLowerCase().matches("tom(.*)")
+                    || futureExpression.toLowerCase().matches("ron(.*)"));
         }
     }
 
-    private static class HogwartsMemberFactory implements LogicalExpressionMember.LogicalExpressionMemberFactory {
+    public static class HogwartsMemberFactory implements LogicalExpressionMemberFactory {
         @Override
         public LogicalExpressionMember createLogicalExpressionMember(String expression, ExpressionLogger log) {
             return new HogwartsMember(expression, log);
@@ -114,6 +114,24 @@ class LogicalExpressionMemberTest {
         String h3 = new LogicalExpression("help", log).solve();
         Assertions.assertEquals(h3, h1);
         Assertions.assertNotEquals(h3, h2); //combined with factory
+    }
+
+    @Test
+    void isLogicalExpressionMemberTest() {
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("0>1 and -1<2"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("0>1 blah -1<2"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("ron() and tom()"));
+        Assertions.assertFalse(new LogicalExpressionParser("", log).isLogicalExpressionMember("ron() blah tom()"));
+
+        Assertions.assertTrue(new LogicalExpressionParser("", log, new HogwartsMemberFactory()).isLogicalExpressionMember("0>1 and -1<2"));
+        Assertions.assertFalse(new LogicalExpressionParser("", log, new HogwartsMemberFactory()).isLogicalExpressionMember("0>1 blah -1<2"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log, new HogwartsMemberFactory()).isLogicalExpressionMember("ron() and tom()"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log, new HogwartsMemberFactory()).isLogicalExpressionMember("ron() blah tom()"));
+
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("0>1 and -1<2"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("0>1 blah -1<2"));
+        Assertions.assertTrue(new LogicalExpressionParser("", log).isLogicalExpressionMember("ron() and tom()"));
+        Assertions.assertFalse(new LogicalExpressionParser("", log).isLogicalExpressionMember("ron() blah tom()"));
     }
 
     @Test
