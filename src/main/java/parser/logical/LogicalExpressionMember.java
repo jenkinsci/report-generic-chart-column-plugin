@@ -9,12 +9,14 @@ public interface LogicalExpressionMember {
     String getHelp();
 
     /**
+     * The method should understand true/false strings, if it is supposed to be used in more complicated expressions.
+     *
      * @return evaluated expression, usually parsed in constructor
      */
     boolean evaluate();
 
     /**
-     * ParserNG have a habiit, that expression is parsed in constructor, and later evaluated in methood.
+     * ParserNG have a habit, that expression is parsed in constructor, and later evaluated in methood.
      * So this methid is takin parameter, of future expression, created over dummy example, so we know,
      * whether it will be viable for future constructor.
      *
