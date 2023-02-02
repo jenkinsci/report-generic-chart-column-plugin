@@ -11,7 +11,7 @@ public class LogicalExpressionFactoryTest {
 
     private static class AlwaysTrueMemberFactory implements LogicalExpressionMemberFactory {
         @Override
-        public LogicalExpressionMember createLogicalExpressionMember(String expression, ExpressionLogger log) {
+        public LogicalExpressionMember createLogicalExpressionMember(String expression, final ExpressionLogger log) {
             return new LogicalExpressionMember() {
                 @Override
                 public String getHelp() {
