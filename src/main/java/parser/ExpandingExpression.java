@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,7 @@ import java.util.List;
 
 import interfaces.Solvable;
 import math.Main;
+import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ComparingExpressionParser;
 import parser.logical.ExpressionLogger;
 import parser.logical.LogicalExpressionMemberFactory;
@@ -49,6 +50,11 @@ public class ExpandingExpression implements Solvable {
             System.out.println(getHelp());
             return;
         }
+        List<String> values = getValuesFromVariables();
+        System.out.println(new ExpandingExpression(in, values, verboseStderrLogger).solve());
+    }//end method
+
+    public static List<String> getValuesFromVariables() {
         String values_png = System.getenv(VALUES_PNG);
         String values_ipng = System.getenv(VALUES_IPNG);
         if (values_png != null && values_ipng != null) {
@@ -74,8 +80,8 @@ public class ExpandingExpression implements Solvable {
         if (values.isEmpty()) {
             verboseStderrLogger.log("Warning, " + VALUES_PNG + " or " + VALUES_IPNG + " declared, but are empty!");
         }
-        System.out.println(new ExpandingExpression(in, values, verboseStderrLogger).solve());
-    }//end method
+        return values;
+    }
 
     @Override
     public String solve() {
@@ -96,7 +102,7 @@ public class ExpandingExpression implements Solvable {
                 "Ln - vlaue of Nth number" + "\n" +
                 "L2..L4 - will expand to values of L2,L3,L4 - order is hnoured" + "\n" +
                 "L2.. - will expand to values of L2,L3,..Ln-1,Ln" + "\n" +
-                "..L5.. - will expand to values of  L0,L1...L4,L5" + "\n" +
+                "..L5 - will expand to values of  L0,L1...L4,L5" + "\n" +
                 "When used as standalone, " + VALUES_PNG + " xor " + VALUES_IPNG + "  are used to pass in the space separated numbers (the I is inverted order)" + "\n" +
                 "Assume " + VALUES_PNG + "='5 9 3 8', then it is the same as " + VALUES_IPNG + "='8 3 9 5'; BUt be aware, with I the L.. and ..L are a bit oposite then expected" + "\n" +
                 "L0 then expand to 8; L2.. expands to 9,3,8; ' ..L2 expands to 5,9 " + "\n" +

@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.expanding;
 
 import parser.LogicalExpression;
 import parser.logical.ComparingExpressionParser;
@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ExpandingExpressionParser {
+public class  ExpandingExpressionParser {
 
     private static final int MAX = 100;
     private static final Pattern downRange = Pattern.compile("\\.\\.L\\d+");
@@ -174,7 +174,7 @@ public class ExpandingExpressionParser {
         return r;
     }
 
-    String getExpanded() {
+    public String getExpanded() {
         return expanded;
     }
 

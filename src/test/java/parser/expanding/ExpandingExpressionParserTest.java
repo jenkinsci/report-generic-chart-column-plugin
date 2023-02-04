@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.expanding;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

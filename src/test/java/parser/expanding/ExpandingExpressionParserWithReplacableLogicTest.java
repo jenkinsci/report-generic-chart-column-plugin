@@ -1,4 +1,4 @@
-package hudson.plugins.report.genericchart.math;
+package parser.expanding;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,11 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import parser.ExpandingExpression;
 import parser.logical.LogicalExpressionFactoryTest;
 import parser.logical.PrintingExpressionLogger;
 
 
-import static hudson.plugins.report.genericchart.math.ExpandingExpressionParserTest.revert;
+import static parser.expanding.ExpandingExpressionParserTest.revert;
 
 class ExpandingExpressionParserWithReplacableLogicTest {
 

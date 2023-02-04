@@ -69,7 +69,7 @@ But that is slow process. Now, the Expanding (and thus also Logical) parsers can
 ```
  VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 or
-VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-column.jar  hudson.plugins.report.genericchart.math.ExpandingExpression  "avg(..L{MN/2}) < avg(L{MN/2}..)"
+VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-column.jar  parser.ExpandingExpression  "avg(..L{MN/2}) < avg(L{MN/2}..)"
 ```
 
 ### testing the expression
