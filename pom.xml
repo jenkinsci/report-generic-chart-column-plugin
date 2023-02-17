@@ -7,7 +7,7 @@
         <version>4.12</version>
     </parent>
     <artifactId>jenkins-report-generic-chart-column</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>Jenkins Chart Column plugin</name>
     <properties>
