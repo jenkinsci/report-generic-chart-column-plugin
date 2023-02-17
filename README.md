@@ -7,6 +7,7 @@ The plugin reads properties file in your archive, specified by glob, and use one
 * [Project summary](#project-summary)
 * [View summary](#view-summary)
 * [Changing build result](#changing-build-result)
+  * [Testing the expressions](#testing-the-expression)
 * [Blacklist and Whitelist](#blacklist-and-whitelist)
 * [Project Settings](#project-settings)
 * [View Settings](#view-settings)
@@ -67,8 +68,10 @@ See the logic at: https://github.com/judovana/jenkins-report-generic-chart-colum
 While this work is based on ParserNG, and is slowly contributing functions, LogicalParser and also in future the Expanding parser, once it will be all finishied, the expressions will be possible to be tested directly in ParserNG.
 But that is slow process. Now, the Expanding (and thus also Logical) parsers can be teste donly via this plugin, thus main method was added. Try:
 ```
- VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+```
 or
+```
 VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-column.jar  parser.ExpandingExpression  "avg(..L{MN/2}) < avg(L{MN/2}..)"
 ```
 
@@ -77,13 +80,17 @@ The jar have a main method, which allows you to test the equations:
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
-All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. ParserNG have powerfull CLI and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
+All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/judovana/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
 ```
 VALUES_PNG='235000 232500 233000 236000 210000'  parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
 ```
 or via its interactive CLI
 ```
 $ VALUES_PNG='235000 232500 233000 236000 210000'  java -jar target/parser-ng-0.1.9.jar -e -i
+```
+<details> <summary>Output</summary>
+
+ ```
 Welcome To ParserNG Command Line
 Math Question 1:
 ______________________________________________________
@@ -98,6 +105,42 @@ Answer
 ______________________________________________________
 235000 232500 233000 236000 210000
 ```
+</details>
+
+```
+VALUES_PNG='235000 232500 233000 236000 210000'  java -jar target/parser-ng-0.1.9.jar -e -i -v
+```
+<details> <summary>Output</summary>
+
+ ```
+Welcome To ParserNG Command Line
+
+Math Question 1:
+______________________________________________________
+L1<L2
+L1<L2
+Expression : L1<L2
+Upon       : 235000,232500,233000,236000,210000
+As         : Ln...L1,L0
+MN         = 5
+Expanded as: 236000<233000
+236000<233000
+  brackets: 236000<233000
+      evaluating logical: 236000<233000
+        evaluating comparison: 236000<233000
+          evaluating math: 236000
+          is: 236000
+          evaluating math: 233000
+          is: 233000
+        ... 236000 < 233000
+        is: false
+      is: false
+  false
+is: false
+Answer
+______________________________________________________
+```
+</details>
 
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
