@@ -144,13 +144,49 @@ ______________________________________________________
 </details>
  
 ### Most common expressions
+#### Divergence from exact pivot
+If something should be soem exact result, or mus tnot be an exact result is most easy usage
+ * `L0 == 5` if last result is 5, then the job willbecome unstable
+ * `L0 != 5` whcih is same as
+ * `![L0 == 5]` if last result is NOT 5, then the job will become unstable
 #### Immediate regression:
-`treshold=5;-1*(L1/(L0/100)-100) < -treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear<br/>
-`treshold=5;   (L1/(L0/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.<br/>
-For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is ok to cover usual oscialtion 
+ * `treshold=5;-1*(L1/(L0/100)-100) < -treshold` which is same as
+ * `treshold=5;   (L1/(L0/100)-100) >  treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear, and
+ * `treshold=5;   (L1/(L0/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.
+ * For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is ok to cover usual oscialtion 
+ * Note, that those equation works fine for boith big numbers and small numbers
 #### Longer term regression
-This can be 
-
+ * In basic comarsion, you can compare any Lx with any Ly. Eg `(L2/(L0/100)-100) > treshold` or `(L{MN}/(L0/100)-100) > treshold` and so on. 
+   * The underlying evaluation is lenient, and eg L4 in size in set of twonumbers, will have simply value of **last valid** (second in this case) number.
+   * Thats also why `L{MN}` works, although you shouldbe explicitly writing `L{MN-1}`
+   * example: ` VALUES_PNG='3 2 1'  java -jar target/parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
+ * another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced bysomething likje `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
+ * You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
+    * `treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` which is same as 
+    * `treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear<br/>
+    * `treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.
+#### Gluing it all together
+You usually have more expressions which are catching your regressions, to connect them, you can use logical operators:
+```
+java -jar target/parser-ng-0.1.9.jar -l   "help"
+Comparing operators - allowed with spaces:!=, ==, >=, <=, <, >; not allowed with spaces:le, ge, lt, gt, 
+Logical operators - allowed with spaces:, |, &; not allowed with spaces:impl, xor, imp, eq, or, and
+As Mathematical parts are using () as brackets, Logical parts must be grouped by [] 
+ ```
+ Eg:
+  * for clasical benchamrks like socre:
+ ```
+ treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
+ ```
+  * for inverted benchmarks like time or size
+ ```
+ treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
+ ```
+Note, that if the variables are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again. Unluckily, you usualy have tresholds different. You can redeclare the variable or ahve different one by PArserNG rules
+ 
+ #### Super complex examples
+ Lokign forward for contributions!
+                                                
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
 
