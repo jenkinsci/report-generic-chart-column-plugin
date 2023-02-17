@@ -8,6 +8,7 @@ The plugin reads properties file in your archive, specified by glob, and use one
 * [View summary](#view-summary)
 * [Changing build result](#changing-build-result)
   * [Testing the expressions](#testing-the-expression)
+  * [Most common expressions](#most-common-expressions)
 * [Blacklist and Whitelist](#blacklist-and-whitelist)
 * [Project Settings](#project-settings)
 * [View Settings](#view-settings)
@@ -80,7 +81,7 @@ The jar have a main method, which allows you to test the equations:
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
-All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/judovana/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
+All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
 ```
 VALUES_PNG='235000 232500 233000 236000 210000'  parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
 ```
@@ -141,6 +142,14 @@ Answer
 ______________________________________________________
 ```
 </details>
+ 
+### Most common expressions
+#### Immediate regression:
+`treshold=5;-1*(L1/(L0/100)-100) < -treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear<br/>
+`treshold=5;   (L1/(L0/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.<br/>
+For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is ok to cover usual oscialtion 
+#### Longer term regression
+This can be 
 
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
