@@ -77,7 +77,27 @@ The jar have a main method, which allows you to test the equations:
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
-If all will go good, all changes will be moved to ParserNG and thus that will be enough for testing... But wea re not yet there
+All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. ParserNG have powerfull CLI and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
+```
+VALUES_PNG='235000 232500 233000 236000 210000'  parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
+```
+or via its interactive CLI
+```
+$ VALUES_PNG='235000 232500 233000 236000 210000'  java -jar target/parser-ng-0.1.9.jar -e -i
+Welcome To ParserNG Command Line
+Math Question 1:
+______________________________________________________
+ echo(L0..L{MN})
+Answer
+______________________________________________________
+210000 236000 233000 232500 235000
+Math Question 2:
+______________________________________________________
+ echo(L{MN}..L0)
+Answer
+______________________________________________________
+235000 232500 233000 236000 210000
+```
 
 ## Blacklist and Whitelist
 you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
