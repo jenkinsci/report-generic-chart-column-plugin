@@ -87,7 +87,7 @@ VALUES_PNG='235000 232500 233000 236000 210000'  parser-ng-0.1.9.jar -e " echo(L
 ```
 or via its interactive CLI
 ```
-$ VALUES_PNG='235000 232500 233000 236000 210000'  java -jar target/parser-ng-0.1.9.jar -e -i
+$ VALUES_PNG='235000 232500 233000 236000 210000'  java -jar parser-ng-0.1.9.jar -e -i
 ```
 <details> <summary>Output</summary>
 
@@ -109,7 +109,7 @@ ______________________________________________________
 </details>
 
 ```
-VALUES_PNG='235000 232500 233000 236000 210000'  java -jar target/parser-ng-0.1.9.jar -e -i -v
+VALUES_PNG='235000 232500 233000 236000 210000'  java -jar parser-ng-0.1.9.jar -e -i -v
 ```
 <details> <summary>Output</summary>
 
@@ -159,7 +159,7 @@ If something should be soem exact result, or mus tnot be an exact result is most
  * In basic comarsion, you can compare any Lx with any Ly. Eg `(L2/(L0/100)-100) > treshold` or `(L{MN}/(L0/100)-100) > treshold` and so on. 
    * The underlying evaluation is lenient, and eg L4 in size in set of twonumbers, will have simply value of **last valid** (second in this case) number.
    * Thats also why `L{MN}` works, although you shouldbe explicitly writing `L{MN-1}`
-   * example: ` VALUES_PNG='3 2 1'  java -jar target/parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
+   * example: ` VALUES_PNG='3 2 1'  java -jar parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
  * another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced bysomething likje `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
  * You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
     * `treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` which is same as 
@@ -168,7 +168,7 @@ If something should be soem exact result, or mus tnot be an exact result is most
 #### Gluing it all together
 You usually have more expressions which are catching your regressions, to connect them, you can use logical operators:
 ```
-java -jar target/parser-ng-0.1.9.jar -l   "help"
+java -jar parser-ng-0.1.9.jar -l   "help"
 Comparing operators - allowed with spaces:!=, ==, >=, <=, <, >; not allowed with spaces:le, ge, lt, gt, 
 Logical operators - allowed with spaces:, |, &; not allowed with spaces:impl, xor, imp, eq, or, and
 As Mathematical parts are using () as brackets, Logical parts must be grouped by [] 
