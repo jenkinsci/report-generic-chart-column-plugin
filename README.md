@@ -182,7 +182,7 @@ As Mathematical parts are using () as brackets, Logical parts must be grouped by
  ```
  treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
  ```
-Note, that if the variables are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again. Unluckily, you usualy have tresholds different. You can redeclare the variable or ahve different one by PArserNG rules
+Note, that if the variables (eg my treshold above) are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again (as I did in above example). Unluckily, you usualy have tresholds different. You can redeclare (as I did) the variable or have different one (eg trehsoldA and tresholdB) by PArserNG rules.
  
  #### Super complex examples
  Lokign forward for contributions!
