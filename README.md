@@ -83,11 +83,11 @@ VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0
 ```
 All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
 ```
-VALUES_PNG='235000 232500 233000 236000 210000'  parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
+VALUES_PNG='235000 232500 233000 236000 210000' java parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
 ```
 or via its interactive CLI
 ```
-$ VALUES_PNG='235000 232500 233000 236000 210000'  java -jar parser-ng-0.1.9.jar -e -i
+$ VALUES_PNG='235000 232500 233000 236000 210000' java -jar parser-ng-0.1.9.jar -e -i
 ```
 <details> <summary>Output</summary>
 
@@ -109,7 +109,7 @@ ______________________________________________________
 </details>
 
 ```
-VALUES_PNG='235000 232500 233000 236000 210000'  java -jar parser-ng-0.1.9.jar -e -i -v
+VALUES_PNG='235000 232500 233000 236000 210000' java -jar parser-ng-0.1.9.jar -e -i -v
 ```
 <details> <summary>Output</summary>
 
@@ -151,16 +151,23 @@ If something should be soem exact result, or mus tnot be an exact result is most
  * `![L0 == 5]` if last result is NOT 5, then the job will become unstable
 #### Immediate regression:
  * `treshold=5;-1*(L1/(L0/100)-100) < -treshold` which is same as
- * `treshold=5;   (L1/(L0/100)-100) >  treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear, and
- * `treshold=5;   (L1/(L0/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.
+ * `treshold=5;   (L1/(L0/100)-100) >  treshold` for classical benchamrk, like score, where more is better. The treshold is how much % is maximal drop it can bear, and
+ * `treshold=5;   (L1/(L0/100)-100) < -treshold` for eg size (where smaller is better) benchmark, or time-based where less is better . The treshold is how much % is maximal increase it can bear.
  * For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is ok to cover usual oscialtion 
  * Note, that those equation works fine for boith big numbers and small numbers
+#### Short term regression
+Such last ru against previous run can not catch constant degradation. To avoid that you may simply extensd of [Immediate regression](#immediate-regression), only `L0` will comapred against all previous runs -  L1 will become somethig lile `..L1` (all except last run)
+ 
+You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
+  * `treshold=5;-1*(avg(..L1)/(L0/100)-100) < -treshold` which is same as
+  * `treshold=5;   (avg(..L1)/(L0/100)-100) >  treshold` for classical benchamrk, like score, where more is better. The treshold is how much % is maximal drop it can bear, and
+ * `treshold=5;   (avg(..L1)/(L0/100)-100) < -treshold` for eg size (where smaller is better) benchmark, or time-based where less is better . The treshold is how much % is maximal increase it can bear.
 #### Longer term regression
  * In basic comarsion, you can compare any Lx with any Ly. Eg `(L2/(L0/100)-100) > treshold` or `(L{MN}/(L0/100)-100) > treshold` and so on. 
    * The underlying evaluation is lenient, and eg L4 in size in set of twonumbers, will have simply value of **last valid** (second in this case) number.
    * Thats also why `L{MN}` works, although you shouldbe explicitly writing `L{MN-1}`
    * example: ` VALUES_PNG='3 2 1'  java -jar parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
- * another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced bysomething likje `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
+ * another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced by something like `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
  * You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
     * `treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` which is same as 
     * `treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear<br/>
@@ -176,13 +183,34 @@ As Mathematical parts are using () as brackets, Logical parts must be grouped by
  Eg:
   * for clasical benchamrks like socre:
  ```
- treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
+ treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold || treshold=5;-1*(avg(..L1)/(L0/100)-100) < -treshold
  ```
   * for inverted benchmarks like time or size
  ```
- treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
+ treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold || treshold=5;   (avg(..L1)/(L0/100)-100) < -treshold
  ```
-Note, that if the variables (eg my treshold above) are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again (as I did in above example). Unluckily, you usualy have tresholds different. You can redeclare (as I did) the variable or have different one (eg trehsoldA and tresholdB) by PArserNG rules.
+Note, that if the variables (eg my treshold above) are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again (as I did in above example). Unluckily, you usualy have tresholds different. You can redeclare (as I did) the variable or have different one (eg trehsoldA and tresholdB) by ParserNG rules.
+
+'avgN' and 'geomN' are usualy producing better resuls, as they are getting rid of random extreme spikes by sorting the input, and removing `N lowest` and `N highest` values. N is first parameter. `avgN(0,...)` is identical to simply `avg(...)`:
+```
+VALUES_PNG='5 5 1 8 5 5'  java -jar parser-ng-0.1.9.jar -e "avgN(0,..L0)"
+4.833333333
+```
+but
+```
+VALUES_PNG='5 5 1 8 5 5'  java -jar parser-ng-0.1.9.jar -e "avgN(1,..L0)"
+5
+```
+as 8 and 1 were removed from list. So:
+  * for clasical benchamrks like socre:
+ ```
+ cut=2;treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -treshold || treshold=5;-1*(avgN(cut,..L1)/(L0/100)-100) < -treshold
+ ```
+  * for inverted benchmarks like time or size
+ ```
+ cut=2;treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -treshold || treshold=5;   (avgN(cut,..L1)/(L0/100)-100) < -treshold
+ ```
+ Is what yoy usually end with
  
  #### Super complex examples
  Lokign forward for contributions!
