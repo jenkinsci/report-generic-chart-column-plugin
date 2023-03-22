@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package hudson.plugins.report.genericchart;
+package io.jenkins.plugins.genericchart;
 
-import hudson.plugins.ColorChanger;
+import io.jenkins.plugins.chartjs.ColorChanger;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;

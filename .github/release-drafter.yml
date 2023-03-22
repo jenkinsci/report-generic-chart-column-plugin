@@ -1,0 +1,2 @@
+_extends: .github
+tag-template: report-generic-chart-column-$NEXT_MINOR_VERSION

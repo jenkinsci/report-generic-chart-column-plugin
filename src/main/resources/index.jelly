@@ -1,0 +1,5 @@
+<?jelly escape-by-default='true'?>
+<div>
+    Plugin to draw a generic chart from poperties to projec page or view page.<br/>
+    Next to drawing, it allows you to build mathematical model, which checks the behavior of your charts<br/>
+</div>

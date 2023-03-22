@@ -58,18 +58,18 @@ avg(..L1)*1.1 <  L0 | L1*1.3 <  L0
 ```
 The expression can be read as: If value of key in last build is bigger then avarage value of all builds before multiplied by 1.1 , or  the last build is bigger then previous build multiplied by 1.3, turn the build to unstable
 
-You can read how it is evaluated here: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L10
+You can read how it is evaluated here: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#L10
 
 The built which just ended is L0.  Previous build is L1 and so on... You can use ranges - eg L5..L1 will return values of given **key** for build N-5,N-4-N-3,N-2,N-1  where N is current build - L0.  Ranges can go withot limit - eg L3..  will exapnd as L3,L2,L1,L0. So obviously mmost used is ..L1 which returns you values  of all except latests (L0) build. Count of points is MN.
 
 The L indexes, can be calcualted. To do so, use `L{expression}`. Eg L{MN/2} upon 1,2,3, will expand as L{3/2} -> L{1,5} -> L1 -> 2. The brackets can be  cumulative (eg L{{1+1}}) and can contain Other L or MN. eg L{L0}. The only reason why this was created was to beable wrote ..L{MN/2} and L{MN/2}..
 
-See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/hudson/plugins/report/genericchart/ChartModel/help-unstableCondition.html#L2
+See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#L2
 
 While this work is based on ParserNG, and is slowly contributing functions, LogicalParser and also in future the Expanding parser, once it will be all finishied, the expressions will be possible to be tested directly in ParserNG.
 But that is slow process. Now, the Expanding (and thus also Logical) parsers can be teste donly via this plugin, thus main method was added. Try:
 ```
-VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  io/jenkins/plugins/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
 or
 ```
@@ -79,7 +79,7 @@ VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-co
 ### testing the expression
 The jar have a main method, which allows you to test the equations:
 ```
-VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  hudson/plugins/report/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
+VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  io/jenkins/plugins/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
 All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
 ```

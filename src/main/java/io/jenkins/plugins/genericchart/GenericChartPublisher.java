@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package hudson.plugins.report.genericchart;
+package io.jenkins.plugins.genericchart;
 
 import hudson.Extension;
 import hudson.Launcher;
