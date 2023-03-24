@@ -73,7 +73,7 @@ public class GenericChartColumn extends ListViewColumn {
     }
 
     public String generateChartName() {
-        return UUID.randomUUID().toString();
+        return "chart"+UUID.randomUUID().toString().replace("-","");
     }
 
     @DataBoundSetter

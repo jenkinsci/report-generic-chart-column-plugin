@@ -2,11 +2,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
     <j:set var="charts" value="${action.charts}" />
     <j:if test="${!charts.isEmpty()}">
-    <script type="text/javascript">var jckPassedChart = {};var buildsMap = {};</script>
+    <script type="text/javascript">var perfChartJsCharts = {};</script>
         <j:forEach var="chart" items="${charts}" varStatus="chartsStatus">
             <h3 style="font-family: monospace">${chart.title}</h3>
             <div id="chartContainer${chartsStatus.index}" style="margin-right: 10pt">
-                <canvas id='chart${chartsStatus.index}' width='600' height='600'>
+                <canvas id='perChartId${chartsStatus.index}' width='600' height='600'>
                 </canvas>
             </div>
             <script type="text/javascript">
@@ -21,17 +21,19 @@
                 ],
                         datasets: [
                         {
-                        label: "${chart.title}",
-                                fillColor: "${chart.color}",
-                                strokeColor: "${chart.color}",
-                                pointStrokeColor: "#808080",
-                                pointHighlightFill: "#fff",
-                                pointHighlightStroke: "rgba(0,0,0,1)",
+                                label: "${chart.title}",
+                                fill: true,
+                                backgroundColor: "${chart.color}",
+                                borderColor: "${chart.color}",
+                                pointBorderColor: "#808080",
+                                pointHoverBackgroundColor: "#fff",
+                                pointHoverBorderColor: "rgba(0,0,0,1)",
+                                pointRadius: 5,
                                 data: [
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
                     ${build.value}<j:if test="${!status.last}">,</j:if>
                 </j:forEach>
-                                ]
+                                      ]
                         }
                         ]
                 },
@@ -42,18 +44,22 @@
                   interaction: {
                     mode: 'index',
                     intersect: false
-                  }
+                  },
+                  onClick: (e) => {
+                    var activePoints = perfChartJsCharts["perChartId${chartsStatus.index}"].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                    var point = activePoints[0]
+                    var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
+                    var index = point.index
+                    var result = perfChartJsCharts["perChartId${chartsStatus.index}"].config.data.labels[index]
+                    var buildId = result.substring(result.lastIndexOf(":") + 1)
+                    window.open("" + buildId, "_blank");
+                }
                 }
               };
-                var ctx = document.getElementById("chart${chartsStatus.index}").getContext("2d");
-                jckPassedChart["chart${chartsStatus.index}"] = new Chart(ctx, allPerf);
+                var ctx = document.getElementById("perChartId${chartsStatus.index}").getContext("2d");
+                perfChartJsCharts["perChartId${chartsStatus.index}"] = new Chart(ctx, allPerf);
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
-                buildsMap["${build.buildNameShortened}"] = "${build.buildNumber}";
                 </j:forEach>
-                document.getElementById("chartContainer${chartsStatus.index}").onclick = function (evt) {
-                var activePoints = jckPassedChart["chart${chartsStatus.index}"].getPointsAtEvent(evt);
-                window.open(buildsMap[activePoints[0].label], "_blank");
-                };
                 // ]]&gt;
             </script>
         </j:forEach>

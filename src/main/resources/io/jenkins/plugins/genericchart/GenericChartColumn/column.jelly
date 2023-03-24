@@ -22,21 +22,18 @@
                     </j:forEach>
                     ],
                             datasets: [{
-                            label: "${it.getColumnCaption()}",
-                                    fillColor: "${it.getChartColor()}",
-                                    strokeColor: "${it.getChartColor()}",
-                                    pointColor: "${it.getChartColor()}",
-                                    pointStrokeColor: "#fff",
-                                    pointHighlightFill: "#fff",
-                                    pointHighlightStroke: "${it.getChartColor()}",
+                                    label: "${it.getColumnCaption()}",
+                                    fill: true,
+                                    backgroundColor: "${it.getChartColor()}",
+                                    borderColor: "${it.getChartColor()}",
+                                    pointBackgroundColor: "${it.getChartColor()}",
+                                    pointBorderColor: "#fff",
+                                    pointHoverBackgroundColor: "#fff",
+                                    pointHoverBorderColor: "${it.getChartColor()}",
+                                    pointRadius: 4,
                                     data: [
                     <j:forEach var="build" items="${points}" varStatus="status">
                         ${build.value}<j:if test="${!status.last}">,</j:if>
-                    </j:forEach>
-                                ],
-                                coloredTips: [
-                    <j:forEach var="build" items="${points}" varStatus="status">
-                        "${build.pointColor}"<j:if test="${!status.last}">,</j:if>
                     </j:forEach>
                                 ]
                         }
@@ -49,14 +46,20 @@
                       interaction: {
                          mode: 'index',
                          intersect: false
-                      }
+                      },
+                        onClick: (e) => {
+                            var activePoints = ${chartName}var.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                            var point = activePoints[0]
+                            var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
+                            var index = point.index
+                            var result = ${chartName}var.config.data.labels[index]
+                            var buildId = result.substring(result.lastIndexOf(":") + 1)
+                            window.open("/${job.url}"+buildId, "_blank");
+                        }
                     }
                   };
                     var ctx = document.getElementById("${chartName}-Chart").getContext("2d");
-                    var chart = new Chart(ctx, dataPerfView)
-                    document.getElementById("${chartName}-ChartContainer").onclick = function (evt) {
-                        window.open("/${job.url}", "_blank");
-                    };
+                    var ${chartName}var = new Chart(ctx, dataPerfView)
                     // ]]&gt;
                 </script>
             </j:if>
