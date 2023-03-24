@@ -11,7 +11,9 @@
             </div>
             <script type="text/javascript">
                 // &lt;![CDATA[
-                var data = {
+              var allPerf = {
+                type: 'line',
+                data: {
                 labels: [
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
                 "${build.buildNameShortened}"<j:if test="${!status.last}">,</j:if>
@@ -29,21 +31,22 @@
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
                     ${build.value}<j:if test="${!status.last}">,</j:if>
                 </j:forEach>
-                                ],
-                                coloredTips: [
-                <j:forEach var="build" items="${chart.points}" varStatus="status">
-                    "${build.pointColor}"<j:if test="${!status.last}">,</j:if>
-                </j:forEach>
                                 ]
                         }
                         ]
-                };
-                var options = {
-                bezierCurve: false,
-                        multiTooltipTemplate: "&lt;%= datasetLabel + \": \" + value %&gt;"
-                };
+                },
+                options: {
+                  plugins: {
+                    legend: { display: false }
+                  },
+                  interaction: {
+                    mode: 'index',
+                    intersect: false
+                  }
+                }
+              };
                 var ctx = document.getElementById("chart${chartsStatus.index}").getContext("2d");
-                jckPassedChart["chart${chartsStatus.index}"] = new Chart(ctx).Line(data, options);
+                jckPassedChart["chart${chartsStatus.index}"] = new Chart(ctx, allPerf);
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
                 buildsMap["${build.buildNameShortened}"] = "${build.buildNumber}";
                 </j:forEach>

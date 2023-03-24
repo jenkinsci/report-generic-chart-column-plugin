@@ -13,7 +13,9 @@
                 </div>
                 <script type="text/javascript">
                     // &lt;![CDATA[
-                    var data = {
+                  var dataPerfView = {
+                    type: 'line',
+                    data: {
                     labels: [
                     <j:forEach var="build" items="${points}" varStatus="status">
                     "${build.buildNumber}"<j:if test="${!status.last}">,</j:if>
@@ -39,13 +41,19 @@
                                 ]
                         }
                         ]
-                    };
-                    var options = {
-                        bezierCurve: false,
-                        multiTooltipTemplate: "&lt;%= datasetLabel + \": \" + value %&gt;"
-                    };
+                    },
+                    options: {
+                      plugins: {
+                        legend: { display: false }
+                      },
+                      interaction: {
+                         mode: 'index',
+                         intersect: false
+                      }
+                    }
+                  };
                     var ctx = document.getElementById("${chartName}-Chart").getContext("2d");
-                    var chart = new Chart(ctx).Line(data, options);
+                    var chart = new Chart(ctx, dataPerfView)
                     document.getElementById("${chartName}-ChartContainer").onclick = function (evt) {
                         window.open("/${job.url}", "_blank");
                     };

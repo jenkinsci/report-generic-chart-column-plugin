@@ -9,15 +9,17 @@
     <f:entry field="key" title="Key to look for in the report file">
         <f:textbox />
     </f:entry>
-    <f:entry field="limit" title="Number of data points to show">
-        <f:textbox />
-    </f:entry>
     <f:entry field="chartColor" title="Color of the chart">
         <f:textbox />
     </f:entry>
     <f:entry field="unstableCondition" title="Condition to make job unstable">
         <f:textbox />
     </f:entry>
+    <f:entry field="limit" title="Number of data points to show">
+        <f:textbox />
+    </f:entry>
+<f:section title="blacklist/whitelist">
+  <f:advanced>
     <f:entry field="resultBlackList" title="Packages blacklisted">
         <f:textbox />
     </f:entry>
@@ -27,4 +29,6 @@
     <f:entry field="rangeAroundWlist" title="Range around whitelisted">
         <f:textbox />
     </f:entry>
+  </f:advanced>
+</f:section>
 </j:jelly>
