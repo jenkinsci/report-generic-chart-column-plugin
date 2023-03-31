@@ -245,4 +245,5 @@ Up is with whitelist (1.8.0.172.\*) and range (3). Down is with whitelist (1.8.0
 ## Future work
 We wish to improve whitelist/balcklist feature, so it can be used to generate wievs comparing selected runs across jobs with some kind of neigbrhood
 
-This plugin depends on https://github.com/judovana/jenkins-chartjs-plugin
+# Dependencies
+This plugin depends on [chartjs-api](https://github.com/jenkinsci/chartjs-api-plugin) library plugin and on [parser-ng](https://github.com/gbenroscience/ParserNG/) amth library 1.9 or up
