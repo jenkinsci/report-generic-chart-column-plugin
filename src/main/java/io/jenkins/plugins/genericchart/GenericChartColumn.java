@@ -35,6 +35,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 public class GenericChartColumn extends ListViewColumn {
 
     private String fileNameGlob;
+    @SuppressWarnings({"lgtm[jenkins/plaintext-storage]", "This is not a password, it is key in properties file"})
     private String key;
     private int limit;
     private String columnCaption;
