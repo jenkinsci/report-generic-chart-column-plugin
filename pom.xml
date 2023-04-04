@@ -12,7 +12,7 @@
     <packaging>hpi</packaging>
     <name>Chart Column from properties</name>
     <properties>
-        <chartjs.version>4.2.1.4</chartjs.version>
+        <chartjs.version>4.2.1.5</chartjs.version>
         <jenkins.version>2.361.4</jenkins.version>
         <!-- those twoo should be aligned -->
         <bom.version>2.361.x</bom.version> <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.github.gbenroscience</groupId>
             <artifactId>parser-ng</artifactId>
-            <version>0.1.9</version>
+            <version>0.1.9-release</version>
         </dependency>
      </dependencies>
 </project>
