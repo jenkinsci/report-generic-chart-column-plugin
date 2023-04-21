@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,6 +54,12 @@ class PresetEquationsManagerTest {
     }
 
     @Test
+    public void noDupes() throws IOException {
+        final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
+        List<String> ids = p1.getIds();
+        Assertions.assertTrue(ids.size()  ==  new HashSet<>(ids).size());
+    }
+
     public void allValuates() throws IOException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();

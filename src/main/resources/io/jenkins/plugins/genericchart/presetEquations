@@ -10,6 +10,62 @@ treshold=/*1*/;
 treshold=/*1*/;
   (L1/(L0/100)-100) < -treshold
 
+# SHORT_UP_OK
+# one parameter, treshold number
+# is using avg of previous points
+# eg: SHORT_UP_OK 5
+treshold=/*1*/;
+  (avg(..L1)/(L0/100)-100) >  treshold
+
+# SHORT_DOWN_OK
+# one parameter, treshold number
+# is using avg of previous points
+# eg: SHORT_DOWN_OK 5
+treshold=/*1*/;
+  (avg(..L1)/(L0/100)-100) < -treshold
+
+# SHORT_UP_BIG_OK
+# one parameter, treshold number
+# is using geom of previous points
+# eg: SHORT_UP_BIG_OK 5
+treshold=/*1*/;
+    (geom(..L1)/(L0/100)-100) >  treshold
+
+# SHORT_DOWN_BIG_OK
+# one parameter, treshold number
+# is using geom of previous points
+# eg: SHORT_DOWN_BIG_OK 5
+treshold=/*1*/;
+  (geom(..L1)/(L0/100)-100) < -treshold
+
+# SHORT_UP_CUT_OK
+# two parameters, cut amount and treshold number
+# is using avgN of previous points
+# eg: SHORT_UP_CUT_OK 1 5
+cut=/*1*/; treshold=/*2*/;
+  (avgN(..L1)/(L0/100)-100) >  treshold
+
+# SHORT_DOWN_CUT_OK
+# two parameters, cut amount and treshold number
+# is using avgN of previous points
+# eg: SHORT_DOWN_CUT_OK 1 5
+cut=/*1*/; treshold=/*2*/;
+  (avgN(..L1)/(L0/100)-100) < -treshold
+
+# SHORT_UP_BIG_CUT_OK
+# two parameters, cut amount and treshold number
+# is using geomN of previous points
+# eg: SHORT_UP_BIG_CUT_OK 1 5
+cut=/*1*/; treshold=/*2*/;
+    (geomN(..L1)/(L0/100)-100) >  treshold
+
+# SHORT_DOWN_BIG_CUT_OK
+# two parameters, cut amount and treshold number
+# is using geomN of previous points
+# eg: SHORT_DOWN_BIG_CUT_OK 1 5
+cut=/*1*/; treshold=/*2*/;
+  (geomN(..L1)/(L0/100)-100) < -treshold
+
 # LONG_UP_OK
 # one parameter, treshold number
 # is using avg of previous points
@@ -59,10 +115,10 @@ cut=/*1*/; treshold=/*2*/;
 cut=/*1*/; treshold=/*2*/;
   (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  treshold
 
-# LONG_DOWN_BIG_OK
+# LONG_DOWN_BIG_CUT_OK
 # two parameters, cut amount and treshold number
 # is using geomN of previous points
-# eg: LONG_DOWN_BIG_OK 1 5
+# eg: LONG_DOWN_BIG_CUT_OK 1 5
 cut=/*1*/; treshold=/*2*/;
   (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -treshold
 
