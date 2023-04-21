@@ -57,6 +57,20 @@ class PresetEquationsManagerTest {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() == new HashSet<>(ids).size());
+        Assertions.assertTrue(ids.size() > 5);
+        for (String id1 : ids) {
+            PresetEquationsManager.PresetEquation e1 = p1.get(id1 + " 2 5 5 5 5");
+            for (String id2 : ids) {
+                PresetEquationsManager.PresetEquation e2 = p1.get(id2 + " 2 5 5 5 5");
+                if (!id1.equals(id2)) {
+                    Assertions.assertNotEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have same equation!");
+                    Assertions.assertNotEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have same equation!");
+                } else {
+                    Assertions.assertEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have NOT same equation!");
+                    Assertions.assertEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have NOT same equation!");
+                }
+            }
+        }
     }
 
     @Test
