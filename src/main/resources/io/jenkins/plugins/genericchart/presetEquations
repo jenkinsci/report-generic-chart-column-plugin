@@ -20,6 +20,18 @@ treshold=/*1*/;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  treshold
 # eg: LONG_DOWN_OK 5
 treshold=/*1*/;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
 
+# SHORT_UP_BIG_OK
+# one parameter, treshold number
+# is using geom of previous points
+# eg: SHORT_UP_OK 5
+treshold=/*1*/;   (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  treshold
+
+# SHORT_DOWN_BIG_OK
+# one parameter, treshold number
+# is using geom of previous points
+# eg: LONG_DOWN_OK 5
+treshold=/*1*/;   (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -treshold
+
 # FINAL_UP_CUTTING_OK
 # four parameter
 # cut, immediate treshold, short time trehsold, long time treshold
