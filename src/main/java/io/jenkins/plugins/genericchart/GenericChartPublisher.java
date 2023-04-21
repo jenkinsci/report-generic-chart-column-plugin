@@ -65,13 +65,26 @@ public class GenericChartPublisher extends Publisher {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
             try {
-                if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().isEmpty()) {
+                if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
+                    String equation = chart.getUnstableCondition().trim();
+                    PresetEquationsManager presets = new PresetEquationsManager(/*TODO, pass custom url (or simply whole config) from settings*/);
+                    if (equation.trim().equals("LIST_INTERNALS")) {
+                        presets.print(listener.getLogger());
+                        equation = "Internal expression printed";
+                    } else {
+                        PresetEquationsManager.PresetEquation isPreset = presets.get(equation);
+                        if (isPreset != null) {
+                            listener.getLogger().println(equation + " found as preset queue:");
+                            listener.getLogger().println(isPreset.getOriginal());
+                            equation = isPreset.getExpression();
+                        }
+                    }
                     List<ChartPoint> points = chart.getPoints();
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    ExpandingExpressionParser lep = new ExpandingExpressionParser(chart.getUnstableCondition(), pointsValues, new ExpressionLogger() {
+                    ExpandingExpressionParser lep = new ExpandingExpressionParser(equation, pointsValues, new ExpressionLogger() {
                         @Override
                         public void log(String s) {
                             listener.getLogger().println(s);
@@ -92,7 +105,7 @@ public class GenericChartPublisher extends Publisher {
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         if (/* getAction(Class) produces a StackOverflowError */!Util.filter(
-                        project.getActions(), GenericChartProjectAction.class).isEmpty()) {
+                project.getActions(), GenericChartProjectAction.class).isEmpty()) {
             // JENKINS-26077: someone like XUnitPublisher already added one
             return Collections.emptySet();
         }
