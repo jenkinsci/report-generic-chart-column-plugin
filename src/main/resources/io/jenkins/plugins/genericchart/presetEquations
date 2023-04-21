@@ -147,3 +147,29 @@ tresholdB=/*3*/;
   ||
 tresholdC=/*4*/;
   (avgN(cut,..L1)/(L0/100)-100) < -tresholdC
+
+# FINAL_UP_OK
+# three parameter
+# immediate treshold, short time trehsold, long time treshold
+# eg: FINAL_UP_OK  5 5 5
+tresholdA=/*1*/;
+  -1*(L1/(L0/100)-100) < -tresholdA
+  ||
+tresholdB=/*2*/;
+  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -tresholdB
+  ||
+tresholdC=/*3*/;
+  -1*(avg(..L1)/(L0/100)-100) < -tresholdC
+
+# FINAL_DOWN_OK
+# three parameter
+# immediate treshold, short time trehsold, long time treshold
+# eg: FINAL_DOWN_OK  5 5 5
+tresholdA=/*1*/;
+  (L1/(L0/100)-100) < -tresholdA
+  ||
+tresholdB=/*2*/;
+  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -tresholdB
+  ||
+tresholdC=/*3*/;
+  (avg(..L1)/(L0/100)-100) < -tresholdC

@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 class PresetEquationsManagerTest {
 
@@ -57,9 +56,39 @@ class PresetEquationsManagerTest {
     public void noDupes() throws IOException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();
-        Assertions.assertTrue(ids.size()  ==  new HashSet<>(ids).size());
+        Assertions.assertTrue(ids.size() == new HashSet<>(ids).size());
     }
 
+    @Test
+    public void buggyIsCought() throws IOException {
+        PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\nblah=/*1*/; avg(blah"); //missing bracket
+        StringBuilder sbOne = new StringBuilder();
+        PresetEquationsManager.PresetEquation e = p1.get("someID 10");
+        Assertions.assertNotNull(e);
+        evaluate(null, sbOne, e);
+        checkError(sbOne);
+
+        p1 = new PresetEquationsManager("# someID\n# some comment\n/*1*/+/*2*/"); //unexpanded /*2*/
+        sbOne = new StringBuilder();
+        e = p1.get("someID 10");
+        Assertions.assertNotNull(e);
+        evaluate(null, sbOne, e);
+        checkError(sbOne);
+
+        p1 = new PresetEquationsManager("# someID\n# some comment\nblah=/*1*/; avg(blah)"); //unexpanded /**/ in variable
+        sbOne = new StringBuilder();
+        e = p1.get("someID");
+        Assertions.assertNotNull(e);
+        Exception ex = null;
+        try {
+            evaluate(null, sbOne, e);
+        } catch (Exception eex) {
+            ex = eex;
+        }
+        Assertions.assertNotNull(ex);
+    }
+
+    @Test
     public void allValuates() throws IOException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();
@@ -69,20 +98,35 @@ class PresetEquationsManagerTest {
             StringBuilder sbOne = new StringBuilder();
             PresetEquationsManager.PresetEquation e = p1.get(id + " 2 5 5 5 5");
             Assertions.assertNotNull(e);
-            ExpandingExpressionParser lep = new ExpandingExpressionParser(e.getExpression(), Arrays.asList("10", "10", "10", "10"), new ExpressionLogger() {
-                @Override
-                public void log(String s) {
-                    sbAll.append(s).append("\n");
-                    sbOne.append(s).append("\n");
-                }
-            });
-            boolean r = lep.evaluate();
-            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("error"));
-            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("fail"));
-            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("exception"));
+            evaluate(sbAll, sbOne, e);
+            checkNoError(sbOne);
         }
-        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("error"));
-        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("fail"));
-        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("exception"));
+        checkNoError(sbAll);
+    }
+
+    private boolean evaluate(StringBuilder sbAll, StringBuilder sbOne, PresetEquationsManager.PresetEquation e) {
+        ExpandingExpressionParser lep = new ExpandingExpressionParser(e.getExpression(), Arrays.asList("10", "10", "10", "10"), new ExpressionLogger() {
+            @Override
+            public void log(String s) {
+                if (sbAll != null) {
+                    sbAll.append(s).append("\n");
+                }
+                sbOne.append(s).append("\n");
+            }
+        });
+        return lep.evaluate();
+    }
+
+    private void checkNoError(StringBuilder sbOne) {
+        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("error"));
+        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("fail"));
+        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("exception"));
+    }
+
+    private void checkError(StringBuilder sbOne) {
+        Assertions.assertTrue(
+                sbOne.toString().toLowerCase().contains("error")
+                        || sbOne.toString().toLowerCase().contains("fail")
+                        || sbOne.toString().toLowerCase().contains("exception"));
     }
 }
