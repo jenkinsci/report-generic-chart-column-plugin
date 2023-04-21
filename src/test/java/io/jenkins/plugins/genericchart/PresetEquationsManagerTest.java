@@ -2,11 +2,16 @@ package io.jenkins.plugins.genericchart;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import parser.expanding.ExpandingExpressionParser;
+import parser.logical.ExpressionLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 class PresetEquationsManagerTest {
 
@@ -45,5 +50,32 @@ class PresetEquationsManagerTest {
         Assertions.assertNotEquals(e4.getExpression(), e4.getOriginal());
         Assertions.assertEquals(e3.getOriginal(), e4.getOriginal());
         Assertions.assertNotEquals(e3.getExpression(), e4.getExpression());
+    }
+
+    @Test
+    public void allValuates() throws IOException {
+        final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
+        List<String> ids = p1.getIds();
+        Assertions.assertTrue(ids.size() > 5);
+        StringBuilder sbAll = new StringBuilder();
+        for (String id : ids) {
+            StringBuilder sbOne = new StringBuilder();
+            PresetEquationsManager.PresetEquation e = p1.get(id + " 2 5 5 5 5");
+            Assertions.assertNotNull(e);
+            ExpandingExpressionParser lep = new ExpandingExpressionParser(e.getExpression(), Arrays.asList("10", "10", "10", "10"), new ExpressionLogger() {
+                @Override
+                public void log(String s) {
+                    sbAll.append(s).append("\n");
+                    sbOne.append(s).append("\n");
+                }
+            });
+            boolean r = lep.evaluate();
+            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("error"));
+            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("fail"));
+            Assertions.assertFalse(sbOne.toString().toLowerCase().contains("exception"));
+        }
+        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("error"));
+        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("fail"));
+        Assertions.assertFalse(sbAll.toString().toLowerCase().contains("exception"));
     }
 }

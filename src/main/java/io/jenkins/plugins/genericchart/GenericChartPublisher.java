@@ -105,7 +105,7 @@ public class GenericChartPublisher extends Publisher {
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         if (/* getAction(Class) produces a StackOverflowError */!Util.filter(
-                project.getActions(), GenericChartProjectAction.class).isEmpty()) {
+                        project.getActions(), GenericChartProjectAction.class).isEmpty()) {
             // JENKINS-26077: someone like XUnitPublisher already added one
             return Collections.emptySet();
         }

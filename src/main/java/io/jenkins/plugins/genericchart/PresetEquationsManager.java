@@ -81,6 +81,11 @@ public class PresetEquationsManager {
             logger.println("eg: " + expanded.getExpression());
             logger.println(" -- ");
         }
+        logger.println("summary: " + getIds().stream().collect(Collectors.joining(", ")));
+    }
+
+    public List<String> getIds() {
+        return internals.stream().map( a->a.getId()).sorted().collect(Collectors.toList());
     }
 
     public PresetEquation get(String idWithParams) {
@@ -132,7 +137,7 @@ public class PresetEquationsManager {
             expression = expand(original, params);
         }
 
-        public String expand(String original, String[] params) {
+        private String expand(String original, String[] params) {
             String fex = original;
             for (int i = 0; i < params.length; i++) {
                 fex = fex.replaceAll("/\\*" + (i + 1) + "\\*/", params[i]);
