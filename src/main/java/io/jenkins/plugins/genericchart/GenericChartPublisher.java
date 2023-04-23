@@ -67,7 +67,7 @@ public class GenericChartPublisher extends Publisher {
             try {
                 if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
                     String equation = chart.getUnstableCondition().trim();
-                    PresetEquationsManager presets = new PresetEquationsManager(/*TODO, pass custom url (or simply whole config) from settings*/);
+                    PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
                     if (equation.trim().equals("LIST_INTERNALS")) {
                         presets.print(listener.getLogger());
                         equation = "Internal expression printed";

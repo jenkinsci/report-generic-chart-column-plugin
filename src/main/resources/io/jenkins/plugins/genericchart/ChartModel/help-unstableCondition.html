@@ -1,4 +1,4 @@
-<div>
+<div xmlns="http://www.w3.org/1999/html">
 	This allows you to specify a mathematical expression which, if true, will turn the job to unstbale<br/>
 	First the  expression is split by logical operands of |,or,&,and,impl,imp,eq<br/>
 	Then it it is split by &gt;,&lt;, ==, !=, <=, >=, lt, gt, le, ge <br/>
@@ -147,12 +147,27 @@ is: true
 true
 		</pre>
 	</div>
-	<div>
+	<div id="preset_equations">
 		There are some preset equations, usable in form of ID arg1 arg2 ... arg9. eg:<br/>
 		<pre>
 FINAL_DOWN_CUTTING_OK 2 5 5 5
 		</pre>
-		To print them, use LIST_INTERNALS instead of expression or look onto https://github.com/judovana/jenkins-report-generic-chart-column/add_the_textfile<br/>
-		You can add yours own preset expressions in main settings as url to file with definitions or as definitions themselves.
+		To print them, use LIST_INTERNALS instead of expression or look onto
+		<a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">
+		pre pprepared availabe embedded functions and exempalr config</a><br/>
+		You can add yours own preset expressions in main settings as url to file with definitions or as definitions themselves.<br/>
+		The syntax is as you saw
+		<a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">
+			above</a>:
+		<ul>
+			<li>empty lines ignored</li>
+			<li>behind hash(#) are comments and examples</li>
+			<li>First comment si mandatory, and is ID</li>
+			<li>after comments follow expression itself as by
+				<a href="https://github.com/gbenroscience/ParserNG/#using-parserng-as-commandline-tool">ParserNG rules</a>
+			</li>
+			<li>It can be multilined for readability (as ParserNG's  --trim)</li>
+			<li>parameters are included substitued into expression via /*1*/ for first param, /*2*/ for second and os on</li>
+		</ul>
 	</div>
 </div>
