@@ -70,7 +70,7 @@ public class GenericChartPublisher extends Publisher {
                     PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
                     if (equation.trim().equals("LIST_INTERNALS")) {
                         presets.print(listener.getLogger());
-                        equation = "Internal expression printed";
+                        equation = "Internal expressions printed";
                     } else {
                         PresetEquationsManager.PresetEquation isPreset = presets.get(equation);
                         if (isPreset != null) {

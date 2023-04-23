@@ -1,6 +1,7 @@
 package io.jenkins.plugins.genericchart;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
@@ -15,6 +16,11 @@ import java.util.List;
 
 class PresetEquationsManagerTest {
 
+    @BeforeEach
+    public void cleanCaches(){
+        PresetEquationsManager.resetCached();
+    }
+
     @Test
     public void listTest() throws IOException {
         final ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
@@ -24,13 +30,22 @@ class PresetEquationsManagerTest {
         }
         String listing1 = baos1.toString(StandardCharsets.UTF_8);
 
-        final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-        final PresetEquationsManager p2 = new PresetEquationsManager("# someID\n# some comment\n1+1");
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        PresetEquationsManager p2 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         try (PrintStream ps = new PrintStream(baos2, true, StandardCharsets.UTF_8)) {
             p2.print(ps);
         }
         String listing2 = baos2.toString(StandardCharsets.UTF_8);
-        Assertions.assertNotEquals(listing1, listing2);
+        Assertions.assertEquals(listing1, listing2); //cahe was not reload
+
+        PresetEquationsManager.resetCached();
+        baos2 = new ByteArrayOutputStream();
+        p2 = new PresetEquationsManager("# someID\n# some comment\n1+1");
+        try (PrintStream ps = new PrintStream(baos2, true, StandardCharsets.UTF_8)) {
+            p2.print(ps);
+        }
+         listing2 = baos2.toString(StandardCharsets.UTF_8);
+         Assertions.assertNotEquals(listing1, listing2);
     }
 
     @Test

@@ -31,6 +31,7 @@ public class GenericChartGlobalConfig extends GlobalConfiguration {
 
     @DataBoundSetter
     public void setCustomEmbeddedFunctions(String customEmbeddedFunctions) {
+        PresetEquationsManager.resetCached();
         this.customEmbeddedFunctions = customEmbeddedFunctions;
     }
 

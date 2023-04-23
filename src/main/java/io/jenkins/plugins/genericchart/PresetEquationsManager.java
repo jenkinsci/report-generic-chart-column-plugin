@@ -15,60 +15,77 @@ import java.util.stream.Collectors;
 
 public class PresetEquationsManager {
 
-    private final List<PresetEquationDefinition> internals;
+    private static final Object lock = new Object();
+    private static List<PresetEquationDefinition> internals;
 
     public PresetEquationsManager() throws IOException {
         this(null);
     }
 
     public PresetEquationsManager(String anotherUrlOrBody) throws IOException {
-        internals = readInternals();
-        if (anotherUrlOrBody != null && !anotherUrlOrBody.trim().isEmpty()) {
-            internals.addAll(readExternals(anotherUrlOrBody));
+        synchronized (lock) {
+            if (internals == null) {
+                internals = readInternals();
+                if (anotherUrlOrBody != null && !anotherUrlOrBody.trim().isEmpty()) {
+                    internals.addAll(readExternals(anotherUrlOrBody));
+                }
+            }
         }
     }
 
-    private static List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException {
-        if (bodyOrUrl.split("\n").length > 1) {
-            return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
-        } else {
-            return readFromStream(new URL(bodyOrUrl).openStream());
+    public static void resetCached() {
+        synchronized (lock) {
+            internals = null;
+        }
+    }
+
+    private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException {
+        synchronized (lock) {
+            if (bodyOrUrl.split("\n").length > 1) {
+                return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
+            } else {
+                return readFromStream(new URL(bodyOrUrl).openStream());
+            }
         }
     }
 
     private List<PresetEquationDefinition> readInternals() throws IOException {
-        return readFromStream(this.getClass().getResourceAsStream("presetEquations"));
+        synchronized (lock) {
+            return readFromStream(this.getClass().getResourceAsStream("presetEquations"));
+        }
     }
 
     private static List<PresetEquationDefinition> readFromStream(InputStream in) throws IOException {
-        List<String> futureComments = new ArrayList<>();
-        List<String> futureBody = new ArrayList<>();
-        List<PresetEquationDefinition> parsed = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-            while (true) {
-                String s = br.readLine();
-                if (s == null) {
-                    if (!futureBody.isEmpty()) {
-                        parsed.add(new PresetEquationDefinition(futureComments, futureBody));
+        synchronized (lock) {
+            List<String> futureComments = new ArrayList<>();
+            List<String> futureBody = new ArrayList<>();
+            List<PresetEquationDefinition> parsed = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                while (true) {
+                    String s = br.readLine();
+                    if (s == null) {
+                        if (!futureBody.isEmpty()) {
+                            parsed.add(new PresetEquationDefinition(futureComments, futureBody));
+                        }
+                        break;
                     }
-                    break;
-                }
-                if (s.trim().isEmpty()) {
-                    continue;
-                }
-                if (s.trim().startsWith("#")) {
-                    if (!futureBody.isEmpty()) {
-                        parsed.add(new PresetEquationDefinition(futureComments, futureBody));
-                        futureComments = new ArrayList<>();
-                        futureBody = new ArrayList<>();
+                    if (s.trim().isEmpty()) {
+                        continue;
                     }
-                    futureComments.add(s.trim());
-                } else {
-                    futureBody.add(s.trim());
+                    if (s.trim().startsWith("#")) {
+                        if (!futureBody.isEmpty()) {
+                            parsed.add(new PresetEquationDefinition(futureComments, futureBody));
+                            futureComments = new ArrayList<>();
+                            futureBody = new ArrayList<>();
+                        }
+                        futureComments.add(s.trim());
+                    } else {
+                        futureBody.add(s.trim());
+                    }
                 }
             }
+            return parsed;
         }
-        return parsed;
 
     }
 

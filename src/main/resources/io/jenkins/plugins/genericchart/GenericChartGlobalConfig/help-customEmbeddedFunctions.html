@@ -5,5 +5,18 @@
     The definitions itself. See
     <a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">examples</a>
     Note, that id is mandatory:
-    <a href="https://github.com/judovana/jenkins-report-generic-chart-column/tree/master/src/main/resources/io/jenkins/plugins/genericchart/GenericChartGlobalConfig/help-customEmbeddedFunctions.html#preset_equations">more ifo</a>
+    <a href="https://github.com/judovana/jenkins-report-generic-chart-column/tree/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#preset_equations">more ifo</a>
+    The syntax is as you saw
+    <a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">
+        above</a>:
+    <ul>
+        <li>empty lines ignored</li>
+        <li>behind hash(#) are comments and examples</li>
+        <li>First comment si mandatory, and is ID</li>
+        <li>after comments follow expression itself as by
+            <a href="https://github.com/gbenroscience/ParserNG/#using-parserng-as-commandline-tool">ParserNG rules</a>
+        </li>
+        <li>It can be multilined for readability (as ParserNG's  --trim)</li>
+        <li>parameters are included substitued into expression via /*1*/ for first param, /*2*/ for second and os on</li>
+    </ul>
 </div>
