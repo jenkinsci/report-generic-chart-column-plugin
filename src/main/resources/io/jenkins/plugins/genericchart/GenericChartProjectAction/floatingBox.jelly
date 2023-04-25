@@ -1,67 +1,36 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
     <j:set var="charts" value="${action.charts}" />
     <j:if test="${!charts.isEmpty()}">
-    <script type="text/javascript">var perfChartJsCharts = {};</script>
+    <st:adjunct includes="io.jenkins.plugins.genericchart.GenericChartProjectAction.declareChartJsClickArray"/>
+        <span id="genericChart-ids" style="visibility:hidden">
+            <j:forEach var="chart" items="${charts}" varStatus="chartsStatus">
+                ${chartsStatus.index}<j:if test="${!chartsStatus.last}">,</j:if>
+            </j:forEach>
+        </span>
         <j:forEach var="chart" items="${charts}" varStatus="chartsStatus">
-            <h3 style="font-family: monospace">${chart.title}</h3>
-            <div id="chartContainer${chartsStatus.index}" style="margin-right: 10pt">
-                <canvas id='perChartId${chartsStatus.index}' width='600' height='600'>
-                </canvas>
-            </div>
-            <script type="text/javascript">
-                // &lt;![CDATA[
-              var allPerf = {
-                type: 'line',
-                data: {
-                labels: [
+            <span id="genericChart-title-${chartsStatus.index}" style="visibility:hidden">
+                ${chart.title}
+            </span>
+            <span id="genericChart-builds-${chartsStatus.index}" style="visibility:hidden">
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
-                "${build.buildNameShortened}"<j:if test="${!status.last}">,</j:if>
+                    ${build.buildNameShortened}<j:if test="${!status.last}">,</j:if>
                 </j:forEach>
-                ],
-                        datasets: [
-                        {
-                                label: "${chart.title}",
-                                fill: true,
-                                backgroundColor: "${chart.color}",
-                                borderColor: "${chart.color}",
-                                pointBorderColor: "#808080",
-                                pointHoverBackgroundColor: "#fff",
-                                pointHoverBorderColor: "rgba(0,0,0,1)",
-                                pointRadius: 5,
-                                data: [
+            </span>
+            <span id="genericChart-color-${chartsStatus.index}" style="visibility:hidden">
+                ${chart.color}
+            </span>
+            <span id="genericChart-values-${chartsStatus.index}" style="visibility:hidden">
                 <j:forEach var="build" items="${chart.points}" varStatus="status">
                     ${build.value}<j:if test="${!status.last}">,</j:if>
                 </j:forEach>
-                                      ]
-                        }
-                        ]
-                },
-                options: {
-                  plugins: {
-                    legend: { display: false }
-                  },
-                  interaction: {
-                    mode: 'index',
-                    intersect: false
-                  },
-                  onClick: (e) => {
-                    var activePoints = perfChartJsCharts["perChartId${chartsStatus.index}"].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
-                    var point = activePoints[0]
-                    var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
-                    var index = point.index
-                    var result = perfChartJsCharts["perChartId${chartsStatus.index}"].config.data.labels[index]
-                    var buildId = result.substring(result.lastIndexOf(":") + 1)
-                    window.open("" + buildId, "_blank");
-                }
-                }
-              };
-                var ctx = document.getElementById("perChartId${chartsStatus.index}").getContext("2d");
-                perfChartJsCharts["perChartId${chartsStatus.index}"] = new Chart(ctx, allPerf);
-                <j:forEach var="build" items="${chart.points}" varStatus="status">
-                </j:forEach>
-                // ]]&gt;
-            </script>
+            </span>
+            <div id="chartContainer${chartsStatus.index}" style="margin-right: 10pt">
+                <h3 style="font-family: monospace">${chart.title}</h3>
+                <canvas id='perChartId${chartsStatus.index}' width='500' height='500'>
+                </canvas>
+            </div>
         </j:forEach>
+        <st:adjunct includes="io.jenkins.plugins.genericchart.GenericChartProjectAction.chartLogicBox"/>
     </j:if>
 </j:jelly>
