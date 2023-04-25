@@ -127,7 +127,7 @@ public class GenericChartPublisher extends Publisher {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         public List<ChartModel.ChartDescriptor> getItemDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(ChartModel.class);
+            return Jenkins.get().getDescriptorList(ChartModel.class);
         }
 
         @Override
