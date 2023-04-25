@@ -1,129 +1,148 @@
 # IMMEDIATE_UP_OK
+# checking whether drop (in %) against previous run was not bigger then threshold
 # one parameter, threshold number
 # eg: IMMEDIATE_UP_OK 5
 threshold=/*1*/;
   (L1/(L0/100)-100) >  threshold
 
 # IMMEDIATE_DOWN_OK
+# checking whether rise (in %) against previous run was not bigger then threshold
 # one parameter, threshold number
 # eg: IMMEDIATE_DOWN_OK 5
 threshold=/*1*/;
   (L1/(L0/100)-100) < -threshold
 
 # SHORT_UP_OK
-# one parameter, threshold number
+# checking whether drop (in %) against previous runs was not bigger then threshold
 # is using avg of previous points
+# one parameter, threshold number
 # eg: SHORT_UP_OK 5
 threshold=/*1*/;
   (avg(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_OK
-# one parameter, threshold number
+# checking whether rise (in %) against previous runs was not bigger then threshold
 # is using avg of previous points
+# one parameter, threshold number
 # eg: SHORT_DOWN_OK 5
 threshold=/*1*/;
   (avg(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_BIG_OK
-# one parameter, threshold number
+# checking whether drop (in %) against previous runs was not bigger then threshold
 # is using geom of previous points
+# one parameter, threshold number
 # eg: SHORT_UP_BIG_OK 5
 threshold=/*1*/;
     (geom(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_BIG_OK
-# one parameter, threshold number
+# checking whether rise (in %) against previous runs was not bigger then threshold
 # is using geom of previous points
+# one parameter, threshold number
 # eg: SHORT_DOWN_BIG_OK 5
 threshold=/*1*/;
   (geom(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_CUT_OK
+# checking whether drop (in %) against previous runs with extremes cut-off was not bigger then threshold
+# is using avgN - average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using avgN of previous points
 # eg: SHORT_UP_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (avgN(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_CUT_OK
+# checking whether rise (in %) against previous runs with extremes cut-off was not bigger then threshold
+# is using avgN - average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using avgN of previous points
 # eg: SHORT_DOWN_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (avgN(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_BIG_CUT_OK
+# checking whether drop (in %) against previous runs with extremes cut-off was not bigger then threshold
+# is using geomN - geometrical average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using geomN of previous points
 # eg: SHORT_UP_BIG_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
     (geomN(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_BIG_CUT_OK
+# checking whether rise (in %) against previous runs with extremes cut-off was not bigger then threshold
+# is using geomN - geometrical average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using geomN of previous points
 # eg: SHORT_DOWN_BIG_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (geomN(..L1)/(L0/100)-100) < -threshold
 
 # LONG_UP_OK
+# checking whether drop (in %) of newer half of builds against older half of builds is not bigger then threshold
+# is using avg - average - of previous points
 # one parameter, threshold number
-# is using avg of previous points
 # eg: LONG_UP_OK 5
 threshold=/*1*/;
   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_OK
+# checking whether rise (in %) of newer half of builds against older half of builds is not bigger then threshold
+# is using avg - average - of previous points
 # one parameter, threshold number
-# is using avg of previous points
 # eg: LONG_DOWN_OK 5
 threshold=/*1*/;
   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_BIG_OK
+# checking whether drop (in %) of newer half of builds against older half of builds is not bigger then threshold
+# is using geom - geometrical average - of previous points
 # one parameter, threshold number
-# is using geom of previous points
 # eg: LONG_UP_BIG_OK 5
 threshold=/*1*/;
   (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_BIG_OK
+# checking whether rise (in %) of newer half of builds against older half of builds is not bigger then threshold
+# is using geom - geometrical average - of previous points
 # one parameter, threshold number
-# is using geom of previous points
 # eg: LONG_DOWN_BIG_OK 5
 threshold=/*1*/;
   (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_CUT_OK
+# checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold
+# is using avgN - average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using avgN of previous points
 # eg: LONG_UP_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_CUT_OK
+# checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold
+# is using avgN - average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using avgN of previous points
 # eg: LONG_DOWN_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_BIG_CUT_OK
+# checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold
+# is using geomN - geometrical average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using geomN of previous points
 # eg: LONG_UP_BIG_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_BIG_CUT_OK
+# checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold
+# is using geomN - geometrical average with cutting - of previous points
 # two parameters, cut amount and threshold number
-# is using geomN of previous points
 # eg: LONG_DOWN_BIG_CUT_OK 1 5
 cut=/*1*/; threshold=/*2*/;
   (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -threshold
 
 # FINAL_UP_CUTTING_OK
-# four parameter
+# combination:LONG_UP_CUT_OK or SHORT_UP_CUT_OK or IMMEDIATE_UP_OK
+# four parameters
 # cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_CUTTING_OK  2 5 5 5
 cut=/*1*/;thresholdA=/*2*/;
@@ -136,7 +155,8 @@ thresholdC=/*4*/;
   -1*(avgN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_CUTTING_OK
-# four parameter
+# combination:LONG_DOWN_CUT_OK or SHORT_DOWN_CUT_OK or IMMEDIATE_DOWN_OK
+# four parameters
 # cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_CUTTING_OK  2 5 5 5
 cut=/*1*/;thresholdA=/*2*/;
@@ -149,7 +169,8 @@ thresholdC=/*4*/;
   (avgN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_OK
-# three parameter
+# combination:LONG_UP_OK or SHORT_UP_OK or IMMEDIATE_UP_OK
+# three parameters
 # immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_OK  5 5 5
 thresholdA=/*1*/;
@@ -162,7 +183,8 @@ thresholdC=/*3*/;
   -1*(avg(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_OK
-# three parameter
+# combination:LONG_DOWN__OK or SHORT_DOWN__OK or IMMEDIATE_DOWN__OK
+# three parameters
 # immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_OK  5 5 5
 thresholdA=/*1*/;
@@ -175,7 +197,8 @@ thresholdC=/*3*/;
   (avg(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_BIG_CUTTING_OK
-# four parameter
+# combination:LONG_UP_BIG_CUT_OK or SHORT_UP_BIG_CUT_OK or IMMEDIATE_UP_OK
+# four parameters
 # cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_BIG_CUTTING_OK  2 5 5 5
 cut=/*1*/;thresholdA=/*2*/;
@@ -188,7 +211,8 @@ thresholdC=/*4*/;
   -1*(geomN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_BIG_CUTTING_OK
-# four parameter
+# combination:LONG_DOWN_BIG_CUT_OK or SHORT_DOWN_BIG_CUT_OK or IMMEDIATE_DOWN_OK
+# four parameters
 # cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_BIG_CUTTING_OK  2 5 5 5
 cut=/*1*/;thresholdA=/*2*/;
@@ -201,7 +225,8 @@ thresholdC=/*4*/;
   (geomN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_BIG_OK
-# three parameter
+# combination:LONG_UP_BIG_OK or SHORT_UP_BIG_OK or IMMEDIATE_UP_OK
+# three parameters
 # immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_BIG_OK  5 5 5
 thresholdA=/*1*/;
@@ -214,7 +239,8 @@ thresholdC=/*3*/;
   -1*(geom(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_BIG_OK
-# three parameter
+# combination:LONG_DOWN_BIG_OK or SHORT_DOWN_BIG_OK or IMMEDIATE_DOWN_OK
+# three parameters
 # immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_BIG_OK  5 5 5
 thresholdA=/*1*/;
