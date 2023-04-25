@@ -1,7 +1,7 @@
 # jenkins-report-generic-chart-column
 Generic reusable plugin that will show a chart in column based on properties file.
 
-The plugin reads properties file in your archive, specified by glob, and use one value, deffined by key, to draw a chart for both project and view. The plugin was orriginally designed to show results of benchmarks, but canbe missused for anything key-number what destire chart. Eg total and failde tests summaries. The graph is scaled, so you will never miss smallest change.
+The plugin reads properties file in your archive, specified by glob, and use one value, defined by key, to draw a chart for both project and view. The plugin was originally designed to show results of benchmarks, but can be misused for anything key-number what desire chart. Eg total and failed tests summaries, watching over size of package and so on. The graph is scaled, so you will never miss smallest change.
 
 * [Properties file](#properties-file)
 * [Project summary](#project-summary)
@@ -16,7 +16,7 @@ The plugin reads properties file in your archive, specified by glob, and use one
 * [Future work](#future-work)
 
 ## Properties file
-To make plugin work, you need a [properties](https://en.wikipedia.org/wiki/.properties) file with results form your job, archived. The properties  file is eg our:
+To make plugin work, you need a [properties](https://en.wikipedia.org/wiki/.properties) file with results form your job, archived. The properties  file is eg.:
 ```
 lastSuccessfulBuild/artifact/jbb-report/result/specjbb2015-C-20180717-00001/report-00001/specjbb2015-C-20180717-00001.raw 
 ```
@@ -34,7 +34,7 @@ other garbage
 The parser is quite forgiving, and will skip garabge. Supports both : and = delimiters.
 
 ## Project summary
-Hugest graphs are shown in project sumamry.  You can have as much graphs as you wish, and have detailed tooltip:
+Hugest graphs are shown in project summary.  You can have as much graphs as you wish, and have detailed tool-tip:
 ![project](https://user-images.githubusercontent.com/2904395/43015881-2747cb3a-8c51-11e8-9ccf-c6b4a0189e61.png)
 Comparing individual jobs was never more simple:)
 
@@ -43,20 +43,20 @@ You can include the graphs to the view:
 ![view](https://user-images.githubusercontent.com/2904395/43015883-278a339e-8c51-11e8-8656-5165b455d8ef.png)
 Comparing individual projects was never more simple:)
 
-You can of course mix it with other propertis or other plugins
+You can of course mix it with other properties or other plugins
 ![view](https://user-images.githubusercontent.com/2904395/43015875-21c739fc-8c51-11e8-9026-c84127628634.png)
 
-The results in view are sortable - they are sort by last valid result shown in chart.
+The results in view are sort-able - they are sort by last valid result shown in chart.
 
 Comparing individual projects was never ever more simple:)
 
 ## Changing build result
 Each chart (there can be several by project) can have its own  condition, on which result it can turn the build to unstable, if the condition is met.
-The mathematic part is handled by https://github.com/gbenroscience/ParserNG/, the logic part is internal. Examplar expression:
+The mathematic part is handled by https://github.com/gbenroscience/ParserNG/, the logic part is internal. Exemplar expression:
 ```
 avg(..L1)*1.1 <  L0 | L1*1.3 <  L0
 ```
-The expression can be read as: If value of key in last build is bigger then avarage value of all builds before multiplied by 1.1 , or  the last build is bigger then previous build multiplied by 1.3, turn the build to unstable
+The expression can be read as: If value of key in last build is bigger then average value of all builds before multiplied by 1.1 , or  the last build is bigger then previous build multiplied by 1.3, turn the build to unstable
 
 You can read how it is evaluated here: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#L10
 
@@ -66,8 +66,10 @@ The L indexes, can be calcualted. To do so, use `L{expression}`. Eg L{MN/2} upon
 
 See the logic at: https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#L2
 
-While this work is based on ParserNG, and is slowly contributing functions, LogicalParser and also in future the Expanding parser, once it will be all finishied, the expressions will be possible to be tested directly in ParserNG.
-But that is slow process. Now, the Expanding (and thus also Logical) parsers can be teste donly via this plugin, thus main method was added. Try:
+
+### testing the expression
+
+Next to the cmdline/library of ParserNG where you can try yours expressions, you can do similarly with  jenkins-report-generic-chart-column.jar; but it is not exactly straightforward to compose classpath. eg:
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  io/jenkins/plugins/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
@@ -75,13 +77,11 @@ or
 ```
 VALUES_PNG="1 2 3" java  -cp parser-ng-0.1.8.jar:jenkins-report-generic-chart-column.jar  parser.ExpandingExpression  "avg(..L{MN/2}) < avg(L{MN/2}..)"
 ```
-
-### testing the expression
-The jar have a main method, which allows you to test the equations:
+or
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  io/jenkins/plugins/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
-All changes were  moved to ParserNG, includig the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you canrun it simply as java -jar:
+Currently all necessary changes were  moved to ParserNG, including the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you can run it simply as java -jar:
 ```
 VALUES_PNG='235000 232500 233000 236000 210000' java parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
 ```
@@ -142,36 +142,36 @@ Answer
 ______________________________________________________
 ```
 </details>
- 
+
 ### Most common expressions
 #### Divergence from exact pivot
-If something should be soem exact result, or mus tnot be an exact result is most easy usage
- * `L0 == 5` if last result is 5, then the job willbecome unstable
- * `L0 != 5` whcih is same as
- * `![L0 == 5]` if last result is NOT 5, then the job will become unstable
+If something should be some exact result, or must not be an exact result is most easy usage
+* `L0 == 5` if last result is 5, then the job will become unstable
+* `L0 != 5` which is same as
+* `![L0 == 5]` if last result is NOT 5, then the job will become unstable
 #### Immediate regression:
- * `treshold=5;-1*(L1/(L0/100)-100) < -treshold` which is same as
- * `treshold=5;   (L1/(L0/100)-100) >  treshold` for classical benchamrk, like score, where more is better. The treshold is how much % is maximal drop it can bear, and
- * `treshold=5;   (L1/(L0/100)-100) < -treshold` for eg size (where smaller is better) benchmark, or time-based where less is better . The treshold is how much % is maximal increase it can bear.
- * For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is ok to cover usual oscialtion 
- * Note, that those equation works fine for boith big numbers and small numbers
+* `threshold=5;-1*(L1/(L0/100)-100) < -threshold` which is same as
+* `threshold=5;   (L1/(L0/100)-100) >  threshold` for classical benchmark, like score, where more is better. The threshold is how much % is maximal drop it can bear, and
+* `threshold=5;   (L1/(L0/100)-100) < -threshold` for eg size (where smaller is better) benchmark, or time-based where less is better . The threshold is how much % is maximal increase it can bear.
+* For stable things 5% should be the biggest regression rate. For  unstable once usually 10% is OK to cover usual oscillation
+* Note, that those equation works fine for both big numbers and small numbers
 #### Short term regression
-Such last ru against previous run can not catch constant degradation. To avoid that you may simply extensd of [Immediate regression](#immediate-regression), only `L0` will comapred against all previous runs -  L1 will become somethig lile `..L1` (all except last run)
- 
-You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
-  * `treshold=5;-1*(avg(..L1)/(L0/100)-100) < -treshold` which is same as
-  * `treshold=5;   (avg(..L1)/(L0/100)-100) >  treshold` for classical benchamrk, like score, where more is better. The treshold is how much % is maximal drop it can bear, and
- * `treshold=5;   (avg(..L1)/(L0/100)-100) < -treshold` for eg size (where smaller is better) benchmark, or time-based where less is better . The treshold is how much % is maximal increase it can bear.
+Such last run against previous run can not catch constant degradation. To avoid that you may simply extends of [Immediate regression](#immediate-regression), only `L0` will compared against all previous runs -  L1 will become something lile `..L1` (all except last run)
+
+You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge thresholds. See parserNG help for descriptions of functions (you can type `help` also to the Jenkins settings for this equation)
+* `threshold=5;-1*(avg(..L1)/(L0/100)-100) < -threshold` which is same as
+* `threshold=5;   (avg(..L1)/(L0/100)-100) >  threshold` for classical benchmark, like score, where more is better. The threshold is how much % is maximal drop it can bear, and
+* `threshold=5;   (avg(..L1)/(L0/100)-100) < -threshold` for eg.: size (where smaller is better) benchmark, or time-based where less is better . The threshold is how much % is maximal increase it can bear.
 #### Longer term regression
- * In basic comarsion, you can compare any Lx with any Ly. Eg `(L2/(L0/100)-100) > treshold` or `(L{MN}/(L0/100)-100) > treshold` and so on. 
-   * The underlying evaluation is lenient, and eg L4 in size in set of twonumbers, will have simply value of **last valid** (second in this case) number.
-   * Thats also why `L{MN}` works, although you shouldbe explicitly writing `L{MN-1}`
-   * example: ` VALUES_PNG='3 2 1'  java -jar parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
- * another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced by something like `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
- * You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge trehsolds. See parserNG help for descriptions of functions (you can type `help` also to the jenkins settings for this equation)
-    * `treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` which is same as 
-    * `treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  treshold` for classical benchamrk, where more is better. The treshold is how much % is maximal drop it can bear<br/>
-    * `treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold` for eg time-based or size benchmark, where less is better. The treshold is how much % is maximal increase it can bear.
+* In basic comparison, you can compare any Lx with any Ly. Eg `(L2/(L0/100)-100) > threshold` or `(L{MN}/(L0/100)-100) > threshold` and so on.
+    * The underlying evaluation is lenient, and eg L4 in size in set of two numbers, will have simply value of **last valid** (second in this case) number.
+    * That's also why `L{MN}` works, although you should be explicitly writing `L{MN-1}`
+    * example: ` VALUES_PNG='3 2 1'  java -jar parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
+* another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced by something like `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
+* You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge thresholds. See parserNG help for descriptions of functions (you can type `help` also to the Jenkins settings for this equation)
+    * `threshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold` which is same as
+    * `threshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold` for classical benchmark, where more is better. The threshold is how much % is maximal drop it can bear<br/>
+    * `threshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold` for eg time-based or size benchmark, where less is better. The threshold is how much % is maximal increase it can bear.
 #### Gluing it all together
 You usually have more expressions which are catching your regressions, to connect them, you can use logical operators:
 ```
@@ -180,18 +180,18 @@ Comparing operators - allowed with spaces:!=, ==, >=, <=, <, >; not allowed with
 Logical operators - allowed with spaces:, |, &; not allowed with spaces:impl, xor, imp, eq, or, and
 As Mathematical parts are using () as brackets, Logical parts must be grouped by [] 
  ```
- Eg:
-  * for clasical benchamrks like socre:
+Eg:
+* for classical benchmarks like score:
  ```
- treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold || treshold=5;-1*(avg(..L1)/(L0/100)-100) < -treshold
+ threshold=5;-1*(L1/(L0/100)-100) < -threshold || threshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold || threshold=5;-1*(avg(..L1)/(L0/100)-100) < -threshold
  ```
-  * for inverted benchmarks like time or size
+* for inverted benchmarks like time or size
  ```
- treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold || treshold=5;   (avg(..L1)/(L0/100)-100) < -treshold
+ threshold=5;   (L1/(L0/100)-100) < -threshold || threshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold || threshold=5;   (avg(..L1)/(L0/100)-100) < -threshold
  ```
-Note, that if the variables (eg my treshold above) are filled as they come to hend. If you set it in first logical half, it can be reused in second without declaring it again (as I did in above example). Unluckily, you usualy have tresholds different. You can redeclare (as I did) the variable or have different one (eg trehsoldA and tresholdB) by ParserNG rules.
+Note, that if the variables (eg my threshold above) are filled as they come to end. If you set it in first logical half, it can be reused in second without declaring it again (as I did in above example). Unluckily, you usually have thresholds different. You can re-declare (as I did) the variable or have different one (eg thresholdA and thresholdB) by ParserNG rules.
 
-'avgN' and 'geomN' are usualy producing better resuls, as they are getting rid of random extreme spikes by sorting the input, and removing `N lowest` and `N highest` values. N is first parameter. `avgN(0,...)` is identical to simply `avg(...)`:
+'avgN' and 'geomN' are usually producing better results, as they are getting rid of random extreme spikes by sorting the input, and removing `N lowest` and `N highest` values. N is first parameter. `avgN(0,...)` is identical to simply `avg(...)`:
 ```
 VALUES_PNG='5 5 1 8 5 5'  java -jar parser-ng-0.1.9.jar -e "avgN(0,..L0)"
 4.833333333
@@ -202,27 +202,27 @@ VALUES_PNG='5 5 1 8 5 5'  java -jar parser-ng-0.1.9.jar -e "avgN(1,..L0)"
 5
 ```
 as 8 and 1 were removed from list. So:
-  * for clasical benchamrks like socre:
+* for classical benchmarks like score:
  ```
- cut=2;treshold=5;-1*(L1/(L0/100)-100) < -treshold || treshold=5;-1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -treshold || treshold=5;-1*(avgN(cut,..L1)/(L0/100)-100) < -treshold
+ cut=2;threshold=5;-1*(L1/(L0/100)-100) < -threshold || threshold=5;-1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold || threshold=5;-1*(avgN(cut,..L1)/(L0/100)-100) < -threshold
  ```
-  * for inverted benchmarks like time or size
+* for inverted benchmarks like time or size
  ```
- cut=2;treshold=5;   (L1/(L0/100)-100) < -treshold || treshold=5;   (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -treshold || treshold=5;   (avgN(cut,..L1)/(L0/100)-100) < -treshold
+ cut=2;threshold=5;   (L1/(L0/100)-100) < -threshold || threshold=5;   (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold || threshold=5;   (avgN(cut,..L1)/(L0/100)-100) < -threshold
  ```
- Is what yoy usually end with
- 
- #### Super complex examples
- Lokign forward for contributions!
-                                                
+Is what yoy usually end with
+
+#### Super complex examples
+Lookign forward for contributions!
+
 ## Denylist and Allowlist
-you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have denylist (and allowlist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty denylist/allowlist means it is not used at all.
+you could noted, that the graphs are scaled.  If you have run, which escapes the normality, the scale get corrupted, and you can easily miss regression. To fix this, you have denylist (and allowlist). This is list of regexes,  which filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and `#build_number` (note the hash). Empty denylist/allowlist means it is not used at all.
 
 ## Project Settings
 Project settings and view settings are separate - with both pros and cons!
 
 ![selection_012](https://user-images.githubusercontent.com/11722903/48773059-8b53ba00-ecc6-11e8-84eb-c0bbdc7774c4.png)
-Most important is **Glob pattern for the report file to parse**, which lets you specify not absolute (glob) path to your properties file and of course **Key to look for in the report file** which tetls chart what value to render.  **Chart name** and **color** are  cosmetic, **denylist** and **allowlist** were already described.  **Number of data points to show** is how many successful builds (counted from end) should be displayed.  If you are in doubts, each suspicious field have help.
+Most important is **Glob pattern for the report file to parse**, which lets you specify not absolute (glob) path to your properties file and of course **Key to look for in the report file** which tells chart what value to render.  **Chart name** and **color** are  cosmetic, **denylist** and **allowlist** were already described.  **Number of data points to show** is how many successful builds (counted from end) should be displayed.  If you are in doubts, each suspicious field have help.
 
 ## View Settings
 Project settings and view settings are separate - with both pros and cons!
@@ -232,7 +232,7 @@ You can see that the settings of view are same - thus duplicated with all its pr
 
 ## Limitations
 
-The limitations flows from double settings and from fact that each chart can show only only one value. The non-shared denylist/allowlist is a negative which we are working on to improve. One line only is considered as - due toscalled graph - definitely positive.
+The limitations flows from double settings and from fact that each chart can show only only one value. The non-shared denylist/allowlist is a negative which we are working on to improve. One line only is considered as - due to scaled graph - definitely positive.
 
 ## Range around allowlisted
 
@@ -243,7 +243,7 @@ Up is without allowlisted and range. Down is with allowlist (1.8.0.172.\*) and r
 Up is with allowlist (1.8.0.172.\*) and range (3). Down is with allowlist (1.8.0.172.\*) and without range.
 ![selection_007](https://user-images.githubusercontent.com/11722903/48713581-fe9af480-ec10-11e8-898f-3ac208b809a8.png)
 ## Future work
-We wish to improve allowlist/denylist feature, so it can be used to generate wievs comparing selected runs across jobs with some kind of neigbrhood
+We wish to improve allowlist/denylist feature, so it can be used to generate views comparing selected runs across jobs with some kind of neighborhood
 
 # Dependencies
-This plugin depends on [chartjs-api](https://github.com/jenkinsci/chartjs-api-plugin) library plugin and on [parser-ng](https://github.com/gbenroscience/ParserNG/) amth library 1.9 or up
+This plugin depends on [chartjs-api](https://github.com/jenkinsci/chartjs-api-plugin) library plugin and on [parser-ng](https://github.com/gbenroscience/ParserNG/) math library 1.9 or up

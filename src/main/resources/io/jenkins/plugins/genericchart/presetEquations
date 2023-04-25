@@ -1,227 +1,227 @@
 # IMMEDIATE_UP_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # eg: IMMEDIATE_UP_OK 5
-treshold=/*1*/;
-  (L1/(L0/100)-100) >  treshold
+threshold=/*1*/;
+  (L1/(L0/100)-100) >  threshold
 
 # IMMEDIATE_DOWN_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # eg: IMMEDIATE_DOWN_OK 5
-treshold=/*1*/;
-  (L1/(L0/100)-100) < -treshold
+threshold=/*1*/;
+  (L1/(L0/100)-100) < -threshold
 
 # SHORT_UP_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using avg of previous points
 # eg: SHORT_UP_OK 5
-treshold=/*1*/;
-  (avg(..L1)/(L0/100)-100) >  treshold
+threshold=/*1*/;
+  (avg(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using avg of previous points
 # eg: SHORT_DOWN_OK 5
-treshold=/*1*/;
-  (avg(..L1)/(L0/100)-100) < -treshold
+threshold=/*1*/;
+  (avg(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_BIG_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using geom of previous points
 # eg: SHORT_UP_BIG_OK 5
-treshold=/*1*/;
-    (geom(..L1)/(L0/100)-100) >  treshold
+threshold=/*1*/;
+    (geom(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_BIG_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using geom of previous points
 # eg: SHORT_DOWN_BIG_OK 5
-treshold=/*1*/;
-  (geom(..L1)/(L0/100)-100) < -treshold
+threshold=/*1*/;
+  (geom(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using avgN of previous points
 # eg: SHORT_UP_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (avgN(..L1)/(L0/100)-100) >  treshold
+cut=/*1*/; threshold=/*2*/;
+  (avgN(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using avgN of previous points
 # eg: SHORT_DOWN_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (avgN(..L1)/(L0/100)-100) < -treshold
+cut=/*1*/; threshold=/*2*/;
+  (avgN(..L1)/(L0/100)-100) < -threshold
 
 # SHORT_UP_BIG_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using geomN of previous points
 # eg: SHORT_UP_BIG_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-    (geomN(..L1)/(L0/100)-100) >  treshold
+cut=/*1*/; threshold=/*2*/;
+    (geomN(..L1)/(L0/100)-100) >  threshold
 
 # SHORT_DOWN_BIG_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using geomN of previous points
 # eg: SHORT_DOWN_BIG_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (geomN(..L1)/(L0/100)-100) < -treshold
+cut=/*1*/; threshold=/*2*/;
+  (geomN(..L1)/(L0/100)-100) < -threshold
 
 # LONG_UP_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using avg of previous points
 # eg: LONG_UP_OK 5
-treshold=/*1*/;
-  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  treshold
+threshold=/*1*/;
+  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using avg of previous points
 # eg: LONG_DOWN_OK 5
-treshold=/*1*/;
-  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -treshold
+threshold=/*1*/;
+  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_BIG_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using geom of previous points
 # eg: LONG_UP_BIG_OK 5
-treshold=/*1*/;
-  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  treshold
+threshold=/*1*/;
+  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_BIG_OK
-# one parameter, treshold number
+# one parameter, threshold number
 # is using geom of previous points
 # eg: LONG_DOWN_BIG_OK 5
-treshold=/*1*/;
-  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -treshold
+threshold=/*1*/;
+  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using avgN of previous points
 # eg: LONG_UP_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) >  treshold
+cut=/*1*/; threshold=/*2*/;
+  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using avgN of previous points
 # eg: LONG_DOWN_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -treshold
+cut=/*1*/; threshold=/*2*/;
+  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold
 
 # LONG_UP_BIG_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using geomN of previous points
 # eg: LONG_UP_BIG_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  treshold
+cut=/*1*/; threshold=/*2*/;
+  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  threshold
 
 # LONG_DOWN_BIG_CUT_OK
-# two parameters, cut amount and treshold number
+# two parameters, cut amount and threshold number
 # is using geomN of previous points
 # eg: LONG_DOWN_BIG_CUT_OK 1 5
-cut=/*1*/; treshold=/*2*/;
-  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -treshold
+cut=/*1*/; threshold=/*2*/;
+  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -threshold
 
 # FINAL_UP_CUTTING_OK
 # four parameter
-# cut, immediate treshold, short time treshold, long time treshold
+# cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_CUTTING_OK  2 5 5 5
-cut=/*1*/;tresholdA=/*2*/;
-  -1*(L1/(L0/100)-100) < -tresholdA
+cut=/*1*/;thresholdA=/*2*/;
+  -1*(L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*3*/;
-  -1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*3*/;
+  -1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*4*/;
-  -1*(avgN(cut,..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*4*/;
+  -1*(avgN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_CUTTING_OK
 # four parameter
-# cut, immediate treshold, short time treshold, long time treshold
+# cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_CUTTING_OK  2 5 5 5
-cut=/*1*/;tresholdA=/*2*/;
-  (L1/(L0/100)-100) < -tresholdA
+cut=/*1*/;thresholdA=/*2*/;
+  (L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*3*/;
-  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*3*/;
+  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*4*/;
-  (avgN(cut,..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*4*/;
+  (avgN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_OK
 # three parameter
-# immediate treshold, short time treshold, long time treshold
+# immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_OK  5 5 5
-tresholdA=/*1*/;
-  -1*(L1/(L0/100)-100) < -tresholdA
+thresholdA=/*1*/;
+  -1*(L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*2*/;
-  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*2*/;
+  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*3*/;
-  -1*(avg(..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*3*/;
+  -1*(avg(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_OK
 # three parameter
-# immediate treshold, short time treshold, long time treshold
+# immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_OK  5 5 5
-tresholdA=/*1*/;
-  (L1/(L0/100)-100) < -tresholdA
+thresholdA=/*1*/;
+  (L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*2*/;
-  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*2*/;
+  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*3*/;
-  (avg(..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*3*/;
+  (avg(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_BIG_CUTTING_OK
 # four parameter
-# cut, immediate treshold, short time treshold, long time treshold
+# cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_BIG_CUTTING_OK  2 5 5 5
-cut=/*1*/;tresholdA=/*2*/;
-  -1*(L1/(L0/100)-100) < -tresholdA
+cut=/*1*/;thresholdA=/*2*/;
+  -1*(L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*3*/;
-  -1*(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*3*/;
+  -1*(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*4*/;
-  -1*(geomN(cut,..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*4*/;
+  -1*(geomN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_BIG_CUTTING_OK
 # four parameter
-# cut, immediate treshold, short time treshold, long time treshold
+# cut, immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_BIG_CUTTING_OK  2 5 5 5
-cut=/*1*/;tresholdA=/*2*/;
-  (L1/(L0/100)-100) < -tresholdA
+cut=/*1*/;thresholdA=/*2*/;
+  (L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*3*/;
-  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*3*/;
+  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*4*/;
-  (geomN(cut,..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*4*/;
+  (geomN(cut,..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_UP_BIG_OK
 # three parameter
-# immediate treshold, short time treshold, long time treshold
+# immediate threshold, short time threshold, long time threshold
 # eg: FINAL_UP_BIG_OK  5 5 5
-tresholdA=/*1*/;
-  -1*(L1/(L0/100)-100) < -tresholdA
+thresholdA=/*1*/;
+  -1*(L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*2*/;
-  -1*(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*2*/;
+  -1*(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*3*/;
-  -1*(geom(..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*3*/;
+  -1*(geom(..L1)/(L0/100)-100) < -thresholdC
 
 # FINAL_DOWN_BIG_OK
 # three parameter
-# immediate treshold, short time treshold, long time treshold
+# immediate threshold, short time threshold, long time threshold
 # eg: FINAL_DOWN_BIG_OK  5 5 5
-tresholdA=/*1*/;
-  (L1/(L0/100)-100) < -tresholdA
+thresholdA=/*1*/;
+  (L1/(L0/100)-100) < -thresholdA
   ||
-tresholdB=/*2*/;
-  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -tresholdB
+thresholdB=/*2*/;
+  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB
   ||
-tresholdC=/*3*/;
-  (geom(..L1)/(L0/100)-100) < -tresholdC
+thresholdC=/*3*/;
+  (geom(..L1)/(L0/100)-100) < -thresholdC
