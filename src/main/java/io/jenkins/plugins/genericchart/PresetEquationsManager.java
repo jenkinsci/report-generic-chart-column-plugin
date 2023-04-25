@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,11 +20,11 @@ public class PresetEquationsManager {
     private static final Object lock = new Object();
     private static List<PresetEquationDefinition> internals;
 
-    public PresetEquationsManager() throws IOException {
+    public PresetEquationsManager() throws IOException, URISyntaxException {
         this(null);
     }
 
-    public PresetEquationsManager(String anotherUrlOrBody) throws IOException {
+    public PresetEquationsManager(String anotherUrlOrBody) throws IOException, URISyntaxException {
         synchronized (lock) {
             if (internals == null) {
                 internals = readInternals();
@@ -39,12 +41,12 @@ public class PresetEquationsManager {
         }
     }
 
-    private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException {
+    private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException, URISyntaxException {
         synchronized (lock) {
             if (bodyOrUrl.split("\n").length > 1) {
                 return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
             } else {
-                return readFromStream(new URL(bodyOrUrl).openStream());
+                return readFromStream(new URI(bodyOrUrl).toURL().openStream());
             }
         }
     }

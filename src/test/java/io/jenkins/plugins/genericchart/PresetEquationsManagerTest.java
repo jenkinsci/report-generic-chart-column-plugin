@@ -9,6 +9,7 @@ import parser.logical.ExpressionLogger;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void listTest() throws IOException {
+    public void listTest() throws IOException, URISyntaxException {
         final ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         final PresetEquationsManager p1 = new PresetEquationsManager();
         try (PrintStream ps = new PrintStream(baos1, true, StandardCharsets.UTF_8)) {
@@ -49,7 +50,7 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void getTest() throws IOException {
+    public void getTest() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         PresetEquationsManager.PresetEquation e0 = p1.get("weird_id weird_params");
         Assertions.assertNull(e0);
@@ -68,7 +69,7 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void noDupes() throws IOException {
+    public void noDupes() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() == new HashSet<>(ids).size());
@@ -89,7 +90,7 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void buggyIsCought() throws IOException {
+    public void buggyIsCought() throws IOException, URISyntaxException {
         PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\nblah=/*1*/; avg(blah"); //missing bracket
         StringBuilder sbOne = new StringBuilder();
         PresetEquationsManager.PresetEquation e = p1.get("someID 10");
@@ -118,7 +119,7 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void allValuates() throws IOException {
+    public void allValuates() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("# someID\n# some comment\n1+1");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() > 5);
