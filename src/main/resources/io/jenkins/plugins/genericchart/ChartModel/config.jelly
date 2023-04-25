@@ -18,15 +18,15 @@
     <f:entry field="limit" title="Number of data points to show">
         <f:textbox />
     </f:entry>
-<f:section title="blacklist/whitelist">
+<f:section title="denylist/allowlist">
   <f:advanced>
-    <f:entry field="resultBlackList" title="Packages blacklisted">
+    <f:entry field="resultBlackList" title="Builds denylisted">
         <f:textbox />
     </f:entry>
-    <f:entry field="resultWhiteList" title="Packages whitelisted">
+    <f:entry field="resultWhiteList" title="Builds allowlisted">
         <f:textbox />
     </f:entry>
-    <f:entry field="rangeAroundWlist" title="Range around whitelisted">
+    <f:entry field="rangeAroundWlist" title="Range around allowlisted">
         <f:textbox />
     </f:entry>
   </f:advanced>

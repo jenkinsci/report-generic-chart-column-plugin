@@ -62,7 +62,7 @@ public class ReportChart {
     }
 
     public String getTitle() {
-        return title + " (blacklisted " + blist.size() + ")" + " (whitelisted " + whiteListSizeWithoutSurroundings + "+" + Integer.toString(wlist.size() - whiteListSizeWithoutSurroundings) + ")";
+        return title + " (dennied " + blist.size() + ")" + " (allowed " + whiteListSizeWithoutSurroundings + "+" + Integer.toString(wlist.size() - whiteListSizeWithoutSurroundings) + ")";
     }
 
     public String getColor() {

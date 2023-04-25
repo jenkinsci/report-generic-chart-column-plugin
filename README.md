@@ -9,7 +9,7 @@ The plugin reads properties file in your archive, specified by glob, and use one
 * [Changing build result](#changing-build-result)
   * [Testing the expressions](#testing-the-expression)
   * [Most common expressions](#most-common-expressions)
-* [Blacklist and Whitelist](#blacklist-and-whitelist)
+* [Denylist and Allowlist](#denylist-and-allowlist)
 * [Project Settings](#project-settings)
 * [View Settings](#view-settings)
 * [Limitations](#limitations)
@@ -215,14 +215,14 @@ as 8 and 1 were removed from list. So:
  #### Super complex examples
  Lokign forward for contributions!
                                                 
-## Blacklist and Whitelist
-you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have balcklist (and whitelist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty blacklist/whitelist means it is not used at all.
+## Denylist and Allowlist
+you could noted, that the graphs are scalled.  Ifyou have run, which escapes the normality, the scale get corrupeted, and youc an easily miss regression. To fix this, you have denylist (and allowlist). This is list of regexes,  whic filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and #build_number. Empty denylist/allowlist means it is not used at all.
 
 ## Project Settings
 Project settings and view settings are separate - with both pros and cons!
 
 ![selection_012](https://user-images.githubusercontent.com/11722903/48773059-8b53ba00-ecc6-11e8-84eb-c0bbdc7774c4.png)
-Most important is **Glob pattern for the report file to parse**, which lets you specify not absolute (glob) path to your properties file and of course **Key to look for in the report file** which tetls chart what value to render.  **Chart name** and **color** are  cosmetic, **blacklist** and **whitelist** were already described.  **Number of data points to show** is how many successful builds (counted from end) should be displayed.  If you are in doubts, each suspicious field have help.
+Most important is **Glob pattern for the report file to parse**, which lets you specify not absolute (glob) path to your properties file and of course **Key to look for in the report file** which tetls chart what value to render.  **Chart name** and **color** are  cosmetic, **denylist** and **allowlist** were already described.  **Number of data points to show** is how many successful builds (counted from end) should be displayed.  If you are in doubts, each suspicious field have help.
 
 ## View Settings
 Project settings and view settings are separate - with both pros and cons!
@@ -232,18 +232,18 @@ You can see that the settings of view are same - thus duplicated with all its pr
 
 ## Limitations
 
-The limitations flows from double settings and from fact that each chart can show only only one value. The non-shared blacklist/whitelist is a negative which we are working on to improve. One line only is considered as - due toscalled graph - definitely positive.
+The limitations flows from double settings and from fact that each chart can show only only one value. The non-shared denylist/allowlist is a negative which we are working on to improve. One line only is considered as - due toscalled graph - definitely positive.
 
-## Range around whitelisted
+## Range around allowlisted
 
-Number of points before and after chosen point using whitelist. For example if you have whitelisted 3 and 4 and range is 2 graph will show points 1 2 3 4 5 6.
+Number of points before and after chosen point using allowlist. For example if you have allowlisted 3 and 4 and range is 2 graph will show points 1 2 3 4 5 6.
 ![selection_008](https://user-images.githubusercontent.com/11722903/48713596-08bcf300-ec11-11e8-9894-4e8445d612f9.png)
-Up is without whitelisted and range. Down is with whitelist (1.8.0.172.\*) and range (3).
+Up is without allowlisted and range. Down is with allowlist (1.8.0.172.\*) and range (3).
 ![selection_008](https://user-images.githubusercontent.com/11722903/48712892-37d26500-ec0f-11e8-92be-62acf31c6bdd.png)
-Up is with whitelist (1.8.0.172.\*) and range (3). Down is with whitelist (1.8.0.172.\*) and without range.
+Up is with allowlist (1.8.0.172.\*) and range (3). Down is with allowlist (1.8.0.172.\*) and without range.
 ![selection_007](https://user-images.githubusercontent.com/11722903/48713581-fe9af480-ec10-11e8-898f-3ac208b809a8.png)
 ## Future work
-We wish to improve whitelist/balcklist feature, so it can be used to generate wievs comparing selected runs across jobs with some kind of neigbrhood
+We wish to improve allowlist/denylist feature, so it can be used to generate wievs comparing selected runs across jobs with some kind of neigbrhood
 
 # Dependencies
 This plugin depends on [chartjs-api](https://github.com/jenkinsci/chartjs-api-plugin) library plugin and on [parser-ng](https://github.com/gbenroscience/ParserNG/) amth library 1.9 or up
