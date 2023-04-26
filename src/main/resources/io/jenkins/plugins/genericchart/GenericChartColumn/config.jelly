@@ -17,13 +17,13 @@
     </f:entry>
 <f:section title="denylist/allowlist">
   <f:advanced>
-    <f:entry field="resultBlackList" title="Builds denylist">
+    <f:entry field="resultDenyList" title="Builds denylist">
         <f:textbox />
     </f:entry>
-    <f:entry field="resultWhiteList" title="Builds allowlisted">
+    <f:entry field="resultAllowList" title="Builds allowlisted">
         <f:textbox />
     </f:entry>
-    <f:entry field="rangeAroundWlist" title="Range around allowlisted">
+    <f:entry field="rangeAroundAlist" title="Range around allowlisted">
         <f:textbox />
     </f:entry>
   </f:advanced>

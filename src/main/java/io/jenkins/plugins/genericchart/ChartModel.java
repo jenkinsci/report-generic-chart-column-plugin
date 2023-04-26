@@ -37,14 +37,14 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
     @SuppressWarnings({"lgtm[jenkins/plaintext-storage]", "This is not a password, it is key in properties file"})
     private String key;
     private int limit;
-    private String resultsBlackList;
-    private String resultsWhiteList;
+    private String resultDenyList;
+    private String resultAllowList;
     private String chartColor;
-    private int rangeAroundWlist;
+    private int rangeAroundAlist;
     private String unstableCondition; //30%<  or !=  or < 1.5 ...
 
     @DataBoundConstructor
-    public ChartModel(String title, String fileNameGlob, String key, int limit, String chartColor, int rangeAroundWlist) {
+    public ChartModel(String title, String fileNameGlob, String key, int limit, String chartColor, int rangeAroundAlist) {
         this.title = title;
         this.fileNameGlob = fileNameGlob;
         this.key = key;
@@ -54,7 +54,7 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
         } else {
             this.chartColor = chartColor;
         }
-        this.rangeAroundWlist = rangeAroundWlist;
+        this.rangeAroundAlist = rangeAroundAlist;
     }
 
     public String getTitle() {
@@ -110,13 +110,13 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
     @Extension
     public static final ChartDescriptor DESCRIPTOR = new ChartDescriptor();
 
-    public int getRangeAroundWlist() {
-        return rangeAroundWlist;
+    public int getRangeAroundAlist() {
+        return rangeAroundAlist;
     }
 
     @DataBoundSetter
-    public void setRangeAroundWlist(int rangeAroundWlist) {
-        this.rangeAroundWlist = rangeAroundWlist;
+    public void setRangeAroundAlist(int rangeAroundAlist) {
+        this.rangeAroundAlist = rangeAroundAlist;
     }
 
     public static class ChartDescriptor extends Descriptor<ChartModel> {
@@ -129,25 +129,25 @@ public class ChartModel extends AbstractDescribableImpl<ChartModel> {
     }
 
     @DataBoundSetter
-    public void setResultBlackList(String resultBlackList) {
-        this.resultsBlackList = resultBlackList;
+    public void setResultDenyList(String resultDenyList) {
+        this.resultDenyList = resultDenyList;
     }
 
-    public String getResultBlackList() {
-        return resultsBlackList;
+    public String getResultDenyList() {
+        return resultDenyList;
     }
 
     @DataBoundSetter
-    public void setResultWhiteList(String resultWhiteList) {
-        this.resultsWhiteList = resultWhiteList;
+    public void setResultAllowList(String resultAllowList) {
+        this.resultAllowList = resultAllowList;
     }
 
-    public String getResultWhiteList() {
-        return resultsWhiteList;
+    public String getResultAllowList() {
+        return resultAllowList;
     }
 
-    public String getPointColor(boolean isInRangeOfWhiteListed) {
-        if (isInRangeOfWhiteListed) {
+    public String getPointColor(boolean isInRangeOfAllowListed) {
+        if (isInRangeOfAllowListed) {
             //there is 32 because it slightly change shade of color so graph is more readable
             return ColorChanger.shiftColorBy(chartColor, 64, 64, 32);
         }

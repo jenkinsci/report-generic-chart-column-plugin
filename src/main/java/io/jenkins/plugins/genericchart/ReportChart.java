@@ -24,6 +24,7 @@
 package io.jenkins.plugins.genericchart;
 
 import hudson.model.Job;
+
 import java.util.List;
 
 public class ReportChart {
@@ -57,7 +58,7 @@ public class ReportChart {
                 points.getPoints(),
                 points.getBlacklist(),
                 points.getWhitelist(),
-                m.getRangeAroundWlist(),
+                m.getRangeAroundAlist(),
                 points.getWhiteListSizeWithoutSurroundings());
     }
 

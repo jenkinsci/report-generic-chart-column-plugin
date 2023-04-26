@@ -40,24 +40,24 @@ public class GenericChartColumn extends ListViewColumn {
     private int limit;
     private String columnCaption;
     private String chartColor;
-    private String resultsBlackList;
-    private String resultsWhiteList;
-    private int rangeAroundWlist;
+    private String resultsDenyList;
+    private String resultsAllowList;
+    private int rangeAroundAlist;
 
     @DataBoundConstructor
-    public GenericChartColumn(String fileNameGlob, String key, int limit, String columnCaption, String chartColor, int rangeAroundWlist) {
+    public GenericChartColumn(String fileNameGlob, String key, int limit, String columnCaption, String chartColor, int rangeAroundAlist) {
         this.fileNameGlob = fileNameGlob;
         this.key = key;
         this.limit = limit;
         this.columnCaption = columnCaption;
         this.chartColor = chartColor;
-        this.rangeAroundWlist = rangeAroundWlist;
+        this.rangeAroundAlist = rangeAroundAlist;
     }
 
     public List<ChartPoint> getReportPoints(Job<?, ?> job) {
-        ChartModel model = new ChartModel(key, fileNameGlob, key, limit, chartColor, rangeAroundWlist);
-        model.setResultBlackList(resultsBlackList);
-        model.setResultWhiteList(resultsWhiteList);
+        ChartModel model = new ChartModel(key, fileNameGlob, key, limit, chartColor, rangeAroundAlist);
+        model.setResultDenyList(resultsDenyList);
+        model.setResultAllowList(resultsAllowList);
         return new PropertiesParser().getReportPointsWithBlacklist(job, model).getPoints();
     }
 
@@ -137,30 +137,30 @@ public class GenericChartColumn extends ListViewColumn {
     }
 
     @DataBoundSetter
-    public void setResultBlackList(String resultBlackList) {
-        this.resultsBlackList = resultBlackList;
+    public void setResultDenyList(String resultDenyList) {
+        this.resultsDenyList = resultDenyList;
     }
 
-    public String getResultBlackList() {
-        return resultsBlackList;
-    }
-
-    @DataBoundSetter
-    public void setResultWhiteList(String resultWhiteList) {
-        this.resultsWhiteList = resultWhiteList;
-    }
-
-    public String getResultWhiteList() {
-        return resultsWhiteList;
-    }
-
-    public int getRangeAroundWlist() {
-        return rangeAroundWlist;
+    public String getResultDenyList() {
+        return resultsDenyList;
     }
 
     @DataBoundSetter
-    public void setRangeAroundWlist(int rangeAroundWlist) {
-        this.rangeAroundWlist = rangeAroundWlist;
+    public void setResultAllowList(String resultAllowList) {
+        this.resultsAllowList = resultAllowList;
+    }
+
+    public String getResultAllowList() {
+        return resultsAllowList;
+    }
+
+    public int getRangeAroundAlist() {
+        return rangeAroundAlist;
+    }
+
+    @DataBoundSetter
+    public void setRangeAroundAlist(int rangeAroundAlist) {
+        this.rangeAroundAlist = rangeAroundAlist;
     }
 
 }

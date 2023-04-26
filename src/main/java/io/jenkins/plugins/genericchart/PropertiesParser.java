@@ -52,7 +52,7 @@ public class PropertiesParser {
         return getList(job, chart, new ListProvider() {
             @Override
             public String getList() {
-                return chart.getResultBlackList();
+                return chart.getResultDenyList();
             }
 
             @Override
@@ -68,12 +68,12 @@ public class PropertiesParser {
         return getList(job, chart, new ListProvider() {
             @Override
             public String getList() {
-                return chart.getResultWhiteList();
+                return chart.getResultAllowList();
             }
 
             @Override
             public int getSurrounding() {
-                return chart.getRangeAroundWlist();
+                return chart.getRangeAroundAlist();
             }
         });
 
@@ -86,7 +86,7 @@ public class PropertiesParser {
         return getList(job, chart, new ListProvider() {
             @Override
             public String getList() {
-                return chart.getResultWhiteList();
+                return chart.getResultAllowList();
             }
 
             @Override
@@ -109,8 +109,8 @@ public class PropertiesParser {
         for (int i = 0; i < builds.length; i++) {
             Run run = builds[i];
             if (run == null
-                            || run.getResult() == null
-                            || run.getResult().isWorseThan(Result.UNSTABLE)) {
+                    || run.getResult() == null
+                    || run.getResult().isWorseThan(Result.UNSTABLE)) {
                 continue;
             }
             String[] items = provider.getList().split("\\s+");
@@ -189,8 +189,8 @@ public class PropertiesParser {
         pointsInRangeOfwhitelisted.removeAll(whiteListWithoutSurroundings);
         for (Run run : job.getBuilds()) {
             if (run == null
-                            || run.getResult() == null
-                            || run.getResult().isWorseThan(Result.UNSTABLE)) {
+                    || run.getResult() == null
+                    || run.getResult().isWorseThan(Result.UNSTABLE)) {
                 continue;
             }
             if (blacklisted.contains(run.getDisplayName())) {
