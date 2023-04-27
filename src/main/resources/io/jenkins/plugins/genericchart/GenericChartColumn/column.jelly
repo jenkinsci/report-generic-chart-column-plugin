@@ -13,6 +13,10 @@
                 </div>
                 <script type="text/javascript">
                     // &lt;![CDATA[
+                    if (typeof chartNameVar == 'undefined') {
+                      var chartNameVar = {};
+                    }
+
                   var dataPerfView = {
                     type: 'line',
                     data: {
@@ -48,18 +52,18 @@
                          intersect: false
                       },
                         onClick: (e) => {
-                            var activePoints = ${chartName}var.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                            var activePoints =chartNameVar["${chartName}"].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
                             var point = activePoints[0]
                             var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
                             var index = point.index
-                            var result = ${chartName}var.config.data.labels[index]
+                            var result = chartNameVar["${chartName}"].config.data.labels[index]
                             var buildId = result.substring(result.lastIndexOf(":") + 1)
                             window.open("/${job.url}"+buildId, "_blank");
                         }
                     }
                   };
                     var ctx = document.getElementById("${chartName}-Chart").getContext("2d");
-                    var ${chartName}var = new Chart(ctx, dataPerfView)
+                    chartNameVar["${chartName}"] = new Chart(ctx, dataPerfView)
                     // ]]&gt;
                 </script>
             </j:if>
