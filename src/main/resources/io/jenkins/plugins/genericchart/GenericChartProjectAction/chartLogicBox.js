@@ -2,9 +2,9 @@
 var genericChart_ids = document.getElementById('genericChart-ids').textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
 for (let i = 0; i < genericChart_ids.length; i++) {
         var id = genericChart_ids[i]
-        var data_title = document.getElementById('genericChart-title-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        var data_title = document.getElementById('genericChart-title-'+id).textContent.trim();
         var data_builds = document.getElementById('genericChart-builds-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
-        var data_color = document.getElementById('genericChart-color-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        var data_color = document.getElementById('genericChart-color-'+id).textContent.trim();
         var data_values = document.getElementById('genericChart-values-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
 
                       var allPerf = {
@@ -13,10 +13,10 @@ for (let i = 0; i < genericChart_ids.length; i++) {
                         labels: data_builds,
                                 datasets: [
                                 {
-                                        label: data_title[0],
+                                        label: data_title,
                                         fill: true,
-                                        backgroundColor: data_color[0],
-                                        borderColor: data_color[0],
+                                        backgroundColor: data_color,
+                                        borderColor: data_color,
                                         pointBorderColor: "#808080",
                                         pointHoverBackgroundColor: "#fff",
                                         pointHoverBorderColor: "rgba(0,0,0,1)",

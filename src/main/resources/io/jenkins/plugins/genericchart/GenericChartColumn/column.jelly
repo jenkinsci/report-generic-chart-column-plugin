@@ -1,5 +1,9 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+    <!-- adjuncts are always loaded jsut once.
+    So even if this snippet is inserted as many times as there are charts
+    the <script src=adjuncts...js>  element is included jsut once-->
+    <st:adjunct includes="io.jenkins.plugins.genericchart.GenericChartColumn.chartLogicColumn"/>
     <j:set var="points" value="${it.getReportPoints(job)}" />
     <td data="${it.getLatestResult(points)}">
         <div>
@@ -8,64 +12,31 @@
                 No data yet
             </j:if>
             <j:if test="${!points.isEmpty()}">
-                <div id="${chartName}-ChartContainer" style="width: 320px; height: 80px">
-                    <canvas id='${chartName}-Chart' width='320' height='80' style="display: block"></canvas>
-                </div>
-                <script type="text/javascript">
-                    // &lt;![CDATA[
-                    if (typeof chartNameVar == 'undefined') {
-                      var chartNameVar = {};
-                    }
-
-                  var dataPerfView = {
-                    type: 'line',
-                    data: {
-                    labels: [
+                <span class="genericChart-names"  genericChart_processed="false" style="visibility:hidden">
+                    ${chartName}
+                </span>
+                <span id="genericChart-builds-${chartName}" style="visibility:hidden">
                     <j:forEach var="build" items="${points}" varStatus="status">
-                    "${build.buildNumber}"<j:if test="${!status.last}">,</j:if>
+                        ${build.buildNumber}<j:if test="${!status.last}">,</j:if>
                     </j:forEach>
-                    ],
-                            datasets: [{
-                                    label: "${it.getColumnCaption()}",
-                                    fill: true,
-                                    backgroundColor: "${it.getChartColor()}",
-                                    borderColor: "${it.getChartColor()}",
-                                    pointBackgroundColor: "${it.getChartColor()}",
-                                    pointBorderColor: "#fff",
-                                    pointHoverBackgroundColor: "#fff",
-                                    pointHoverBorderColor: "${it.getChartColor()}",
-                                    pointRadius: 4,
-                                    data: [
+                </span>
+                <span id="genericChart-color-${chartName}" style="visibility:hidden">
+                    ${it.getChartColor()}
+                </span>
+                <span id="genericChart-title-${chartName}" style="visibility:hidden">
+                    ${it.getColumnCaption()}
+                </span>
+                <span id="genericChart-url-${chartName}" style="visibility:hidden">
+                    ${job.url}
+                </span>
+                <span id="genericChart-values-${chartName}" style="visibility:hidden">
                     <j:forEach var="build" items="${points}" varStatus="status">
                         ${build.value}<j:if test="${!status.last}">,</j:if>
                     </j:forEach>
-                                ]
-                        }
-                        ]
-                    },
-                    options: {
-                      plugins: {
-                        legend: { display: false }
-                      },
-                      interaction: {
-                         mode: 'index',
-                         intersect: false
-                      },
-                        onClick: (e) => {
-                            var activePoints =chartNameVar["${chartName}"].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
-                            var point = activePoints[0]
-                            var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
-                            var index = point.index
-                            var result = chartNameVar["${chartName}"].config.data.labels[index]
-                            var buildId = result.substring(result.lastIndexOf(":") + 1)
-                            window.open("/${job.url}"+buildId, "_blank");
-                        }
-                    }
-                  };
-                    var ctx = document.getElementById("${chartName}-Chart").getContext("2d");
-                    chartNameVar["${chartName}"] = new Chart(ctx, dataPerfView)
-                    // ]]&gt;
-                </script>
+                </span>
+                <div id="${chartName}-ChartContainer" style="width: 320px; height: 80px">
+                    <canvas id='${chartName}-Chart' width='320' height='80' style="display: block"></canvas>
+                </div>
             </j:if>
         </div>
     </td>
