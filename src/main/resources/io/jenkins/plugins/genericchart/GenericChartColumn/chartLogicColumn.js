@@ -24,6 +24,7 @@ function readCharts() {
 
                   var dataPerfView = {
                     type: 'line',
+                    url_from_job: data_url,
                     data: {
                     labels: data_builds,
                             datasets: [{
@@ -49,13 +50,14 @@ function readCharts() {
                          intersect: false
                       },
                         onClick: (e) => {
-                            var activePoints =chartNameVar[id].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                            var chart = e.chart;
+                            var activePoints = chart.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
                             var point = activePoints[0]
                             var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
                             var index = point.index
-                            var result = chartNameVar[id].config.data.labels[index]
+                            var result = chart.config.data.labels[index]
                             var buildId = result.substring(result.lastIndexOf(":") + 1)
-                            window.open("/"+data_url+buildId, "_blank");
+                            window.open("/"+chart.config._config.url_from_job+buildId, "_blank");
                         }
                     }
                   };

@@ -34,11 +34,12 @@ for (let i = 0; i < genericChart_ids.length; i++) {
                             intersect: false
                           },
                           onClick: (e) => {
-                            var activePoints = perfChartJsCharts["perChartId"+i].getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                            var chart = e.chart;
+                            var activePoints = chart.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
                             var point = activePoints[0]
                             var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
                             var index = point.index
-                            var result = perfChartJsCharts["perChartId"+i].config.data.labels[index]
+                            var result = chart.config.data.labels[index]
                             var buildId = result.substring(result.lastIndexOf(":") + 1)
                             window.open("" + buildId, "_blank");
                         }
