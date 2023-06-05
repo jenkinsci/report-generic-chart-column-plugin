@@ -8,45 +8,36 @@ for (let i = 0; i < genericChart_ids.length; i++) {
         var data_values = document.getElementById('genericChart-values-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
 
                       var allPerf = {
-                        type: 'line',
-                        data: {
                         labels: data_builds,
                                 datasets: [
                                 {
                                         label: data_title,
-                                        fill: true,
-                                        backgroundColor: data_color,
-                                        borderColor: data_color,
+                                        fillColor: data_color,
+                                        strokeColor: data_color,
                                         pointBorderColor: "#808080",
-                                        pointHoverBackgroundColor: "#fff",
-                                        pointHoverBorderColor: "rgba(0,0,0,1)",
-                                        pointRadius: 5,
+                                        pointHighlightFill: "#fff",
+                                        pointHighlightStroke: "rgba(0,0,0,1)",
                                         data: data_values
                                 }
                                 ]
-                        },
-                        options: {
-                          plugins: {
-                            legend: { display: false }
-                          },
-                          interaction: {
-                            mode: 'index',
-                            intersect: false
-                          },
-                          onClick: (e) => {
-                            var chart = e.chart;
-                            var activePoints = chart.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
+                      };
+                        var options = {
+                            bezierCurve: false,
+                            multiTooltipTemplate: "<%= datasetLabel + \": \" + value %>"
+                        };
+                        var ctx = document.getElementById("perChartId"+i).getContext("2d");
+                        perfChartJsCharts["perChartId"+i] = new Chart(ctx).Line(allPerf, options);
+                        document.getElementById("perChartId"+i).onclick = function (evt) {
+                            var lid = event.target.id;
+                            var jid = lid.replace("perChartId", "")
+                            var activePoints = perfChartJsCharts[lid].getPointsAtEvent(evt);
                             var point = activePoints[0]
                             var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
                             var index = point.index
-                            var result = chart.config.data.labels[index]
+                            var result = point.label;
                             var buildId = result.substring(result.lastIndexOf(":") + 1)
                             window.open("" + buildId, "_blank");
-                        }
-                        }
-                      };
-                        var ctx = document.getElementById("perChartId"+i).getContext("2d");
-                        perfChartJsCharts["perChartId"+i] = new Chart(ctx, allPerf);
+                        };
 
         }
 // ]]>

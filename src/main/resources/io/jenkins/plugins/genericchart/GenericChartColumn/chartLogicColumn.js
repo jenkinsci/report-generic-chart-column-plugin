@@ -23,46 +23,39 @@ function readCharts() {
                     }
 
                   var dataPerfView = {
-                    type: 'line',
-                    url_from_job: data_url,
-                    data: {
                     labels: data_builds,
                             datasets: [{
                                     label: data_title,
-                                    fill: true,
-                                    backgroundColor: data_color,
-                                    borderColor: data_color,
-                                    pointBackgroundColor: data_color,
-                                    pointBorderColor: "#fff",
-                                    pointHoverBackgroundColor: "#fff",
-                                    pointHoverBorderColor: data_color,
-                                    pointRadius: 4,
+                                    fillColor: data_color,
+                                    strokeColor: data_color,
+                                    pointColor: data_color,
+                                    pointStrokeColor: "#fff",
+                                    pointHighlightFill: "#fff",
+                                    pointHighlightStroke: data_color,
                                     data: data_values
                         }
                         ]
-                    },
-                    options: {
-                      plugins: {
-                        legend: { display: false }
-                      },
-                      interaction: {
-                         mode: 'index',
-                         intersect: false
-                      },
-                        onClick: (e) => {
-                            var chart = e.chart;
-                            var activePoints = chart.getElementsAtEventForMode(e, 'index', { intersect: false }, true);
-                            var point = activePoints[0]
-                            var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
-                            var index = point.index
-                            var result = chart.config.data.labels[index]
-                            var buildId = result.substring(result.lastIndexOf(":") + 1)
-                            window.open("/"+chart.config._config.url_from_job+buildId, "_blank");
-                        }
-                    }
                   };
+                    var options = {
+                        url_from_job: data_url,
+                        bezierCurve: false,
+                        multiTooltipTemplate: "&lt;%= datasetLabel + \": \" + value %&gt;"
+                    };
                     var ctx = document.getElementById(id+"-Chart").getContext("2d");
-                    chartNameVar[id] = new Chart(ctx, dataPerfView)
+                    chartNameVar[id] = new Chart(ctx).Line(dataPerfView, options);
+                    document.getElementById(id+"-Chart").onclick = function (evt) {
+                        var lid = event.target.id;
+                        var jid = lid.replace("-Chart", "")
+                        var chart = chartNameVar[jid]
+                        var activePoints = chart.getPointsAtEvent(evt);
+                        var point = activePoints[0]
+                        var datasetIndex = point.datasetIndex //labels are for all data together,  no need to look into exact dataset
+                        var index = point.index
+                        var result = point.label;
+                        var buildId = result.substring(result.lastIndexOf(":") + 1)
+                        window.open("/"+chart.options.url_from_job+buildId, "_blank");
+                        //window.open("/${job.url}", "_blank");
+                    };
         }
     }
 
