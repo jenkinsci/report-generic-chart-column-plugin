@@ -12,7 +12,7 @@
     <packaging>hpi</packaging>
     <name>Chart Column from properties</name>
     <properties>
-        <revision>2.0</revision>
+        <revision>4.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/report-generic-chart-column-plugin</gitHubRepo>
         <chartjs.version>4.2.1.5</chartjs.version>
