@@ -12,10 +12,10 @@
     <packaging>hpi</packaging>
     <name>Chart Column from properties</name>
     <properties>
-        <revision>4.0</revision>
+        <revision>2.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/report-generic-chart-column-plugin</gitHubRepo>
-        <chartjs.version>4.2.1.5</chartjs.version>
+        <chartjs.version>1.0.2.6</chartjs.version>
         <jenkins.version>2.361.4</jenkins.version>
         <!-- those twoo should be aligned -->
         <bom.version>2.361.x</bom.version> <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
