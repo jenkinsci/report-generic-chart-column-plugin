@@ -1,11 +1,35 @@
 // <![CDATA[
 var genericChart_ids = document.getElementById('genericChart-ids').textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
-for (let i = 0; i < genericChart_ids.length; i++) {
+if (genericChart_ids != null) {
+    for (let i = 0; i < genericChart_ids.length; i++) {
         var id = genericChart_ids[i]
-        var data_title = document.getElementById('genericChart-title-'+id).textContent.trim();
-        var data_builds = document.getElementById('genericChart-builds-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
-        var data_color = document.getElementById('genericChart-color-'+id).textContent.trim();
-        var data_values = document.getElementById('genericChart-values-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        if (id == null) {
+            continue;
+        }
+        var data_title_element = document.getElementById('genericChart-title-'+id)
+        if (data_title_element == null){
+            continue;
+        } else {
+            var data_title = data_title_element.textContent.trim();
+        }
+        var data_builds_element = document.getElementById('genericChart-builds-'+id)
+        if (data_builds_element == null){
+            continue;
+        } else {
+        var data_builds = data_builds_element.textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        }
+        var data_color_element = document.getElementById('genericChart-color-'+id)
+        if (data_color_element == null){
+            continue;
+        } else {
+        var data_color = data_color_element.textContent.trim();
+        }
+        var data_values_element = document.getElementById('genericChart-values-'+id)
+        if (data_values_element == null){
+            continue;
+        } else {
+            var data_values = data_values_element.textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        }
 
                       var allPerf = {
                         type: 'line',
@@ -50,3 +74,4 @@ for (let i = 0; i < genericChart_ids.length; i++) {
 
         }
 // ]]>
+}

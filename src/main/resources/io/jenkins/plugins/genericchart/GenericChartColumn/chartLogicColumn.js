@@ -1,6 +1,9 @@
 // <![CDATA[
 function readCharts() {
     var allChartIdElements = document.getElementsByClassName("genericChart-names")
+    if (allChartIdElements == null) {
+        return;
+    }
     for (let i = 0; i < allChartIdElements.length; i++) {
         var keyAttribute = allChartIdElements[i].getAttribute("genericChart_processed")
         if (keyAttribute == null) {
@@ -11,11 +14,36 @@ function readCharts() {
         }
         allChartIdElements[i].setAttribute("genericChart_processed", "true")
         var id = allChartIdElements[i].textContent.trim();
-        var data_title = document.getElementById('genericChart-title-'+id).textContent.trim();
-        var data_builds = document.getElementById('genericChart-builds-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
-        var data_color = document.getElementById('genericChart-color-'+id).textContent.trim();
-        var data_values = document.getElementById('genericChart-values-'+id).textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
-        var data_url = document.getElementById('genericChart-url-'+id).textContent.trim();
+        var data_title_element = document.getElementById('genericChart-title-'+id)
+        if (data_title_element == null) {
+            continue;
+        } else {
+            var data_title = data_title_element.textContent.trim();
+        }
+        var data_builds_element = document.getElementById('genericChart-builds-'+id)
+        if (data_builds_element == null) {
+            continue;
+        } else {
+            var data_builds = data_builds_element.textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        }
+        var data_color_element = document.getElementById('genericChart-color-'+id)
+        if (data_color_element == null) {
+            continue;
+        } else {
+            var data_color = data_color_element.textContent.trim();
+        }
+        var data_values_element = document.getElementById('genericChart-values-'+id)
+        if (data_values_element == null) {
+            continue;
+        } else {
+            var data_values = data_values_element.textContent.split(/\s*,\s*/).flatMap((s) => (s.trim()));
+        }
+        var data_url_element = document.getElementById('genericChart-url-'+id)
+        if (data_url_element == null) {
+            continue;
+        } else {
+            var data_url = data_url_element.textContent.trim();
+        }
 
 
                     if (typeof chartNameVar == 'undefined') {
