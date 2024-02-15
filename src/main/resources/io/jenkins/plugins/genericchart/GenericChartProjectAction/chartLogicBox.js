@@ -50,6 +50,7 @@ if (genericChart_ids != null) {
                                 ]
                         },
                         options: {
+                          responsive: false,
                           plugins: {
                             legend: { display: false }
                           },

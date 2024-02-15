@@ -27,7 +27,7 @@
             </span>
             <div id="chartContainer${chartsStatus.index}" style="margin-right: 10pt">
                 <h3 style="font-family: monospace">${chart.title}</h3>
-                <canvas id='perChartId${chartsStatus.index}' width='500' height='500'>
+                <canvas id='perChartId${chartsStatus.index}' width='600' height='600'>
                 </canvas>
             </div>
         </j:forEach>
