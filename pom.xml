@@ -16,9 +16,9 @@
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/report-generic-chart-column-plugin</gitHubRepo>
         <chartjs.version>4.2.1.5</chartjs.version>
-        <jenkins.version>2.361.4</jenkins.version>
-        <!-- those twoo should be aligned -->
-        <bom.version>2.361.x</bom.version> <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
+        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+        <jenkins.baseline>2.361</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.4</jenkins.version>
     </properties>
 
     <developers>
@@ -58,7 +58,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-${bom.version}</artifactId>
+                <artifactId>bom-${jenkins.baseline}.x</artifactId>
                 <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
                 <version>2102.v854b_fec19c92</version>
                 <scope>import</scope>
