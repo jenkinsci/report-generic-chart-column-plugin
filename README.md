@@ -168,7 +168,7 @@ You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you
     * The underlying evaluation is lenient, and eg L4 in size in set of two numbers, will have simply value of **last valid** (second in this case) number.
     * That's also why `L{MN}` works, although you should be explicitly writing `L{MN-1}`
     * example: ` VALUES_PNG='3 2 1'  java -jar parser-ng-0.1.9.jar -e  "echo(L5,L6,L7)"` will give you `3 3 3`
-* another,more generic solution, may achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced by something like `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
+* another,more generic solution, may be achieved by simply extension of [Immediate regression](#immediate-regression), only `L0` will be replaced by something like `L0..L{MN/2}` (newer half of the set) and L1 by `L{MN/2}..L{MN}` (older half of the set)
 * You can then call `avg` or `avgN` functions above it or `geom` or `geomN` if you have to diverse data with huge thresholds. See parserNG help for descriptions of functions (you can type `help` also to the Jenkins settings for this equation)
     * `threshold=5;-1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold` which is same as
     * `threshold=5;   (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold` for classical benchmark, where more is better. The threshold is how much % is maximal drop it can bear<br/>
@@ -214,7 +214,7 @@ as 8 and 1 were removed from list. So:
 Is what yoy usually end with
 
 #### Named queries
-As it maybe boring and error prone to keep repeating compelx equations, you can set the equation in the global settings and then just call it via its name - even with different parameters.
+As it maybe boring and error-prone to keep repeating compelx equations, you can set the equation in the global settings and then just call it via its name - even with different parameters.
  
 There are same named queries  already embedded: https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations
  
