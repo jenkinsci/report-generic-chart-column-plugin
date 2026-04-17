@@ -27,7 +27,6 @@ import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,38 +42,26 @@ import java.util.List;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    //FIXME when exeuted from job dir, the expressions must be read from config.xml, and data to the past jobs...
+    public static void main(String[] args) throws Exception {
         System.out.println("Parser-NG Preset Equation Evaluator");
         System.out.println("====================================");
-        System.out.println();
-        
         if (args.length == 0) {
             printUsage();
             System.exit(1);
         }
-        
         String presetName = args[0];
-        
         if (presetName.equalsIgnoreCase("LIST") || presetName.equalsIgnoreCase("--list") || presetName.equalsIgnoreCase("-l")) {
             listPresets();
             System.exit(0);
         }
-        
         if (presetName.equalsIgnoreCase("--help") || presetName.equalsIgnoreCase("-h")) {
             printUsage();
             System.exit(0);
         }
-        
-        try {
-            // Initialize preset equations manager
             PresetEquationsManager manager = new PresetEquationsManager();
-            
-            // Build the full preset call string (preset name + parameters)
             String presetCall = String.join(" ", args);
-            
-            // Get the preset equation
             PresetEquationsManager.PresetEquation preset = manager.get(presetCall);
-            
             if (preset == null) {
                 System.err.println("Error: Preset equation '" + presetName + "' not found!");
                 System.err.println();
@@ -84,43 +71,50 @@ public class Main {
                 }
                 System.exit(1);
             }
-            
             System.out.println("Preset: " + presetName);
             System.out.println("Original template: " + preset.getOriginal());
             System.out.println("Expanded expression: " + preset.getExpression());
             System.out.println();
-            
-            // For evaluation, we need data values
-            // The user should provide them after the preset parameters
-            // We need to prompt or use remaining args as values
-            System.out.println("Note: This evaluator shows the expanded expression.");
-            System.out.println("To evaluate with actual data values, you would need to provide them");
-            System.out.println("in the format expected by the ExpandingExpressionParser.");
-            System.out.println();
-            System.out.println("Expression ready for evaluation: " + preset.getExpression());
-            
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
-        }
+
+            List<String> dataValues = new ArrayList<>();
+            for (int i = 1; i < args.length; i++) {
+                dataValues.add(args[i]);
+            }
+
+                System.out.println("Evaluating preset equation...");
+                System.out.println("Data values: " + dataValues);
+                System.out.println();
+                ExpressionLogger logger = new ExpressionLogger() {
+                    @Override
+                    public void log(String s) {
+                        System.out.println(s);
+                    }
+                };
+                ExpandingExpressionParser parser = new ExpandingExpressionParser(preset.getExpression(), dataValues, logger);
+                boolean result = parser.evaluate();
+                System.out.println("Evaluation result: " + result);
+                System.out.println();
     }
     
     private static void printUsage() {
         System.out.println("Usage:");
-        System.out.println("  java -jar fat.jar <PRESET_NAME> <param1> <param2> ...");
+        System.out.println("  java -jar fat.jar <PRESET_NAME> <value1> <value2> ...");
         System.out.println();
         System.out.println("Options:");
         System.out.println("  LIST, --list, -l    List all available preset equations");
         System.out.println("  --help, -h          Show this help message");
         System.out.println();
         System.out.println("Examples:");
-        System.out.println("  java -jar fat.jar IMMEDIATE_UP_OK 5");
-        System.out.println("  java -jar fat.jar SHORT_UP_CUT_OK 1 5");
-        System.out.println("  java -jar fat.jar FINAL_UP_CUTTING_OK 2 5 5 5");
+        System.out.println("  java -jar fat.jar IMMEDIATE_UP_OK 5 100 95 90 85");
+        System.out.println("    - IMMEDIATE_UP_OK is the preset name");
+        System.out.println("    - 5 is the threshold parameter");
+        System.out.println("    - 100 95 90 85 are data values (L0=100, L1=95, L2=90, L3=85)");
         System.out.println();
-        System.out.println("The preset equation will be expanded with the provided parameters.");
-        System.out.println("Parameters are substituted for /*1*/, /*2*/, etc. in the preset template.");
+        System.out.println("  java -jar fat.jar SHORT_UP_CUT_OK 1 5 100 95 90 85 80");
+        System.out.println("    - cut=1, threshold=5, data values follow");
+        System.out.println();
+        System.out.println("The preset equation will be expanded with parameters and evaluated with data.");
+        System.out.println("All arguments after preset name are used as data values for evaluation.");
     }
     
     private static void listPresets() {

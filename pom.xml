@@ -89,7 +89,7 @@
                  <version>3.6.0</version>
                  <executions>
                      <execution>
-                         <id>make-fat-jar</id>
+                         <id>make-with-deps-jar</id>
                          <phase>package</phase>
                          <goals>
                              <goal>single</goal>

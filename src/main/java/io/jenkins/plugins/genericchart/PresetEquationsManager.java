@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,15 +121,11 @@ public class PresetEquationsManager {
     public static class PresetEquationDefinition {
         private final List<String> comments;
         private final List<String> body;
-        private final String comment;
-        private final String expression;
         private final String id;
 
         public PresetEquationDefinition(List<String> comments, List<String> body) {
             this.comments = Collections.unmodifiableList(comments);
             this.body = Collections.unmodifiableList(body);
-            comment = comments.stream().collect(Collectors.joining("\n"));
-            expression = body.stream().collect(Collectors.joining(" "));
             id = comments.get(0).replaceFirst("#*", "").trim();
         }
 
@@ -139,11 +134,11 @@ public class PresetEquationsManager {
         }
 
         public String getExpression() {
-            return expression;
+            return body.stream().collect(Collectors.joining(" "));
         }
 
         public String getComment() {
-            return comment;
+            return comments.stream().collect(Collectors.joining("\n"));
         }
     }
 
