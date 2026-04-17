@@ -80,7 +80,6 @@ public class Main {
             for (int i = 1; i < args.length; i++) {
                 dataValues.add(args[i]);
             }
-
                 System.out.println("Evaluating preset equation...");
                 System.out.println("Data values: " + dataValues);
                 System.out.println();

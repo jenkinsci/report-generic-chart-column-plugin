@@ -32,7 +32,7 @@ class PresetEquationsManagerTest {
         String listing1 = baos1.toString(StandardCharsets.UTF_8);
 
         ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-        PresetEquationsManager p2 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"1+1\"]}]");
+        PresetEquationsManager p2 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         try (PrintStream ps = new PrintStream(baos2, true, StandardCharsets.UTF_8)) {
             p2.print(ps);
         }
@@ -41,7 +41,7 @@ class PresetEquationsManagerTest {
 
         PresetEquationsManager.resetCached();
         baos2 = new ByteArrayOutputStream();
-        p2 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"1+1\"]}]");
+        p2 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         try (PrintStream ps = new PrintStream(baos2, true, StandardCharsets.UTF_8)) {
             p2.print(ps);
         }
@@ -51,7 +51,7 @@ class PresetEquationsManagerTest {
 
     @Test
     public void getTest() throws IOException, URISyntaxException {
-        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"1+1\"]}]");
+        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         PresetEquationsManager.PresetEquation e0 = p1.get("weird_id weird_params");
         Assertions.assertNull(e0);
         PresetEquationsManager.PresetEquation e1 = p1.get("someID");
@@ -70,7 +70,7 @@ class PresetEquationsManagerTest {
 
     @Test
     public void noDupes() throws IOException, URISyntaxException {
-        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"1+1\"]}]");
+        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() == new HashSet<>(ids).size());
         Assertions.assertTrue(ids.size() > 5);
@@ -91,21 +91,21 @@ class PresetEquationsManagerTest {
 
     @Test
     public void buggyIsCought() throws IOException, URISyntaxException {
-        PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"blah=/*1*/; avg(blah\"]}]"); //missing bracket
+        PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"blah=/*1*/; avg(blah\"]}]}]"); //missing bracket
         StringBuilder sbOne = new StringBuilder();
         PresetEquationsManager.PresetEquation e = p1.get("someID 10");
         Assertions.assertNotNull(e);
         evaluate(null, sbOne, e);
         checkError(sbOne);
 
-        p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"/*1*/+/*2*/\"]}]"); //unexpanded /*2*/
+        p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"/*1*/+/*2*/\"]}]}]"); //unexpanded /*2*/
         sbOne = new StringBuilder();
         e = p1.get("someID 10");
         Assertions.assertNotNull(e);
         evaluate(null, sbOne, e);
         checkError(sbOne);
 
-        p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"blah=/*1*/; avg(blah)\"]}]"); //unexpanded /**/ in variable
+        p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"blah=/*1*/; avg(blah)\"]}]}]"); //unexpanded /**/ in variable
         sbOne = new StringBuilder();
         e = p1.get("someID");
         Assertions.assertNotNull(e);
@@ -120,7 +120,7 @@ class PresetEquationsManagerTest {
 
     @Test
     public void allValuates() throws IOException, URISyntaxException {
-        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"body\":[\"1+1\"]}]");
+        final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() > 5);
         StringBuilder sbAll = new StringBuilder();

@@ -6,9 +6,14 @@
       "one parameter, threshold number",
       "eg: IMMEDIATE_UP_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (L1/(L0/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (L1/(L0/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -18,9 +23,14 @@
       "one parameter, threshold number",
       "eg: IMMEDIATE_DOWN_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (L1/(L0/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (L1/(L0/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -31,9 +41,14 @@
       "one parameter, threshold number",
       "eg: SHORT_UP_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (avg(..L1)/(L0/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (avg(..L1)/(L0/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -44,9 +59,14 @@
       "one parameter, threshold number",
       "eg: SHORT_DOWN_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (avg(..L1)/(L0/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (avg(..L1)/(L0/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -57,9 +77,14 @@
       "one parameter, threshold number",
       "eg: SHORT_UP_BIG_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "    (geom(..L1)/(L0/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "    (geom(..L1)/(L0/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -70,9 +95,14 @@
       "one parameter, threshold number",
       "eg: SHORT_DOWN_BIG_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (geom(..L1)/(L0/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (geom(..L1)/(L0/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -83,9 +113,14 @@
       "two parameters, cut amount and threshold number",
       "eg: SHORT_UP_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (avgN(..L1)/(L0/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (avgN(..L1)/(L0/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -96,9 +131,14 @@
       "two parameters, cut amount and threshold number",
       "eg: SHORT_DOWN_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (avgN(..L1)/(L0/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (avgN(..L1)/(L0/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -109,9 +149,14 @@
       "two parameters, cut amount and threshold number",
       "eg: SHORT_UP_BIG_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "    (geomN(..L1)/(L0/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "    (geomN(..L1)/(L0/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -122,9 +167,14 @@
       "two parameters, cut amount and threshold number",
       "eg: SHORT_DOWN_BIG_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (geomN(..L1)/(L0/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (geomN(..L1)/(L0/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -135,9 +185,14 @@
       "one parameter, threshold number",
       "eg: LONG_UP_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -148,9 +203,14 @@
       "one parameter, threshold number",
       "eg: LONG_DOWN_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -161,9 +221,14 @@
       "one parameter, threshold number",
       "eg: LONG_UP_BIG_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -174,9 +239,14 @@
       "one parameter, threshold number",
       "eg: LONG_DOWN_BIG_OK 5"
     ],
-    "body": [
-      "threshold=/*1*/;",
-      "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "threshold=/*1*/;",
+          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -187,9 +257,14 @@
       "two parameters, cut amount and threshold number",
       "eg: LONG_UP_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -200,9 +275,14 @@
       "two parameters, cut amount and threshold number",
       "eg: LONG_DOWN_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -213,9 +293,14 @@
       "two parameters, cut amount and threshold number",
       "eg: LONG_UP_BIG_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  threshold"
+        ]
+      }
     ]
   },
   {
@@ -226,9 +311,14 @@
       "two parameters, cut amount and threshold number",
       "eg: LONG_DOWN_BIG_CUT_OK 1 5"
     ],
-    "body": [
-      "cut=/*1*/; threshold=/*2*/;",
-      "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -threshold"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/; threshold=/*2*/;",
+          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -threshold"
+        ]
+      }
     ]
   },
   {
@@ -239,15 +329,20 @@
       "cut, immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_UP_CUTTING_OK  2 5 5 5"
     ],
-    "body": [
-      "cut=/*1*/;thresholdA=/*2*/;",
-      "  -1*(L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*3*/;",
-      "  -1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*4*/;",
-      "  -1*(avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/;thresholdA=/*2*/;",
+          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*3*/;",
+          "  -1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*4*/;",
+          "  -1*(avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -258,15 +353,20 @@
       "cut, immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_DOWN_CUTTING_OK  2 5 5 5"
     ],
-    "body": [
-      "cut=/*1*/;thresholdA=/*2*/;",
-      "  (L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*3*/;",
-      "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*4*/;",
-      "  (avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/;thresholdA=/*2*/;",
+          "  (L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*3*/;",
+          "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*4*/;",
+          "  (avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -277,15 +377,20 @@
       "immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_UP_OK  5 5 5"
     ],
-    "body": [
-      "thresholdA=/*1*/;",
-      "  -1*(L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*2*/;",
-      "  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*3*/;",
-      "  -1*(avg(..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "thresholdA=/*1*/;",
+          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*2*/;",
+          "  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*3*/;",
+          "  -1*(avg(..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -296,15 +401,20 @@
       "immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_DOWN_OK  5 5 5"
     ],
-    "body": [
-      "thresholdA=/*1*/;",
-      "  (L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*2*/;",
-      "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*3*/;",
-      "  (avg(..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "thresholdA=/*1*/;",
+          "  (L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*2*/;",
+          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*3*/;",
+          "  (avg(..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -315,15 +425,20 @@
       "cut, immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_UP_BIG_CUTTING_OK  2 5 5 5"
     ],
-    "body": [
-      "cut=/*1*/;thresholdA=/*2*/;",
-      "  -1*(L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*3*/;",
-      "  -1*(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*4*/;",
-      "  -1*(geomN(cut,..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/;thresholdA=/*2*/;",
+          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*3*/;",
+          "  -1*(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*4*/;",
+          "  -1*(geomN(cut,..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -334,15 +449,20 @@
       "cut, immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_DOWN_BIG_CUTTING_OK  2 5 5 5"
     ],
-    "body": [
-      "cut=/*1*/;thresholdA=/*2*/;",
-      "  (L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*3*/;",
-      "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*4*/;",
-      "  (geomN(cut,..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "cut=/*1*/;thresholdA=/*2*/;",
+          "  (L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*3*/;",
+          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*4*/;",
+          "  (geomN(cut,..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -353,15 +473,20 @@
       "immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_UP_BIG_OK  5 5 5"
     ],
-    "body": [
-      "thresholdA=/*1*/;",
-      "  -1*(L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*2*/;",
-      "  -1*(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*3*/;",
-      "  -1*(geom(..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "thresholdA=/*1*/;",
+          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*2*/;",
+          "  -1*(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*3*/;",
+          "  -1*(geom(..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
     ]
   },
   {
@@ -372,15 +497,55 @@
       "immediate threshold, short time threshold, long time threshold",
       "eg: FINAL_DOWN_BIG_OK  5 5 5"
     ],
-    "body": [
-      "thresholdA=/*1*/;",
-      "  (L1/(L0/100)-100) < -thresholdA",
-      "  ||",
-      "thresholdB=/*2*/;",
-      "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
-      "  ||",
-      "thresholdC=/*3*/;",
-      "  (geom(..L1)/(L0/100)-100) < -thresholdC"
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "thresholdA=/*1*/;",
+          "  (L1/(L0/100)-100) < -thresholdA",
+          "  ||",
+          "thresholdB=/*2*/;",
+          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  ||",
+          "thresholdC=/*3*/;",
+          "  (geom(..L1)/(L0/100)-100) < -thresholdC"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "FUTURE",
+    "comments": [
+      "//named results impl",
+      "[ //named equations",
+      "  {",
+      "   ename=\"ename1\"",
+      "   edescription_line1=\"multiline description\"",
+      "   edescription_line2=\"multiline description\"",
+      "   edescription_lineN=\"multiline description\"",
+      "   [  //equationSteps",
+      "                                              //the condition must be able to use all varnames and equations, including this one",
+      "     {varname=\"name1\", equation=\"something1\" [{conditionEquation=\"cq1\", \"trueDescription=\"txt1\", \"elseDescription=\"txt1\"}]}",
+      "     //then we can use  \"name1\" latr",
+      "     {varname=\"name2\", equation=\"something2+varname2\"}",
+      "     //similaryly as /*2*/ is used /*name1*/",
+      "     ...",
+      "     {varname=\"nameN\", equation=\"somethingN+varname1+..?..+varnameN\"}",
+      "     //result of last equation is used as final result",
+      "   ]",
+      "   }",
+      " ]"
+    ],
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "a=/*1*/;",
+          "b=/*2*/;",
+          "c=/*3*/;",
+          "  a+b+c"
+        ]
+      }
     ]
   }
 ]

@@ -74,7 +74,7 @@ public class PresetEquationsManager {
                 
                 List<PresetEquationDefinition> parsed = new ArrayList<>();
                 for (PresetEquationDefinitionJson json : jsonList) {
-                    parsed.add(new PresetEquationDefinition(json.id, json.comments, json.body));
+                    parsed.add(new PresetEquationDefinition(json.id, json.comments, json.equations));
                 }
                 return parsed;
             }
@@ -85,7 +85,13 @@ public class PresetEquationsManager {
     private static class PresetEquationDefinitionJson {
         String id;
         List<String> comments;
-        List<String> body;
+        List<NamedEquation> equations;
+    }
+    
+    @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD"}, justification = "written to by gson builder")
+    private static class NamedEquation {
+        String name;
+        List<String> equation;
     }
 
     public void print(PrintStream logger) {
@@ -118,13 +124,18 @@ public class PresetEquationsManager {
 
     public static class PresetEquationDefinition {
         private final List<String> comments;
-        private final List<String> body;
+        private final List<NamedEquationDefinition> equations;
         private final String id;
 
-        public PresetEquationDefinition(String id, List<String> comments, List<String> body) {
+        public PresetEquationDefinition(String id, List<String> comments, List<NamedEquation> equations) {
             this.id = id;
             this.comments = Collections.unmodifiableList(comments);
-            this.body = Collections.unmodifiableList(body);
+            // Convert NamedEquation (JSON) to NamedEquationDefinition (immutable)
+            List<NamedEquationDefinition> eqList = new ArrayList<>();
+            for (NamedEquation eq : equations) {
+                eqList.add(new NamedEquationDefinition(eq.name, eq.equation));
+            }
+            this.equations = Collections.unmodifiableList(eqList);
         }
 
         public String getId() {
@@ -132,11 +143,46 @@ public class PresetEquationsManager {
         }
 
         public String getExpression() {
-            return body.stream().collect(Collectors.joining(" "));
+            StringBuilder sb = new StringBuilder();
+            for (NamedEquationDefinition eq : equations) {
+                for (String line : eq.getEquation()) {
+                    if (sb.length() > 0) {
+                        sb.append(" ");
+                    }
+                    sb.append(line);
+                }
+            }
+            return sb.toString();
         }
 
         public String getComment() {
             return comments.stream().collect(Collectors.joining("\n"));
+        }
+        
+        public List<NamedEquationDefinition> getEquations() {
+            return equations;
+        }
+    }
+    
+    public static class NamedEquationDefinition {
+        private final String name;
+        private final List<String> equation;
+        
+        public NamedEquationDefinition(String name, List<String> equation) {
+            this.name = name;
+            this.equation = Collections.unmodifiableList(equation);
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public List<String> getEquation() {
+            return equation;
+        }
+        
+        public String getEquationAsString() {
+            return equation.stream().collect(Collectors.joining(" "));
         }
     }
 
