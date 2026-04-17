@@ -1,11 +1,15 @@
 package io.jenkins.plugins.genericchart;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -43,51 +47,50 @@ public class PresetEquationsManager {
     private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException, URISyntaxException {
         synchronized (lock) {
             if (bodyOrUrl.split("\n").length > 1) {
-                return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
+                // It's a body, check if it's JSON or old format
+                String trimmed = bodyOrUrl.trim();
+                if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+                    return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
+                } else {
+                    return PresetEquationsLegacyLoader.readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
+                }
             } else {
-                return readFromStream(new URI(bodyOrUrl).toURL().openStream());
+                // It's a URL, try JSON first, fallback to old format
+                try {
+                    return readFromStream(new URI(bodyOrUrl).toURL().openStream());
+                } catch (Exception e) {
+                    return PresetEquationsLegacyLoader.readFromStream(new URI(bodyOrUrl).toURL().openStream());
+                }
             }
         }
     }
 
     private List<PresetEquationDefinition> readInternals() throws IOException {
         synchronized (lock) {
-            return readFromStream(this.getClass().getResourceAsStream("presetEquations"));
+            return readFromStream(this.getClass().getResourceAsStream("presetEquations.json"));
         }
     }
 
     private static List<PresetEquationDefinition> readFromStream(InputStream in) throws IOException {
         synchronized (lock) {
-            List<String> futureComments = new ArrayList<>();
-            List<String> futureBody = new ArrayList<>();
-            List<PresetEquationDefinition> parsed = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                while (true) {
-                    String s = br.readLine();
-                    if (s == null) {
-                        if (!futureBody.isEmpty()) {
-                            parsed.add(new PresetEquationDefinition(futureComments, futureBody));
-                        }
-                        break;
-                    }
-                    if (s.trim().isEmpty()) {
-                        continue;
-                    }
-                    if (s.trim().startsWith("#")) {
-                        if (!futureBody.isEmpty()) {
-                            parsed.add(new PresetEquationDefinition(futureComments, futureBody));
-                            futureComments = new ArrayList<>();
-                            futureBody = new ArrayList<>();
-                        }
-                        futureComments.add(s.trim());
-                    } else {
-                        futureBody.add(s.trim());
-                    }
+                Gson gson = new Gson();
+                Type listType = new TypeToken<List<PresetEquationDefinitionJson>>(){}.getType();
+                List<PresetEquationDefinitionJson> jsonList = gson.fromJson(br, listType);
+                
+                List<PresetEquationDefinition> parsed = new ArrayList<>();
+                for (PresetEquationDefinitionJson json : jsonList) {
+                    parsed.add(new PresetEquationDefinition(json.id, json.comments, json.body));
                 }
+                return parsed;
             }
-            return parsed;
         }
-
+    }
+    
+    private static class PresetEquationDefinitionJson {
+        String id;
+        List<String> comments;
+        List<String> body;
     }
 
     public void print(PrintStream logger) {
@@ -123,10 +126,18 @@ public class PresetEquationsManager {
         private final List<String> body;
         private final String id;
 
+        // Constructor for legacy format (ID extracted from first comment line)
         public PresetEquationDefinition(List<String> comments, List<String> body) {
             this.comments = Collections.unmodifiableList(comments);
             this.body = Collections.unmodifiableList(body);
             id = comments.get(0).replaceFirst("#*", "").trim();
+        }
+
+        // Constructor for JSON format (ID provided separately)
+        public PresetEquationDefinition(String id, List<String> comments, List<String> body) {
+            this.id = id;
+            this.comments = Collections.unmodifiableList(comments);
+            this.body = Collections.unmodifiableList(body);
         }
 
         public String getId() {

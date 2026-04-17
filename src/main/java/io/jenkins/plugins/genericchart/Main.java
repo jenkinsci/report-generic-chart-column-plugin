@@ -31,8 +31,8 @@ import java.util.List;
 
 /**
  * Main class for launching parser-ng extended parser from fat jar.
- * Executes preset equations from presetEquations file.
- * 
+ * Executes preset equations from presetEquations.json file.
+ *
  * Usage: java -jar fat.jar <PRESET_NAME> <param1> <param2> ... <value1> <value2> ...
  * 
  * Example: java -jar fat.jar IMMEDIATE_UP_OK 5 100 95 90 85
