@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
@@ -67,9 +68,10 @@ public class PresetEquationsManager {
         synchronized (lock) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 Gson gson = new Gson();
-                Type listType = new TypeToken<List<PresetEquationDefinitionJson>>(){}.getType();
+                Type listType = new TypeToken<List<PresetEquationDefinitionJson>>() {
+                }.getType();
                 List<PresetEquationDefinitionJson> jsonList = gson.fromJson(br, listType);
-                
+
                 List<PresetEquationDefinition> parsed = new ArrayList<>();
                 for (PresetEquationDefinitionJson json : jsonList) {
                     parsed.add(new PresetEquationDefinition(json.id, json.comments, json.equations));
@@ -92,22 +94,17 @@ public class PresetEquationsManager {
     }
 
     public List<String> getIds() {
-        return internals.stream().map( a->a.getId()).sorted().collect(Collectors.toList());
+        return internals.stream().map(a -> a.getId()).sorted().collect(Collectors.toList());
     }
 
     public PresetEquation get(String idWithParams) {
-        try {
-            String[] fullSplit = idWithParams.split("\\s+");
-            String id = fullSplit[0];
-            String[] params = idWithParams.replaceFirst(id + "\\s+", "").split("\\s+");
-            for (PresetEquationDefinition def : internals) {
-                if (def.getId().equals(id)) {
-                    return new PresetEquation(def.getExpression(), params);
-                }
+        String[] fullSplit = idWithParams.split("\\s+");
+        String id = fullSplit[0];
+        String[] params = idWithParams.replaceFirst(Pattern.quote(id) + "\\s+", "").split("\\s+");
+        for (PresetEquationDefinition def : internals) {
+            if (def.getId().equals(id)) {
+                return new PresetEquation(def.getExpression(), params);
             }
-        }catch (PatternSyntaxException ex) {
-            //there is unnecessary glitch, when we are using ID in repalceAll as pattern...
-            return null;
         }
         return null;
     }
