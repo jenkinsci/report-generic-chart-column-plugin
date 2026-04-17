@@ -31,6 +31,8 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
+import io.jenkins.plugins.genericchart.equations.PresetEquation;
+import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
 import parser.expanding.ExpandingExpressionParser;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -72,7 +74,7 @@ public class GenericChartPublisher extends Publisher {
                         presets.print(listener.getLogger());
                         equation = "Internal expressions printed";
                     } else {
-                        PresetEquationsManager.PresetEquation isPreset = presets.get(equation);
+                        PresetEquation isPreset = presets.get(equation);
                         if (isPreset != null) {
                             listener.getLogger().println(equation + " found as preset queue:");
                             listener.getLogger().println(isPreset.getOriginal());

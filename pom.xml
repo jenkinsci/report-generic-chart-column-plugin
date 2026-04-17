@@ -97,7 +97,7 @@
                          <configuration>
                              <archive>
                                  <manifest>
-                                     <mainClass>io.jenkins.plugins.genericchart.Main</mainClass>
+                                     <mainClass>io.jenkins.plugins.genericchart.equations.Main</mainClass>
                                  </manifest>
                              </archive>
                              <finalName>${project.artifactId}-${project.version}-with-deps</finalName>

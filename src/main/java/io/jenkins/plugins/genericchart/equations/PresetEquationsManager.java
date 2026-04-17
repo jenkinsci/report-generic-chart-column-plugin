@@ -1,4 +1,4 @@
-package io.jenkins.plugins.genericchart;
+package io.jenkins.plugins.genericchart.equations;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -14,11 +14,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class PresetEquationsManager {
 
@@ -81,19 +78,6 @@ public class PresetEquationsManager {
         }
     }
 
-    @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD"}, justification = "written to by gson builder")
-    private static class PresetEquationDefinitionJson {
-        String id;
-        List<String> comments;
-        List<NamedEquation> equations;
-    }
-    
-    @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD"}, justification = "written to by gson builder")
-    private static class NamedEquation {
-        String name;
-        List<String> equation;
-    }
-
     public void print(PrintStream logger) {
         for (PresetEquationDefinition def : internals) {
             logger.println("***" + def.getId() + "***");
@@ -120,96 +104,6 @@ public class PresetEquationsManager {
             }
         }
         return null;
-    }
-
-    public static class PresetEquationDefinition {
-        private final List<String> comments;
-        private final List<NamedEquationDefinition> equations;
-        private final String id;
-
-        public PresetEquationDefinition(String id, List<String> comments, List<NamedEquation> equations) {
-            this.id = id;
-            this.comments = Collections.unmodifiableList(comments);
-            // Convert NamedEquation (JSON) to NamedEquationDefinition (immutable)
-            List<NamedEquationDefinition> eqList = new ArrayList<>();
-            for (NamedEquation eq : equations) {
-                eqList.add(new NamedEquationDefinition(eq.name, eq.equation));
-            }
-            this.equations = Collections.unmodifiableList(eqList);
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getExpression() {
-            StringBuilder sb = new StringBuilder();
-            for (NamedEquationDefinition eq : equations) {
-                for (String line : eq.getEquation()) {
-                    if (sb.length() > 0) {
-                        sb.append(" ");
-                    }
-                    sb.append(line);
-                }
-            }
-            return sb.toString();
-        }
-
-        public String getComment() {
-            return comments.stream().collect(Collectors.joining("\n"));
-        }
-        
-        public List<NamedEquationDefinition> getEquations() {
-            return equations;
-        }
-    }
-    
-    public static class NamedEquationDefinition {
-        private final String name;
-        private final List<String> equation;
-        
-        public NamedEquationDefinition(String name, List<String> equation) {
-            this.name = name;
-            this.equation = Collections.unmodifiableList(equation);
-        }
-        
-        public String getName() {
-            return name;
-        }
-        
-        public List<String> getEquation() {
-            return equation;
-        }
-        
-        public String getEquationAsString() {
-            return equation.stream().collect(Collectors.joining(" "));
-        }
-    }
-
-    public static class PresetEquation {
-        private final String original;
-        private final String expression;
-
-        private PresetEquation(String original, String... params) {
-            this.original = original;
-            expression = expand(original, params);
-        }
-
-        private String expand(String original, String[] params) {
-            String fex = original;
-            for (int i = 0; i < params.length; i++) {
-                fex = fex.replaceAll("/\\*" + (i + 1) + "\\*/", params[i]);
-            }
-            return fex;
-        }
-
-        public String getOriginal() {
-            return original;
-        }
-
-        public String getExpression() {
-            return expression;
-        }
     }
 
 }

@@ -21,13 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io.jenkins.plugins.genericchart;
+package io.jenkins.plugins.genericchart.equations;
 
 import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Main class for launching parser-ng extended parser from fat jar.
@@ -59,40 +60,43 @@ public class Main {
             printUsage();
             System.exit(0);
         }
-            PresetEquationsManager manager = new PresetEquationsManager();
-            String presetCall = String.join(" ", args);
-            PresetEquationsManager.PresetEquation preset = manager.get(presetCall);
-            if (preset == null) {
-                System.err.println("Error: Preset equation '" + presetName + "' not found!");
-                System.err.println();
-                System.err.println("Available presets:");
-                for (String id : manager.getIds()) {
-                    System.err.println("  - " + id);
-                }
-                System.exit(1);
+        PresetEquationsManager manager = new PresetEquationsManager();
+        String presetCall = String.join(" ", args);
+        PresetEquation preset;
+        try {
+            preset = manager.get(presetCall);
+        } catch (PatternSyntaxException ex) {
+            //there is unnecessary glitch, when we are using ID in repalceAll as pattern...
+            preset = null;
+        }
+        List<String> dataValues = new ArrayList<>();
+        for (int i = 1; i < args.length; i++) {
+            dataValues.add(args[i]);
+        }
+        System.out.println("Evaluating preset equation...");
+        System.out.println("Data values: " + dataValues);
+        System.out.println();
+        ExpressionLogger logger = new ExpressionLogger() {
+            @Override
+            public void log(String s) {
+                System.out.println(s);
             }
+        };
+        String expresion = presetName;
+        if (preset == null) {
+            System.out.println("Error: Preset equation '" + presetName + "' not found. Run --help or --list for more. Now evaluating.");
+            expresion = PresetEquation.expand(presetName, dataValues.toArray(new String[0]));
+        } else {
             System.out.println("Preset: " + presetName);
             System.out.println("Original template: " + preset.getOriginal());
             System.out.println("Expanded expression: " + preset.getExpression());
             System.out.println();
-
-            List<String> dataValues = new ArrayList<>();
-            for (int i = 1; i < args.length; i++) {
-                dataValues.add(args[i]);
-            }
-                System.out.println("Evaluating preset equation...");
-                System.out.println("Data values: " + dataValues);
-                System.out.println();
-                ExpressionLogger logger = new ExpressionLogger() {
-                    @Override
-                    public void log(String s) {
-                        System.out.println(s);
-                    }
-                };
-                ExpandingExpressionParser parser = new ExpandingExpressionParser(preset.getExpression(), dataValues, logger);
-                boolean result = parser.evaluate();
-                System.out.println("Evaluation result: " + result);
-                System.out.println();
+            expresion = preset.getExpression();
+        }
+        ExpandingExpressionParser parser = new ExpandingExpressionParser(expresion, dataValues, logger);
+        boolean result = parser.evaluate();
+        System.out.println("Evaluation result: " + result);
+        System.out.println();
     }
     
     private static void printUsage() {
@@ -114,6 +118,7 @@ public class Main {
         System.out.println();
         System.out.println("The preset equation will be expanded with parameters and evaluated with data.");
         System.out.println("All arguments after preset name are used as data values for evaluation.");
+        System.out.println("If preset equation is not found, the first argument is evaluated as equation (with others as params) as expected.");
     }
     
     private static void listPresets() {

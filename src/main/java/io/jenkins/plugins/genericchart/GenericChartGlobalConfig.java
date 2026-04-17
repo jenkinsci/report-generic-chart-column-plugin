@@ -9,6 +9,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import java.util.logging.Logger;
 
 import hudson.Extension;
+import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
 import jenkins.model.GlobalConfiguration;
 
 @Extension
