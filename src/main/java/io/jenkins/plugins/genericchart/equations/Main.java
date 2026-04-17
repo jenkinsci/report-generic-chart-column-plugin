@@ -28,7 +28,6 @@ import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Main class for launching parser-ng extended parser from fat jar.
@@ -62,13 +61,7 @@ public class Main {
         }
         PresetEquationsManager manager = new PresetEquationsManager();
         String presetCall = String.join(" ", args);
-        PresetEquation preset;
-        try {
-            preset = manager.get(presetCall);
-        } catch (PatternSyntaxException ex) {
-            //there is unnecessary glitch, when we are using ID in repalceAll as pattern...
-            preset = null;
-        }
+        PresetEquation preset = manager.get(presetCall);
         List<String> dataValues = new ArrayList<>();
         for (int i = 1; i < args.length; i++) {
             dataValues.add(args[i]);

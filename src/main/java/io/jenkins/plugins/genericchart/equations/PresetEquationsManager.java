@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 public class PresetEquationsManager {
@@ -95,13 +96,18 @@ public class PresetEquationsManager {
     }
 
     public PresetEquation get(String idWithParams) {
-        String[] fullSplit = idWithParams.split("\\s+");
-        String id = fullSplit[0];
-        String[] params = idWithParams.replaceFirst(id+"\\s+","").split("\\s+");
-        for (PresetEquationDefinition def : internals) {
-            if (def.getId().equals(id)) {
-                return new PresetEquation(def.getExpression(), params);
+        try {
+            String[] fullSplit = idWithParams.split("\\s+");
+            String id = fullSplit[0];
+            String[] params = idWithParams.replaceFirst(id + "\\s+", "").split("\\s+");
+            for (PresetEquationDefinition def : internals) {
+                if (def.getId().equals(id)) {
+                    return new PresetEquation(def.getExpression(), params);
+                }
             }
+        }catch (PatternSyntaxException ex) {
+            //there is unnecessary glitch, when we are using ID in repalceAll as pattern...
+            return null;
         }
         return null;
     }
