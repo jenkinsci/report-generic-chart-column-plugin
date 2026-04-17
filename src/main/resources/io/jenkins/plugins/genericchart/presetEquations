@@ -251,3 +251,28 @@ thresholdB=/*2*/;
   ||
 thresholdC=/*3*/;
   (geom(..L1)/(L0/100)-100) < -thresholdC
+
+#FUTURE
+#//named results impl
+# [ //named equations
+#   {
+#    ename="ename1"
+#    edescription_line1="multiline description"
+#    edescription_line2="multiline description"
+#    edescription_lineN="multiline description"
+#    [  //equationSteps
+#                                               //the condition must be able to use all varnames and equations, including this one
+#      {varname="name1", equation="something1" [{conditionEquation="cq1", "trueDescription="txt1", "elseDescription="txt1"}]}
+#      //then we can use  "name1" latr
+#      {varname="name2", equation="something2+varname2"}
+#      //similaryly as /*2*/ is used /*name1*/
+#      ...
+#      {varname="nameN", equation="somethingN+varname1+..?..+varnameN"}
+#      //result of last equation is used as final result
+#    ]
+#    }
+#  ]
+a=/*1*/;
+b=/*2*/;
+c=/*3*/;
+  a+b >  c

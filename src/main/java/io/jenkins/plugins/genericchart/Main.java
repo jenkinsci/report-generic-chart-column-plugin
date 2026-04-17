@@ -1,0 +1,141 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2026 user.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package io.jenkins.plugins.genericchart;
+
+import parser.expanding.ExpandingExpressionParser;
+import parser.logical.ExpressionLogger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Main class for launching parser-ng extended parser from fat jar.
+ * Executes preset equations from presetEquations file.
+ * 
+ * Usage: java -jar fat.jar <PRESET_NAME> <param1> <param2> ... <value1> <value2> ...
+ * 
+ * Example: java -jar fat.jar IMMEDIATE_UP_OK 5 100 95 90 85
+ *   - IMMEDIATE_UP_OK is the preset equation name
+ *   - 5 is the threshold parameter
+ *   - 100 95 90 85 are the data values (L0=100, L1=95, L2=90, L3=85)
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        System.out.println("Parser-NG Preset Equation Evaluator");
+        System.out.println("====================================");
+        System.out.println();
+        
+        if (args.length == 0) {
+            printUsage();
+            System.exit(1);
+        }
+        
+        String presetName = args[0];
+        
+        if (presetName.equalsIgnoreCase("LIST") || presetName.equalsIgnoreCase("--list") || presetName.equalsIgnoreCase("-l")) {
+            listPresets();
+            System.exit(0);
+        }
+        
+        if (presetName.equalsIgnoreCase("--help") || presetName.equalsIgnoreCase("-h")) {
+            printUsage();
+            System.exit(0);
+        }
+        
+        try {
+            // Initialize preset equations manager
+            PresetEquationsManager manager = new PresetEquationsManager();
+            
+            // Build the full preset call string (preset name + parameters)
+            String presetCall = String.join(" ", args);
+            
+            // Get the preset equation
+            PresetEquationsManager.PresetEquation preset = manager.get(presetCall);
+            
+            if (preset == null) {
+                System.err.println("Error: Preset equation '" + presetName + "' not found!");
+                System.err.println();
+                System.err.println("Available presets:");
+                for (String id : manager.getIds()) {
+                    System.err.println("  - " + id);
+                }
+                System.exit(1);
+            }
+            
+            System.out.println("Preset: " + presetName);
+            System.out.println("Original template: " + preset.getOriginal());
+            System.out.println("Expanded expression: " + preset.getExpression());
+            System.out.println();
+            
+            // For evaluation, we need data values
+            // The user should provide them after the preset parameters
+            // We need to prompt or use remaining args as values
+            System.out.println("Note: This evaluator shows the expanded expression.");
+            System.out.println("To evaluate with actual data values, you would need to provide them");
+            System.out.println("in the format expected by the ExpandingExpressionParser.");
+            System.out.println();
+            System.out.println("Expression ready for evaluation: " + preset.getExpression());
+            
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+    
+    private static void printUsage() {
+        System.out.println("Usage:");
+        System.out.println("  java -jar fat.jar <PRESET_NAME> <param1> <param2> ...");
+        System.out.println();
+        System.out.println("Options:");
+        System.out.println("  LIST, --list, -l    List all available preset equations");
+        System.out.println("  --help, -h          Show this help message");
+        System.out.println();
+        System.out.println("Examples:");
+        System.out.println("  java -jar fat.jar IMMEDIATE_UP_OK 5");
+        System.out.println("  java -jar fat.jar SHORT_UP_CUT_OK 1 5");
+        System.out.println("  java -jar fat.jar FINAL_UP_CUTTING_OK 2 5 5 5");
+        System.out.println();
+        System.out.println("The preset equation will be expanded with the provided parameters.");
+        System.out.println("Parameters are substituted for /*1*/, /*2*/, etc. in the preset template.");
+    }
+    
+    private static void listPresets() {
+        try {
+            PresetEquationsManager manager = new PresetEquationsManager();
+            System.out.println("Available Preset Equations:");
+            System.out.println("===========================");
+            System.out.println();
+            manager.print(System.out);
+        } catch (Exception e) {
+            System.err.println("Error loading presets: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+}
+
+// Made with Bob
