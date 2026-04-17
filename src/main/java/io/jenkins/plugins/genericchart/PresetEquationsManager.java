@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class PresetEquationsManager {
 
     private static final Object lock = new Object();
@@ -46,21 +48,13 @@ public class PresetEquationsManager {
 
     private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException, URISyntaxException {
         synchronized (lock) {
-            if (bodyOrUrl.split("\n").length > 1) {
-                // It's a body, check if it's JSON or old format
-                String trimmed = bodyOrUrl.trim();
-                if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
-                    return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
-                } else {
-                    return PresetEquationsLegacyLoader.readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
-                }
+            String trimmed = bodyOrUrl.trim();
+            // Check if it's JSON (starts with [ or {) or multi-line text
+            if (trimmed.startsWith("[") || trimmed.startsWith("{") || bodyOrUrl.split("\n").length > 1) {
+                return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));
             } else {
-                // It's a URL, try JSON first, fallback to old format
-                try {
-                    return readFromStream(new URI(bodyOrUrl).toURL().openStream());
-                } catch (Exception e) {
-                    return PresetEquationsLegacyLoader.readFromStream(new URI(bodyOrUrl).toURL().openStream());
-                }
+                // It's a URL
+                return readFromStream(new URI(bodyOrUrl).toURL().openStream());
             }
         }
     }
@@ -86,7 +80,8 @@ public class PresetEquationsManager {
             }
         }
     }
-    
+
+    @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD"}, justification = "written to by gson builder")
     private static class PresetEquationDefinitionJson {
         String id;
         List<String> comments;
@@ -126,14 +121,6 @@ public class PresetEquationsManager {
         private final List<String> body;
         private final String id;
 
-        // Constructor for legacy format (ID extracted from first comment line)
-        public PresetEquationDefinition(List<String> comments, List<String> body) {
-            this.comments = Collections.unmodifiableList(comments);
-            this.body = Collections.unmodifiableList(body);
-            id = comments.get(0).replaceFirst("#*", "").trim();
-        }
-
-        // Constructor for JSON format (ID provided separately)
         public PresetEquationDefinition(String id, List<String> comments, List<String> body) {
             this.id = id;
             this.comments = Collections.unmodifiableList(comments);
