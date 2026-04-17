@@ -214,21 +214,33 @@ as 8 and 1 were removed from list. So:
 Is what yoy usually end with
 
 #### Named queries
-As it maybe boring and error-prone to keep repeating compelx equations, you can set the equation in the global settings and then just call it via its name - even with different parameters.
+As it maybe boring and error-prone to keep repeating complex equations, you can set the equation in the global settings and then just call it via its name - even with different parameters.
  
-There are same named queries  already embedded: https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations
+There are same named queries already embedded: https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations.json
  
+The preset equations are defined in JSON format:
+```json
+{
+  "id": "EQUATION_NAME",
+  "comments": [
+    "Description of what this equation does",
+    "Parameters: param1, param2, ...",
+    "Example: EQUATION_NAME 5 10"
+  ],
+  "equations": [
+    {
+      "name": "main",
+      "equation": [
+        "variable=/*1*/;",
+        "expression with /*1*/ /*2*/ ... /*9*/ as placeholders"
+      ]
+    }
+  ]
+}
 ```
- # FIRST_LINE_IS_ALWAYS_NAME
- # then soem documentation
- Then, on multiple lines without hash (as parserng -t)
- there is the expression  with /*1*/ /*2*/
- upto /*9*/ as placeholders for your arguments
- 
- # empty line then ends up the expression.
- # you ca then call FIRST_LINE_IS_ALWAYS_NAME arg1 arg2 ...
-```
-Well see [examples](https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations) and dont forget you can set up yor own in settings.
+You can then call `EQUATION_NAME arg1 arg2 ...` in your unstable condition.
+
+See [examples](https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations.json) and don't forget you can set up your own in global settings (also in JSON format).
 
 ## Denylist and Allowlist
 you could noted, that the graphs are scaled.  If you have run, which escapes the normality, the scale get corrupted, and you can easily miss regression. To fix this, you have denylist (and allowlist). This is list of regexes,  which filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and `#build_number` (note the hash). Empty denylist/allowlist means it is not used at all.
