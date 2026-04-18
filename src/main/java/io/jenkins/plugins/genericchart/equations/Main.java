@@ -23,7 +23,6 @@
  */
 package io.jenkins.plugins.genericchart.equations;
 
-import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public class Main {
         }
         PresetEquationsManager manager = new PresetEquationsManager();
         String presetCall = String.join(" ", args);
-        PresetEquation preset = manager.get(presetCall);
+        PresetEquationDefinition preset = manager.getFromCommandString(presetCall);
         List<String> dataValues = new ArrayList<>();
         for (int i = 1; i < args.length; i++) {
             dataValues.add(args[i]);
@@ -75,38 +74,34 @@ public class Main {
                 System.out.println(s);
             }
         };
-        String expresion = presetName;
+        IncrementalSequentialEvaluator expresion;
         if (preset == null) {
             System.out.println("Error: Preset equation '" + presetName + "' not found. Run --help or --list for more. Now evaluating.");
-            expresion = PresetEquation.expand(presetName, dataValues.toArray(new String[0]));
+            expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator(presetName);
         } else {
-            System.out.println("Preset: " + presetName);
-            System.out.println("Original template: " + preset.getOriginal());
-            System.out.println("Expanded expression: " + preset.getExpression());
-            System.out.println();
-            expresion = preset.getExpression();
+            expresion = preset.getExpressions();
         }
-        ExpandingExpressionParser parser = new ExpandingExpressionParser(expresion, dataValues, logger);
-        boolean result = parser.evaluate();
+        boolean result = expresion.evaluate(dataValues, PresetEquationsManager.getParamsFromParams(presetName), logger);
+
         System.out.println("Evaluation result: " + result);
         System.out.println();
     }
-    
+
     private static void printUsage() {
         System.out.println("Usage:");
-        System.out.println("  java -jar fat.jar <PRESET_NAME> <value1> <value2> ...");
+        System.out.println("  java -jar fat.jar \"<PRESET_NAME_OR_EQUATION> PRESET_PARAM1 PRESET_PARAM2 ... PRESET_PARAMN\" <datavalue1> <datavalue2> ...");
         System.out.println();
         System.out.println("Options:");
         System.out.println("  LIST, --list, -l    List all available preset equations");
         System.out.println("  --help, -h          Show this help message");
         System.out.println();
         System.out.println("Examples:");
-        System.out.println("  java -jar fat.jar IMMEDIATE_UP_OK 5 100 95 90 85");
+        System.out.println("  java -jar fat.jar \"IMMEDIATE_UP_OK 5\" 100 95 90 85");
         System.out.println("    - IMMEDIATE_UP_OK is the preset name");
-        System.out.println("    - 5 is the threshold parameter");
+        System.out.println("    - 5 is the  preset equation parameter");
         System.out.println("    - 100 95 90 85 are data values (L0=100, L1=95, L2=90, L3=85)");
         System.out.println();
-        System.out.println("  java -jar fat.jar SHORT_UP_CUT_OK 1 5 100 95 90 85 80");
+        System.out.println("  java -jar fat.jar \"SHORT_UP_CUT_OK 1 5\" 100 95 90 85 80");
         System.out.println("    - cut=1, threshold=5, data values follow");
         System.out.println();
         System.out.println("The preset equation will be expanded with parameters and evaluated with data.");

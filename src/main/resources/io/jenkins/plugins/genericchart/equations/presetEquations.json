@@ -538,12 +538,21 @@
     ],
     "equations": [
       {
-        "name": "main",
+        "name": "main1",
         "equation": [
           "a=/*1*/;",
           "b=/*2*/;",
           "c=/*3*/;",
           "  a+b+c"
+        ]
+      },
+      {
+        "name": "main2",
+        "equation": [
+          "a=/*4*/;",
+          "b=/*5*/;",
+          "c=/*6*/;",
+          "  (a+b+c)*/*main1*/"
         ]
       }
     ]

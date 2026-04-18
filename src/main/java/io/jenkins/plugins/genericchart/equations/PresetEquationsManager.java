@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 public class PresetEquationsManager {
@@ -85,8 +84,8 @@ public class PresetEquationsManager {
         for (PresetEquationDefinition def : internals) {
             logger.println("***" + def.getId() + "***");
             logger.println(def.getComment());
-            logger.println(def.getExpression());
-            PresetEquation expanded = new PresetEquation(def.getExpression(), "99 88 77 66 55 44 33 22 11".split(" "));
+            logger.println(def.getConnectedSingleExpression());
+            PresetEquation expanded = new PresetEquation(def.getConnectedSingleExpression(), "99 88 77 66 55 44 33 22 11".split(" "));
             logger.println("eg: " + expanded.getExpression());
             logger.println(" -- ");
         }
@@ -97,16 +96,26 @@ public class PresetEquationsManager {
         return internals.stream().map(a -> a.getId()).sorted().collect(Collectors.toList());
     }
 
-    public PresetEquation get(String idWithParams) {
-        String[] fullSplit = idWithParams.split("\\s+");
-        String id = fullSplit[0];
-        String[] params = idWithParams.replaceFirst(Pattern.quote(id) + "\\s+", "").split("\\s+");
+    //the params are not used. They are just filtered out
+    public PresetEquationDefinition getFromCommandString(String idWithParams) {
+        String id = getIdFromParams(idWithParams);
         for (PresetEquationDefinition def : internals) {
             if (def.getId().equals(id)) {
-                return new PresetEquation(def.getExpression(), params);
+                return def;
             }
         }
         return null;
+    }
+
+    public static String getIdFromParams(String idWithParams) {
+        String[] fullSplit = idWithParams.split("\\s+");
+        String id = fullSplit[0];
+        return id;
+    }
+
+    public static String[] getParamsFromParams(String idWithParams) {
+        String id = getIdFromParams(idWithParams);
+        return idWithParams.replaceFirst(Pattern.quote(id) + "\\s+", "").split("\\s+");
     }
 
 }

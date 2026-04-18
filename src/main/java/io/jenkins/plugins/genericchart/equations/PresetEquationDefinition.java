@@ -25,7 +25,8 @@ public class PresetEquationDefinition {
         return id;
     }
 
-    public String getExpression() {
+    @Deprecated
+    public String getConnectedSingleExpression() {
         StringBuilder sb = new StringBuilder();
         for (NamedEquationDefinition eq : equations) {
             for (String line : eq.getEquation()) {
@@ -36,6 +37,10 @@ public class PresetEquationDefinition {
             }
         }
         return sb.toString();
+    }
+
+    public IncrementalSequentialEvaluator getExpressions() {
+        return new IncrementalSequentialEvaluator(equations);
     }
 
     public String getComment() {

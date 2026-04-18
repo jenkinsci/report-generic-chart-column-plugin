@@ -31,9 +31,9 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import io.jenkins.plugins.genericchart.equations.PresetEquation;
+import io.jenkins.plugins.genericchart.equations.IncrementalSequentialEvaluator;
+import io.jenkins.plugins.genericchart.equations.PresetEquationDefinition;
 import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
-import parser.expanding.ExpandingExpressionParser;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -68,31 +68,33 @@ public class GenericChartPublisher extends Publisher {
         for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
             try {
                 if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
-                    String equation = chart.getUnstableCondition().trim();
+                    String equationNameOrDef = chart.getUnstableCondition().trim();
                     PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
-                    if (equation.trim().equals("LIST_INTERNALS")) {
+                    IncrementalSequentialEvaluator expresion;
+                    if (equationNameOrDef.trim().equals("LIST_INTERNALS")) {
                         presets.print(listener.getLogger());
-                        equation = "Internal expressions printed";
+                        expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator("Internal expressions printed");
                     } else {
-                        PresetEquation isPreset = presets.get(equation);
+                        PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
                         if (isPreset != null) {
-                            listener.getLogger().println(equation + " found as preset queue:");
-                            listener.getLogger().println(isPreset.getOriginal());
-                            equation = isPreset.getExpression();
+                            listener.getLogger().println(equationNameOrDef + " found as preset queue:");
+                            expresion = isPreset.getExpressions();
+                        } else {
+                            expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator(equationNameOrDef);
                         }
                     }
                     List<ChartPoint> points = chart.getPoints();
+                    //FIXME SECKO BLBE- micham data a parametetry.
+                    //FIXME data jsou  pointsValues
+                    //FIXME ale aprametry jsou v equationNameOrDef
+                    //FIXME je to blbe v cele nove logice, vcetne testu
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    ExpandingExpressionParser lep = new ExpandingExpressionParser(equation, pointsValues, new ExpressionLogger() {
-                        @Override
-                        public void log(String s) {
-                            listener.getLogger().println(s);
-                        }
-                    });
-                    if (lep.evaluate()) {
+                    boolean lep = expresion.evaluate(pointsValues,
+                            PresetEquationsManager.getParamsFromParams(equationNameOrDef), s -> listener.getLogger().println(s));
+                    if (lep) {
                         build.setResult(Result.UNSTABLE);
                         return true; //you can not go back, nothing is going worse here, so lets quit
                     }
