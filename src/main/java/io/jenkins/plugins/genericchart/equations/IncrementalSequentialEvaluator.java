@@ -24,15 +24,22 @@ public class IncrementalSequentialEvaluator {
 
     public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader) {
         String lastResult = "NaN";
+        Map<String, String> allEquationsDefs = new HashMap<>();
+        for (NamedEquationDefinition def : equations) {
+            allEquationsDefs.put(def.getName() + "_orig", def.getEquationAsString());
+        }
+        Map<String, String> allEquationsExp = new HashMap<>();
         for (NamedEquationDefinition def : equations) {
             //TODO check if there is maybe preddefined equation?
             //then calc it, and only use reuslt
             ExpandingExpressionParser ex = new ExpandingExpressionParser(new PresetEquation(def.getEquationAsString(),params).getExpression(results), dataValues, logger);
+            allEquationsExp.put(def.getName()+"_ex", ex.getExpanded());
             lastResult = ex.solve();
             results.put(def.getName(), lastResult);
             for (NamedEquationDescriptionDefinition desc : def.getDescriptions()) {
                 final Map<String, String> additionalVariablesForDescriptions = new HashMap<>();
                 additionalVariablesForDescriptions.putAll(results);
+                additionalVariablesForDescriptions.putAll(allEquationsExp);
                 additionalVariablesForDescriptions.put("RESULT", lastResult);
                 //additionalVariablesForDescriptions.put("ORIGEQ",  def.getEquationAsString()); /*We can not include original descriptions, they would get expanded*/
                 additionalVariablesForDescriptions.put("EXEQ", ex.getExpanded());
@@ -52,7 +59,12 @@ public class IncrementalSequentialEvaluator {
                                     ExpandingExpressionParser dex = new ExpandingExpressionParser(new PresetEquation(descLine, params).getExpression(additionalVariablesForDescriptions), dataValues, s -> {
                                     });
                                     //here we are expanding CONDO and ORIGEQ
-                                    descriptionReader.log(PresetEquation.repalceVariable("ORIGEQ", def.getEquationAsString(), PresetEquation.repalceVariable("CONDO", desc.getCondition(), dex.getExpanded())));
+                                    String finalMessage = PresetEquation.repalceVariable("CONDO", desc.getCondition(), dex.getExpanded());
+                                    finalMessage = PresetEquation.repalceVariable("ORIGEQ", def.getEquationAsString(), finalMessage);
+                                    for (Map.Entry<String, String> origFunctions : allEquationsDefs.entrySet()) {
+                                        finalMessage = PresetEquation.repalceVariable(origFunctions.getKey(), origFunctions.getValue(), finalMessage);
+                                    }
+                                    descriptionReader.log(finalMessage);
                                 }
                             } catch (Throwable e) {
                                 e.printStackTrace();

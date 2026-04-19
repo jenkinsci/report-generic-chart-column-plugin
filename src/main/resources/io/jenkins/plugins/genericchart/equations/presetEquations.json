@@ -514,43 +514,36 @@
     ]
   },
   {
-    "id": "FUTURE",
+    "id": "INTERCALL",
     "comments": [
-      "This is how future impl should look like",
-      "several equations passing results on",
-      "and several descriptions to describe the result"
+      "This show how other preset equations can cal lthemselves"
     ],
     "equations": [
       {
-        "name": "main1",
+        "name": "call1",
         "equation": [
-          "a=/*1*/;",
-          "b=/*2*/;",
-          "c=/*3*/;",
-          "  (a+b+c)*avg(L0..L{MN})"
+          "TEST /*1*/ /*2*/"
         ],
-        "descriptions": [
-          {"condition": "true","description": ["some title"]},
-          {"condition": "true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
-          {"condition": "true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
-          {"condition": "/*RESULT*/ > 0","description": ["some message with some /*1*/ and maybe L{MN}..L0 datas?", "Should be easy to preprocess, but not evaluate at the end."]},
-          {"condition": "/*RESULT*/ > 0","description": ["some other message with some /*main1*/ and maybe L{MN}..L0 datas?", "Should be easy to preprocess, but not evaluate at the end."]}
-        ]
+        "descriptions": []
       },
       {
-        "name": "main2",
+        "name": "call2",
         "equation": [
-          "a=/*4*/;",
-          "b=/*5*/;",
-          "c=/*6*/;",
-          "  (a+b+c)*/*main1*/-avg(L0..L{MN}) > 0"
+          "TEST /*1*/ /*2*/"
+        ],
+        "descriptions": []
+      },
+      {
+        "name": "main",
+        "equation": [
+          "/*call1*/ && /*call2*/"
         ],
         "descriptions": [
-          {"condition": "true","description": ["some title2"]},
-          {"condition": "/*RESULT*/ eq true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
-          {"condition": "/*RESULT*/ eq false","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]}
+          {"condition": "/*RESULT*/ eq true","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]}
         ]
       }
+
     ]
   },
 
@@ -592,11 +585,14 @@
         ],
         "descriptions": [
           {"condition": "true","description": ["final title"]},
-          {"condition": "/*RESULT*/ eq true","description": ["both /*t1*/ and /*t2*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*t1*/ and /*t2*/ ended same"]}
+          {"condition": "/*RESULT*/ eq true ","description": ["~both /*t1_orig*/ and /*t2_orig*/ ended same"]},
+          {"condition": "/*RESULT*/ eq true ","description": ["both /*t1_orig*/ and /*t2_orig*/ ended same"]},
+          {"condition": "/*RESULT*/ eq true ","description": ["both /*t1_ex*/ and /*t2_ex*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["~both /*t1_orig*/ and /*t2_orig*/ ended differently"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*t1_orig*/ and /*t2_orig*/ ended differently"]},
+          {"condition": "/*RESULT*/ eq false ","description": ["both /*t1_ex*/ and /*t2_ex*/ ended differently"]}
         ]
       }
-
     ]
   }
 ]

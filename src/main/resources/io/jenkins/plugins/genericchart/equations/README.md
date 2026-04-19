@@ -56,6 +56,8 @@
             * `/*CONDO*/` - original condition
             * `/*CONDE*/` - expanded condition
             * `/*CONDR*/` - result of condition (true xor false)
+            * `/*<name>_orig*/` - will print deffinition of given equation (can look forward)
+            * `/*<name>_ex*/` - will print  given equation as it get expanded (may be giantic)
             * If you want toe avoid the expansion, preffix the *line* by `~`
           * Description can appear several times to mimimc multiple lines again.:  
 ```
