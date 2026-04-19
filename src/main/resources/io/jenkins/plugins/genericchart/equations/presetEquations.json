@@ -118,7 +118,7 @@
         "name": "main",
         "equation": [
           "cut=/*1*/; threshold=/*2*/;",
-          "  (avgN(..L1)/(L0/100)-100) >  threshold"
+          "  (avgN(cut,..L1)/(L0/100)-100) >  threshold"
         ]
       }
     ]
@@ -136,7 +136,7 @@
         "name": "main",
         "equation": [
           "cut=/*1*/; threshold=/*2*/;",
-          "  (avgN(..L1)/(L0/100)-100) < -threshold"
+          "  (avgN(cut,..L1)/(L0/100)-100) < -threshold"
         ]
       }
     ]
@@ -154,7 +154,7 @@
         "name": "main",
         "equation": [
           "cut=/*1*/; threshold=/*2*/;",
-          "    (geomN(..L1)/(L0/100)-100) >  threshold"
+          "    (geomN(cut,..L1)/(L0/100)-100) >  threshold"
         ]
       }
     ]
@@ -172,7 +172,7 @@
         "name": "main",
         "equation": [
           "cut=/*1*/; threshold=/*2*/;",
-          "  (geomN(..L1)/(L0/100)-100) < -threshold"
+          "  (geomN(cut,..L1)/(L0/100)-100) < -threshold"
         ]
       }
     ]
