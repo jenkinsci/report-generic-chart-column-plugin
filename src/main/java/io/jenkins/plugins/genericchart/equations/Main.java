@@ -43,8 +43,8 @@ public class Main {
 
     //FIXME when exeuted from job dir, the expressions must be read from config.xml, and data to the past jobs...
     public static void main(String[] args) throws Exception {
-        System.out.println("Parser-NG Preset Equation Evaluator");
-        System.out.println("====================================");
+        System.out.println("jenkins-report-generic-chart-column Preset Equation Evaluator");
+        System.out.println("==============================================================");
         if (args.length == 0) {
             printUsage();
             System.exit(1);
@@ -59,6 +59,10 @@ public class Main {
             System.exit(0);
         }
         PresetEquationsManager manager = new PresetEquationsManager();
+        if (presetName.equalsIgnoreCase("--readme")) {
+            System.out.println(manager.readReadme());
+            System.exit(0);
+        }
         String presetCall = String.join(" ", args);
         PresetEquationDefinition preset = manager.getFromCommandString(presetCall);
         List<String> dataValues = new ArrayList<>();
@@ -74,6 +78,12 @@ public class Main {
                 System.out.println(s);
             }
         };
+        ExpressionLogger descriptionReader = new ExpressionLogger() {
+            @Override
+            public void log(String s) {
+                System.out.println(s);
+            }
+        };
         IncrementalSequentialEvaluator expresion;
         if (preset == null) {
             System.out.println("Error: Preset equation '" + presetName + "' not found. Run --help or --list for more. Now evaluating.");
@@ -81,7 +91,7 @@ public class Main {
         } else {
             expresion = preset.getExpressions();
         }
-        boolean result = expresion.evaluate(dataValues, PresetEquationsManager.getParamsFromParams(presetName), logger);
+        String result = expresion.solve(dataValues, PresetEquationsManager.getParamsFromParams(presetName), logger, descriptionReader);
 
         System.out.println("Evaluation result: " + result);
         System.out.println();
@@ -94,6 +104,7 @@ public class Main {
         System.out.println("Options:");
         System.out.println("  LIST, --list, -l    List all available preset equations");
         System.out.println("  --help, -h          Show this help message");
+        System.out.println("  --readme            shows in-tree readme");
         System.out.println();
         System.out.println("Examples:");
         System.out.println("  java -jar fat.jar \"IMMEDIATE_UP_OK 5\" 100 95 90 85");
@@ -123,5 +134,3 @@ public class Main {
         }
     }
 }
-
-// Made with Bob

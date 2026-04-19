@@ -516,25 +516,9 @@
   {
     "id": "FUTURE",
     "comments": [
-      "//named results impl",
-      "[ //named equations",
-      "  {",
-      "   ename=\"ename1\"",
-      "   edescription_line1=\"multiline description\"",
-      "   edescription_line2=\"multiline description\"",
-      "   edescription_lineN=\"multiline description\"",
-      "   [  //equationSteps",
-      "                                              //the condition must be able to use all varnames and equations, including this one",
-      "     {varname=\"name1\", equation=\"something1\" [{conditionEquation=\"cq1\", \"trueDescription=\"txt1\", \"elseDescription=\"txt1\"}]}",
-      "     //then we can use  \"name1\" latr",
-      "     {varname=\"name2\", equation=\"something2+varname2\"}",
-      "     //similaryly as /*2*/ is used /*name1*/",
-      "     ...",
-      "     {varname=\"nameN\", equation=\"somethingN+varname1+..?..+varnameN\"}",
-      "     //result of last equation is used as final result",
-      "   ]",
-      "   }",
-      " ]"
+      "This is how future impl should look like",
+      "several equations passing results on",
+      "and several descriptions to describe the result"
     ],
     "equations": [
       {
@@ -543,7 +527,14 @@
           "a=/*1*/;",
           "b=/*2*/;",
           "c=/*3*/;",
-          "  a+b+c"
+          "  (a+b+c)*avg(L0..L{MN})"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["some title"]},
+          {"condition": "true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
+          {"condition": "true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
+          {"condition": "/*RESULT*/ > 0","description": ["some message with some /*1*/ and maybe L{MN}..L0 datas?", "Should be easy to preprocess, but not evaluate at the end."]},
+          {"condition": "/*RESULT*/ > 0","description": ["some other message with some /*main1*/ and maybe L{MN}..L0 datas?", "Should be easy to preprocess, but not evaluate at the end."]}
         ]
       },
       {
@@ -552,9 +543,60 @@
           "a=/*4*/;",
           "b=/*5*/;",
           "c=/*6*/;",
-          "  (a+b+c)*/*main1*/"
+          "  (a+b+c)*/*main1*/-avg(L0..L{MN}) > 0"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["some title2"]},
+          {"condition": "/*RESULT*/ eq true","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]},
+          {"condition": "/*RESULT*/ eq false","description": ["/*RESULT*/ | /*ORIGEQ*/ | /*EXEQ*/ | /*CONDO*/ | /*CONDE*/ | /*CONDR*/ "]}
         ]
       }
+    ]
+  },
+
+
+  {
+    "id": "TEST",
+    "comments": [],
+    "equations": [
+      {
+        "name": "t1",
+        "equation": [
+          "a=/*1*/;",
+          "  a+L1"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["some title"]},
+          {"condition": "/*RESULT*/ > 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
+          {"condition": "/*RESULT*/ < 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
+          {"condition": "/*RESULT*/ == 0","description": ["first param was same as first arg, only oposite"]}
+        ]
+      },
+      {
+        "name": "t2",
+        "equation": [
+          "b=/*2*/;",
+          "  b+L2"
+        ],
+        "descriptions": [
+          {"condition": "false","description": ["no title"]},
+          {"condition": "/*RESULT*/ > 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
+          {"condition": "/*RESULT*/ < 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
+          {"condition": "/*RESULT*/ == 0","description": ["second param was same as second arg, only oposite"]}
+        ]
+      },
+      {
+        "name": "main",
+        "equation": [
+          "/*t1*/ == /*t2*/"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["final title"]},
+          {"condition": "/*RESULT*/ eq true","description": ["both /*t1*/ and /*t2*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*t1*/ and /*t2*/ ended same"]}
+        ]
+      }
+
     ]
   }
 ]

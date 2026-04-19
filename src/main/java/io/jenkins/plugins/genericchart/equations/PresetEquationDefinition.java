@@ -16,7 +16,7 @@ public class PresetEquationDefinition {
         // Convert NamedEquation (JSON) to NamedEquationDefinition (immutable)
         List<NamedEquationDefinition> eqList = new ArrayList<>();
         for (NamedEquation eq : equations) {
-            eqList.add(new NamedEquationDefinition(eq.name, eq.equation));
+            eqList.add(new NamedEquationDefinition(eq.name, eq.equation, eq.descriptions));
         }
         this.equations = Collections.unmodifiableList(eqList);
     }

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.genericchart.equations;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class PresetEquation {
     private final String original;
@@ -27,8 +28,8 @@ public class PresetEquation {
         return fex;
     }
 
-    private static String repalceVariable(String key, String value, String fex) {
-        return fex.replaceAll("/\\*" + key + "\\*/", value);
+    static String repalceVariable(String key, String value, String fex) {
+        return fex.replaceAll("/\\*" + Pattern.quote(key) + "\\*/", value);
     }
 
     public String getOriginal() {

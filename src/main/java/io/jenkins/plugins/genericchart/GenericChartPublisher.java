@@ -39,6 +39,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -84,16 +85,19 @@ public class GenericChartPublisher extends Publisher {
                         }
                     }
                     List<ChartPoint> points = chart.getPoints();
-                    //FIXME SECKO BLBE- micham data a parametetry.
-                    //FIXME data jsou  pointsValues
-                    //FIXME ale aprametry jsou v equationNameOrDef
-                    //FIXME je to blbe v cele nove logice, vcetne testu
+                    List<String> replies = new ArrayList<>();
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues,
-                            PresetEquationsManager.getParamsFromParams(equationNameOrDef), s -> listener.getLogger().println(s));
+                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), s -> listener.getLogger().println(s), new ExpressionLogger() {
+                        @Override
+                        public void log(String s) {
+                            listener.getLogger().println(s);
+                            replies.add(s);
+                        }
+                    });
+                    //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
                     if (lep) {
                         build.setResult(Result.UNSTABLE);
                         return true; //you can not go back, nothing is going worse here, so lets quit

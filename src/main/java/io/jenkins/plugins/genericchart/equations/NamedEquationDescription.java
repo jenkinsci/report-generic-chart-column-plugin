@@ -5,8 +5,7 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD"}, justification = "written to by gson builder")
-class NamedEquation {
-    String name;
-    List<String> equation;
-    List<NamedEquationDescription> descriptions;
+class NamedEquationDescription {
+    String condition;
+    List<String> description;
 }

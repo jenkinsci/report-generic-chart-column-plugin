@@ -63,6 +63,12 @@ public class PresetEquationsManager {
         }
     }
 
+    public String readReadme() throws IOException {
+        synchronized (lock) {
+            return  new String(this.getClass().getResourceAsStream("README.md").readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
     private static List<PresetEquationDefinition> readFromStream(InputStream in) throws IOException {
         synchronized (lock) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {

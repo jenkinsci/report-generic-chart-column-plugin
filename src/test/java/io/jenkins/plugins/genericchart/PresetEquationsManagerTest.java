@@ -134,6 +134,57 @@ class PresetEquationsManagerTest {
     }
 
     @Test
+    public void descriptionsAreParsed() throws IOException, URISyntaxException {
+        final PresetEquationsManager p1 = new PresetEquationsManager("""
+                [
+                  {
+                    "id": "withDescriptions",
+                    "comments": ["some comment"],
+                    "equations": [
+                      {
+                        "name": "main1",
+                        "equation": ["/*1*/+1"],
+                        "descriptions": [
+                        {
+                            "condition": "true",
+                            "description": ["this is title"]
+                          },
+                          {
+                            "condition": "/*RESULT*/ == 2",
+                            "description": ["ok"]
+                          },
+                          {
+                            "condition": "/*RESULT*/ != 2",
+                            "description": ["fail"]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "main2",
+                        "equation": ["2+2"]
+                      }
+                    ]
+                  }
+                ]
+                """);
+        PresetEquationDefinition preset = p1.getFromCommandString("withDescriptions 1");
+        Assertions.assertNotNull(preset);
+        Assertions.assertEquals(2, preset.getEquations().size());
+
+        Assertions.assertEquals("main1", preset.getEquations().get(0).getName());
+        Assertions.assertEquals(3, preset.getEquations().get(0).getDescriptions().size());
+        Assertions.assertEquals("true", preset.getEquations().get(0).getDescriptions().get(0).getCondition());
+        Assertions.assertEquals(Arrays.asList("this is title"), preset.getEquations().get(0).getDescriptions().get(0).getDescriptionLines());
+        Assertions.assertEquals("/*RESULT*/ == 2", preset.getEquations().get(0).getDescriptions().get(1).getCondition());
+        Assertions.assertEquals(Arrays.asList("ok"), preset.getEquations().get(0).getDescriptions().get(1).getDescriptionLines());
+        Assertions.assertEquals("/*RESULT*/ != 2", preset.getEquations().get(0).getDescriptions().get(2).getCondition());
+        Assertions.assertEquals(Arrays.asList("fail"), preset.getEquations().get(0).getDescriptions().get(2).getDescriptionLines());
+
+        Assertions.assertEquals("main2", preset.getEquations().get(1).getName());
+        Assertions.assertTrue(preset.getEquations().get(1).getDescriptions().isEmpty());
+    }
+
+    @Test
     public void allValuates() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
@@ -152,7 +203,7 @@ class PresetEquationsManagerTest {
     }
 
     private boolean evaluateNw(StringBuilder sbAll, StringBuilder sbOne, IncrementalSequentialEvaluator e, String[] params) {
-        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, new ExpressionLogger() {
+        ExpressionLogger el = new ExpressionLogger() {
             @Override
             public void log(String s) {
                 if (sbAll != null) {
@@ -160,7 +211,8 @@ class PresetEquationsManagerTest {
                 }
                 sbOne.append(s).append("\n");
             }
-        });
+        };
+        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, el, el);
     }
 
     private boolean evaluate(StringBuilder sbAll, StringBuilder sbOne, PresetEquation e) {
