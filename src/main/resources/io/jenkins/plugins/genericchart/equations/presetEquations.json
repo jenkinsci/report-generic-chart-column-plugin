@@ -529,7 +529,7 @@
       {
         "name": "call2",
         "equation": [
-          "TEST /*1*/ /*2*/"
+          "TEST /*3*/ /*4*/"
         ],
         "descriptions": []
       },
@@ -539,8 +539,12 @@
           "/*call1*/ && /*call2*/"
         ],
         "descriptions": [
-          {"condition": "/*RESULT*/ eq true","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]}
+          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
+          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1_ex*/ and /*call2_ex*/ ended same"]},
+          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1*/ and /*call2*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_ex*/ and /*call2_ex*/ ended same"]},
+          {"condition": "/*RESULT*/ eq false","description": ["both /*call1*/ and /*call2*/ ended same"]}
         ]
       }
 

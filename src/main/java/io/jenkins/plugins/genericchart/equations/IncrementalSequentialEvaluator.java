@@ -22,7 +22,7 @@ public class IncrementalSequentialEvaluator {
         results.putAll(alreadyKnownResults);
     }
 
-    public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader) {
+    public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader, PresetEquationsManager manager) {
         String lastResult = "NaN";
         Map<String, String> allEquationsDefs = new HashMap<>();
         for (NamedEquationDefinition def : equations) {
@@ -30,20 +30,32 @@ public class IncrementalSequentialEvaluator {
         }
         Map<String, String> allEquationsExp = new HashMap<>();
         for (NamedEquationDefinition def : equations) {
-            //TODO check if there is maybe preddefined equation?
-            //then calc it, and only use reuslt
-            ExpandingExpressionParser ex = new ExpandingExpressionParser(new PresetEquation(def.getEquationAsString(),params).getExpression(results), dataValues, logger);
-            allEquationsExp.put(def.getName()+"_ex", ex.getExpanded());
-            lastResult = ex.solve();
+            String thisExpanded = "N/A";
+            //this is really just for calling embed, otherwise would be completely wrong
+            String tmpDefForPreset = PresetEquation.expand(def.getEquationAsString(), params);
+            PresetEquationDefinition isPreset = null;
+            if (manager != null) {
+                isPreset = manager.getFromCommandString(tmpDefForPreset);
+            }
+            if (isPreset != null) {
+                logger.log("Subcall: " + tmpDefForPreset);
+                String subResult = isPreset.getExpressions().solve(dataValues, PresetEquationsManager.getParamsFromParams(tmpDefForPreset), new ExpressionLogger.InheritingExpressionLogger(logger), descriptionReader, manager);
+                logger.log("Subcall end: " + tmpDefForPreset);
+                thisExpanded = tmpDefForPreset;
+                lastResult = subResult;
+            } else {
+                ExpandingExpressionParser ex = new ExpandingExpressionParser(new PresetEquation(def.getEquationAsString(),params).getExpression(results), dataValues, logger);
+                thisExpanded = ex.getExpanded();
+                lastResult = ex.solve();
+            }
+            allEquationsExp.put(def.getName()+"_ex", thisExpanded);
             results.put(def.getName(), lastResult);
             for (NamedEquationDescriptionDefinition desc : def.getDescriptions()) {
                 final Map<String, String> additionalVariablesForDescriptions = new HashMap<>();
                 additionalVariablesForDescriptions.putAll(results);
                 additionalVariablesForDescriptions.putAll(allEquationsExp);
                 additionalVariablesForDescriptions.put("RESULT", lastResult);
-                //additionalVariablesForDescriptions.put("ORIGEQ",  def.getEquationAsString()); /*We can not include original descriptions, they would get expanded*/
-                additionalVariablesForDescriptions.put("EXEQ", ex.getExpanded());
-                //additionalVariablesForDescriptions.put("CONDO", desc.getCondition()); /*We can not include original descriptions, they would get expanded*/
+                additionalVariablesForDescriptions.put("EXEQ", thisExpanded);
                 ExpandingExpressionParser cex = new ExpandingExpressionParser(new PresetEquation(desc.getCondition(), params).getExpression(additionalVariablesForDescriptions), dataValues, s -> {
                 });
                 additionalVariablesForDescriptions.put("CONDE", cex.getExpanded());
@@ -58,7 +70,7 @@ public class IncrementalSequentialEvaluator {
                                 } else {
                                     ExpandingExpressionParser dex = new ExpandingExpressionParser(new PresetEquation(descLine, params).getExpression(additionalVariablesForDescriptions), dataValues, s -> {
                                     });
-                                    //here we are expanding CONDO and ORIGEQ
+                                    //here we are expanding CONDO and ORIGEQ and others which we do not want to see expanded
                                     String finalMessage = PresetEquation.repalceVariable("CONDO", desc.getCondition(), dex.getExpanded());
                                     finalMessage = PresetEquation.repalceVariable("ORIGEQ", def.getEquationAsString(), finalMessage);
                                     for (Map.Entry<String, String> origFunctions : allEquationsDefs.entrySet()) {
@@ -81,8 +93,8 @@ public class IncrementalSequentialEvaluator {
         return lastResult;
     }
 
-    public boolean evaluate(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionsReader) {
-        return Boolean.parseBoolean(solve(dataValues, params, logger, descriptionsReader));
+    public boolean evaluate(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionsReader, PresetEquationsManager manager) {
+        return Boolean.parseBoolean(solve(dataValues, params, logger, descriptionsReader, manager));
     }
 
     public static IncrementalSequentialEvaluator getUserDefIncrementalSequentialEvaluator(String presetName) {

@@ -63,14 +63,15 @@ public class Main {
             System.out.println(manager.readReadme());
             System.exit(0);
         }
-        String presetCall = String.join(" ", args);
-        PresetEquationDefinition preset = manager.getFromCommandString(presetCall);
+        PresetEquationDefinition preset = manager.getFromCommandString(presetName);
         List<String> dataValues = new ArrayList<>();
         for (int i = 1; i < args.length; i++) {
             dataValues.add(args[i]);
         }
         System.out.println("Evaluating preset equation...");
         System.out.println("Data values: " + dataValues);
+        System.out.println("params: " + String.join(", ",PresetEquationsManager.getParamsFromParams(presetName)));
+        System.out.println("name: " + PresetEquationsManager.getIdFromParams(presetName));
         System.out.println();
         ExpressionLogger logger = new ExpressionLogger() {
             @Override
@@ -91,7 +92,7 @@ public class Main {
         } else {
             expresion = preset.getExpressions();
         }
-        String result = expresion.solve(dataValues, PresetEquationsManager.getParamsFromParams(presetName), logger, descriptionReader);
+        String result = expresion.solve(dataValues, PresetEquationsManager.getParamsFromParams(presetName), logger, descriptionReader, manager);
 
         System.out.println("Evaluation result: " + result);
         System.out.println();

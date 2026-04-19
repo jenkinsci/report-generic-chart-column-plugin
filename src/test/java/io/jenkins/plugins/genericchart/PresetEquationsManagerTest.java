@@ -202,7 +202,7 @@ class PresetEquationsManagerTest {
         checkNoError(sbAll);
     }
 
-    private boolean evaluateNw(StringBuilder sbAll, StringBuilder sbOne, IncrementalSequentialEvaluator e, String[] params) {
+    private boolean evaluateNw(StringBuilder sbAll, StringBuilder sbOne, IncrementalSequentialEvaluator e, String[] params) throws IOException, URISyntaxException {
         ExpressionLogger el = new ExpressionLogger() {
             @Override
             public void log(String s) {
@@ -212,7 +212,7 @@ class PresetEquationsManagerTest {
                 sbOne.append(s).append("\n");
             }
         };
-        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, el, el);
+        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, el, el, new PresetEquationsManager(null));
     }
 
     private boolean evaluate(StringBuilder sbAll, StringBuilder sbOne, PresetEquation e) {

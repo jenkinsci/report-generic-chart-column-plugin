@@ -96,7 +96,7 @@ public class GenericChartPublisher extends Publisher {
                             listener.getLogger().println(s);
                             replies.add(s);
                         }
-                    });
+                    }, presets);
                     //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
                     if (lep) {
                         build.setResult(Result.UNSTABLE);
