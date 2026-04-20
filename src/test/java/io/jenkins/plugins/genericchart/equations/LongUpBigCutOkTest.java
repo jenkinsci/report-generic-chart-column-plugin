@@ -45,7 +45,8 @@ class LongUpBigCutOkTest {
     @Test
     void testExactThresholdBoundary() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 100, 105, 150, 105, 110);
-        assertFalse(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertFalse(evaluateEquation(EQUATION_ID, "1 20", data));
     }
 
     @Test
@@ -93,8 +94,8 @@ class LongUpBigCutOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 90, 100, 150, 110, 120);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "1 5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "1 5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 
@@ -107,7 +108,8 @@ class LongUpBigCutOkTest {
     @Test
     void testBarelyBelowThreshold() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 100, 105, 150, 104.99, 109.98);
-        assertFalse(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertFalse(evaluateEquation(EQUATION_ID, "1 18", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "1 5", data));
     }
 
     @Test

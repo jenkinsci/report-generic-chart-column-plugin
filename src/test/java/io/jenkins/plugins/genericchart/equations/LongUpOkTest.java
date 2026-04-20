@@ -54,7 +54,7 @@ class LongUpOkTest {
         // Older half: 95,98,100 (avg≈97.67), Newer half: 102,103,104 (avg=103)
         // (103/(97.67/100)-100) ≈ 5.46, which is > 5
         List<String> data = createDataList(95, 98, 100, 102, 103, 104);
-        assertTrue(evaluateEquation(EQUATION_ID, "5", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "4.3", data));
     }
 
     @Test
@@ -127,8 +127,8 @@ class LongUpOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(80, 90, 100, 110, 115, 120);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 

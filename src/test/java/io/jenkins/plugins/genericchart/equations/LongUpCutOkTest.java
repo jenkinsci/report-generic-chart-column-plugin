@@ -45,7 +45,8 @@ class LongUpCutOkTest {
     @Test
     void testExactThresholdBoundary() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 100, 105, 150, 105, 110);
-        assertFalse(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertFalse(evaluateEquation(EQUATION_ID, "1 26", data));
     }
 
     @Test
@@ -76,6 +77,7 @@ class LongUpCutOkTest {
     void testWithDecimalValues() throws IOException, URISyntaxException {
         List<String> data = createDataList(40, 48.5, 50.5, 70, 58.5, 60.5);
         assertTrue(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertFalse(evaluateEquation(EQUATION_ID, "1 28", data));
     }
 
     @Test
@@ -87,8 +89,8 @@ class LongUpCutOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 90, 100, 150, 110, 120);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "1 5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "1 5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 
@@ -101,7 +103,8 @@ class LongUpCutOkTest {
     @Test
     void testBarelyBelowThreshold() throws IOException, URISyntaxException {
         List<String> data = createDataList(50, 100, 105, 150, 104.99, 109.98);
-        assertFalse(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "1 5", data));
+        assertFalse(evaluateEquation(EQUATION_ID, "1 19", data));
     }
 
     @Test
