@@ -99,8 +99,8 @@ class ShortDownBigCutOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(100, 200, 90, 85, 80, 10);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "1 5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "1 5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 

@@ -103,8 +103,8 @@ class ShortUpBigCutOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(100, 50, 110, 115, 120, 200);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "1 5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "1 5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 

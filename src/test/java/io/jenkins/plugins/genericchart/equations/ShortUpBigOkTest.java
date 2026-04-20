@@ -202,9 +202,9 @@ class ShortUpBigOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(100, 110, 115);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "5", data);
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "5", data);
         
-        assertTrue(result.getResult(), "Should return true");
+        assertTrue(result.getResultAsBool(), "Should return true");
         assertFalse(result.getLog().isEmpty(), "Should produce log output");
     }
 

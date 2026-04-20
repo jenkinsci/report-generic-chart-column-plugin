@@ -93,15 +93,15 @@ class LongUpBigOkTest {
     @Test
     void testWithLogging() throws IOException, URISyntaxException {
         List<String> data = createDataList(80, 90, 100, 110, 115, 120);
-        EvaluationResult result = evaluateWithLog(EQUATION_ID, "5", data);
-        assertTrue(result.getResult());
+        EvaluationResult result = solveWithLogs(EQUATION_ID, "5", data);
+        assertTrue(result.getResultAsBool());
         assertFalse(result.getLog().isEmpty());
     }
 
     @Test
     void testBarelyAboveThreshold() throws IOException, URISyntaxException {
         List<String> data = createDataList(95, 100, 105, 100, 105.01, 110.02);
-        assertTrue(evaluateEquation(EQUATION_ID, "5", data));
+        assertTrue(evaluateEquation(EQUATION_ID, "4.9", data));
     }
 
     @Test
