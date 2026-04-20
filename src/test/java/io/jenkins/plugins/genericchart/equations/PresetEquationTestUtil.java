@@ -71,7 +71,7 @@ public class PresetEquationTestUtil {
         StringBuilder logBuilder = new StringBuilder();
         ExpressionLogger logger = s -> logBuilder.append(s).append("\n");
         StringBuilder answersBuilder = new StringBuilder();
-        ExpressionLogger anwers = s -> logBuilder.append(s).append("\n");
+        ExpressionLogger anwers = s -> answersBuilder.append(s).append("\n");
         
         String result = evaluator.solve(dataValues, paramArray, logger, anwers, manager);
         
