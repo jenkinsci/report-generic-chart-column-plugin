@@ -65,7 +65,9 @@ public class PresetEquationsManager {
 
     public String readReadme() throws IOException {
         synchronized (lock) {
-            return  new String(this.getClass().getResourceAsStream("README.md").readAllBytes(), StandardCharsets.UTF_8);
+            try (InputStream s = this.getClass().getResourceAsStream("README.md")){
+                return new String(s.readAllBytes(), StandardCharsets.UTF_8);
+            }
         }
     }
 
