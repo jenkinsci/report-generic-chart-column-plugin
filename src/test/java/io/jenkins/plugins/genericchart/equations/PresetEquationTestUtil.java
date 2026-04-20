@@ -42,6 +42,7 @@ public class PresetEquationTestUtil {
     public static boolean evaluateEquation(String equationId, String params, List<String> dataValues)
              throws IOException, URISyntaxException {
         EvaluationResult result = solveWithLogs(equationId, params, dataValues);
+        //System.out.println(result.getReplies());
         return result.getResultAsBool();
     }
 
