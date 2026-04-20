@@ -1,5 +1,23 @@
 [
   {
+    "id": "IMMEDIATE_CALC",
+    "comments": [
+      "computing the change (in %) against previous run "
+    ],
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "  (L1/(L0/100)-100)"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["The relative difference between this (L0) and previous (L1, from total of MN) is: /*RESULT*/%"]}
+        ]
+      }
+    ]
+  },
+
+  {
     "id": "IMMEDIATE_UP_OK",
     "comments": [
       "checking whether drop (in %) against previous run was not bigger then threshold",
@@ -8,11 +26,22 @@
     ],
     "equations": [
       {
+        "name": "calc",
+        "equation": [
+          "IMMEDIATE_CALC"
+        ]
+      },
+      {
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (L1/(L0/100)-100) >  threshold"
-        ]
+          "  /*calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["The result whether drop (in %) against previous run was not not bigger then threshold is:"]},
+          { "condition": "/*RESULT*/ eq true","description": ["The /*calc*/% is bigger then threshold /*1*/%, that is ok"]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*calc*/% is lower or equal to  threshold /*1*/%, that is bad"]}
+      ]
       }
     ]
   },
