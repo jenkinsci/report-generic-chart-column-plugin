@@ -111,7 +111,7 @@
           "  /*immediate_calc*/ < -threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, thet 'less is better', on immediate scale with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', on immediate scale with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result, whether rise (in %) against previous run was not bigger then threshold is:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is bigger or equal to  threshold -/*1*/%, that is bad."]}
@@ -139,6 +139,12 @@
         "equation": [
           "threshold=/*1*/;",
           "  /*short_calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not not bigger then threshold is:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to  threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -162,6 +168,12 @@
         "equation": [
           "threshold=/*1*/;",
           "  /*short_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not not bigger then threshold is:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to  threshold /*1*/%, that is bad."]}
         ]
       }
     ]
