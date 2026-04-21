@@ -40,7 +40,7 @@ public class PresetEquationDefinition {
     }
 
     public IncrementalSequentialEvaluator getExpressions() {
-        return new IncrementalSequentialEvaluator(equations);
+        return new IncrementalSequentialEvaluator(equations, comments);
     }
 
     public String getComment() {
