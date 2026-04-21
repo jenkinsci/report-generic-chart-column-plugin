@@ -2,13 +2,23 @@
   {
     "id": "IMMEDIATE_CALC",
     "comments": [
-      "computing the change (in %) against previous run "
+      "computing the change (in %) against previous run ",
+      "(L1/(L0/100)-100)"
     ],
     "equations": [
       {
+        "name": "len",
+        "equation": [
+          "MN"
+        ],
+        "descriptions": [
+          {"condition": "/*RESULT*/ <= 0 ","description": ["warning, not enough data values for safe calculation (MN). Should be at lest 1."]}
+        ]
+      },
+      {
         "name": "main",
         "equation": [
-          "  (L1/(L0/100)-100)"
+          "(L1/(L0/100)-100)"
         ],
         "descriptions": [
           {"condition": "true","description": ["The relative difference between this (L0) and previous (L1, from total of MN) is: /*RESULT*/%"]}
@@ -16,6 +26,40 @@
       }
     ]
   },
+  {
+      "id": "SHORT_CALC",
+    "comments": [
+      "computing the change (in %) against previous runs (is using avg of previous points)",
+      "(avg(..L1)/(L0/100)-100)"
+    ],
+    "equations": [
+      {
+        "name": "len",
+        "equation": [
+          "MN-1"
+        ],
+        "descriptions": [
+        {"condition": "/*RESULT*/ <= 0 ","description": ["warning, not enough data values for safe calculation (MN). Should be at lest 2."]}
+      ]
+      },{
+        "name": "avg",
+        "equation": [
+          "avg(..L1)"
+        ]
+      },{
+        "name": "main",
+        "equation": [
+          "(/*avg*//(L0/100)-100)"
+        ],
+        "descriptions": [
+          {"condition": "true","description": ["The /*avg*/ is the avg of: ..L1"]},
+          {"condition": "true","description": ["The relative difference between this (L0) and avg(/*avg*/) of previous(/*len*/) values is: /*RESULT*/%"]}
+        ]
+      }
+    ]
+  },
+
+
 
   {
     "id": "IMMEDIATE_UP_OK",
@@ -85,10 +129,16 @@
     ],
     "equations": [
       {
+        "name": "short_calc",
+        "equation": [
+          "SHORT_CALC"
+        ]
+      },
+      {
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (avg(..L1)/(L0/100)-100) >  threshold"
+          "  /*short_calc*/ >  threshold"
         ]
       }
     ]
@@ -103,10 +153,15 @@
     ],
     "equations": [
       {
+        "name": "short_calc",
+        "equation": [
+          "SHORT_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (avg(..L1)/(L0/100)-100) < -threshold"
+          "  /*short_calc*/ < -threshold"
         ]
       }
     ]
@@ -445,16 +500,27 @@
     ],
     "equations": [
       {
+        "name": "immediate_calc",
+        "equation": [
+          "IMMEDIATE_CALC"
+        ]
+      },{
+        "name": "short_calc",
+        "equation": [
+          "SHORT_CALC"
+        ]
+      },
+      {
         "name": "main",
         "equation": [
           "thresholdA=/*1*/;",
-          "  (L1/(L0/100)-100) < -thresholdA",
+          "  /*immediate_calc*/ < -thresholdA",
           "  ||",
           "thresholdB=/*2*/;",
           "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
           "thresholdC=/*3*/;",
-          "  (avg(..L1)/(L0/100)-100) < -thresholdC"
+          "  /*short_calc*/ < -thresholdC"
         ]
       }
     ]

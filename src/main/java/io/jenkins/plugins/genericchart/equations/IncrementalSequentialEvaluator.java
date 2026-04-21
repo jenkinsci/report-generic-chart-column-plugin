@@ -11,18 +11,26 @@ import parser.logical.ExpressionLogger;
 public class IncrementalSequentialEvaluator {
 
     private final List<NamedEquationDefinition> equations;
+    private final List<String> commetns;
     private final Map<String, String> results = new HashMap<>();
 
-    public IncrementalSequentialEvaluator(List<NamedEquationDefinition> equations) {
+    public IncrementalSequentialEvaluator(List<NamedEquationDefinition> equations, List<String> comments) {
         this.equations = equations;
+        this.commetns = comments;
     }
 
-    public IncrementalSequentialEvaluator(List<NamedEquationDefinition> equations, Map<String, String> alreadyKnownResults) {
+    public IncrementalSequentialEvaluator(List<NamedEquationDefinition> equations, Map<String, String> alreadyKnownResults, List<String> comments) {
         this.equations = equations;
-        results.putAll(alreadyKnownResults);
+        this.results.putAll(alreadyKnownResults);
+        this.commetns = comments;
     }
 
     public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader, PresetEquationsManager manager) {
+        if (commetns != null) {
+            for(String comment : commetns){
+                descriptionReader.log(comment);
+            }
+        }
         String lastResult = "NaN";
         Map<String, String> allEquationsDefs = new HashMap<>();
         for (NamedEquationDefinition def : equations) {
@@ -98,6 +106,6 @@ public class IncrementalSequentialEvaluator {
     }
 
     public static IncrementalSequentialEvaluator getUserDefIncrementalSequentialEvaluator(String presetName) {
-        return new IncrementalSequentialEvaluator(Arrays.asList(new NamedEquationDefinition("userDef", Arrays.asList(presetName), null)));
+        return new IncrementalSequentialEvaluator(Arrays.asList(new NamedEquationDefinition("userDef", Arrays.asList(presetName), null)), null);
     }
 }
