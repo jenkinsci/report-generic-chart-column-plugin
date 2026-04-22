@@ -440,12 +440,16 @@
     ],
     "equations": [
       {
+        "name": "immediate_up_ok",
+        "equation": [
+          "IMMEDIATE_UP_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/;thresholdA=/*2*/;",
-          "  (L1/(L0/100)-100) > thresholdA",
+          "/*immediate_up_ok*/",
           "  ||",
-          "thresholdB=/*3*/;",
+          "cut=/*1*/; thresholdB=/*3*/;",
           "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
@@ -464,12 +468,16 @@
     ],
     "equations": [
       {
+        "name": "immediate_down_ok",
+        "equation": [
+          "IMMEDIATE_DOWN_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/;thresholdA=/*2*/;",
-          "  (L1/(L0/100)-100) < -thresholdA",
+          "  /*immediate_down_ok*/",
           "  ||",
-          "thresholdB=/*3*/;",
+          "cut=/*1*/; thresholdB=/*3*/;",
           "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
@@ -488,16 +496,24 @@
     ],
     "equations": [
       {
+        "name": "immediate_up_ok",
+        "equation": [
+          "IMMEDIATE_UP_OK /*1*/"
+        ]
+      },{
+        "name": "short_up_ok",
+        "equation": [
+          "SHORT_UP_OK /*3*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "thresholdA=/*1*/;",
-          "  (L1/(L0/100)-100) > thresholdA",
+          "/*immediate_up_ok*/",
           "  ||",
           "thresholdB=/*2*/;",
           "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
-          "thresholdC=/*3*/;",
-          "  (avg(..L1)/(L0/100)-100) > thresholdC"
+          "/*short_up_ok*/"
         ]
       }
     ]
@@ -545,12 +561,16 @@
     ],
     "equations": [
       {
+        "name": "immediate_up_ok",
+        "equation": [
+          "IMMEDIATE_UP_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/;thresholdA=/*2*/;",
-          "  (L1/(L0/100)-100) > thresholdA",
+          "/*immediate_up_ok*/",
           "  ||",
-          "thresholdB=/*3*/;",
+          "cut=/*1*/; thresholdB=/*3*/;",
           "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
@@ -569,12 +589,16 @@
     ],
     "equations": [
       {
+        "name": "immediate_down_ok",
+        "equation": [
+          "IMMEDIATE_DOWN_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/;thresholdA=/*2*/;",
-          "  (L1/(L0/100)-100) < -thresholdA",
+          "/*immediate_down_ok*/",
           "  ||",
-          "thresholdB=/*3*/;",
+          "cut=/*1*/; thresholdB=/*3*/;",
           "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
@@ -593,10 +617,14 @@
     ],
     "equations": [
       {
+        "name": "immediate_up_ok",
+        "equation": [
+          "IMMEDIATE_UP_OK /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "thresholdA=/*1*/;",
-          "  (L1/(L0/100)-100) > thresholdA",
+          "/*immediate_up_ok*/",
           "  ||",
           "thresholdB=/*2*/;",
           "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) > thresholdB",
@@ -617,10 +645,14 @@
     ],
     "equations": [
       {
+        "name": "immediate_down_ok",
+        "equation": [
+          "IMMEDIATE_DOWN_OK /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "thresholdA=/*1*/;",
-          "  (L1/(L0/100)-100) < -thresholdA",
+          "/*immediate_down_ok*/",
           "  ||",
           "thresholdB=/*2*/;",
           "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
