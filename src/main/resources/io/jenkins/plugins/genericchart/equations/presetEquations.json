@@ -57,7 +57,38 @@
         ]
       }
     ]
-  },
+  },{
+  "id": "SHORT_BIG_CALC",
+  "comments": [
+    "computing the change (in %) against previous runs (is using geometrical mean of previous points)",
+    "(geom(..L1)/(L0/100)-100)"
+  ],
+  "equations": [
+    {
+      "name": "len",
+      "equation": [
+        "MN-1"
+      ],
+      "descriptions": [
+        {"condition": "/*RESULT*/ <= 0 ","description": ["warning, not enough data values for safe calculation (MN). Should be at lest 2."]}
+      ]
+    },{
+      "name": "geom",
+      "equation": [
+        "geom(..L1)"
+      ]
+    },{
+      "name": "main",
+      "equation": [
+        "(/*geom*//(L0/100)-100)"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The /*geom*/ is the geometrical mean of: ..L1"]},
+        {"condition": "true","description": ["The relative difference between this (L0) and geom(/*geom*/) of previous(/*len*/) values is: /*RESULT*/%"]}
+      ]
+    }
+  ]
+},
 
 
 
@@ -83,9 +114,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not not bigger then threshold is:"]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not bigger then threshold is:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is bigger then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to  threshold /*1*/%, that is bad."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
       ]
       }
     ]
@@ -114,7 +145,7 @@
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', on immediate scale with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result, whether rise (in %) against previous run was not bigger then threshold is:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is bigger or equal to  threshold -/*1*/%, that is bad."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
       }
     ]
@@ -141,10 +172,10 @@
           "  /*short_calc*/ >  threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not not bigger then threshold is:"]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not bigger then threshold is:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is bigger then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to  threshold /*1*/%, that is bad."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -170,10 +201,10 @@
           "  /*short_calc*/ < -threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not not bigger then threshold is:"]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to  threshold /*1*/%, that is bad."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -182,16 +213,27 @@
     "id": "SHORT_UP_BIG_OK",
     "comments": [
       "checking whether drop (in %) against previous runs was not bigger then threshold",
-      "is using geom of previous points",
+      "is using geometrical mean of previous points",
       "one parameter, threshold number",
       "eg: SHORT_UP_BIG_OK 5"
     ],
     "equations": [
       {
+        "name": "short_big_calc",
+        "equation": [
+          "SHORT_BIG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "    (geom(..L1)/(L0/100)-100) >  threshold"
+          "    /*short_big_calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (geom) previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not bigger then threshold is:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -206,10 +248,21 @@
     ],
     "equations": [
       {
+        "name": "short_big_calc",
+        "equation": [
+          "SHORT_BIG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (geom(..L1)/(L0/100)-100) < -threshold"
+          "   /*short_big_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is lower then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is bigger or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -622,6 +675,11 @@
           "IMMEDIATE_UP_OK /*1*/"
         ]
       },{
+        "name": "short_up_big_ok",
+        "equation": [
+          "SHORT_UP_BIG_OK /*3*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_up_ok*/",
@@ -629,8 +687,7 @@
           "thresholdB=/*2*/;",
           "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
-          "thresholdC=/*3*/;",
-          "  (geom(..L1)/(L0/100)-100) > thresholdC"
+          "/*short_up_big_ok*/"
         ]
       }
     ]
@@ -650,6 +707,11 @@
           "IMMEDIATE_DOWN_OK /*1*/"
         ]
       },{
+        "name": "short_down_big_ok",
+        "equation": [
+          "SHORT_DOWN_BIG_OK /*3*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_down_ok*/",
@@ -657,94 +719,7 @@
           "thresholdB=/*2*/;",
           "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
-          "thresholdC=/*3*/;",
-          "  (geom(..L1)/(L0/100)-100) < -thresholdC"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "INTERCALL",
-    "comments": [
-      "This show how other preset equations can cal lthemselves"
-    ],
-    "equations": [
-      {
-        "name": "call1",
-        "equation": [
-          "TEST /*1*/ /*2*/"
-        ],
-        "descriptions": []
-      },
-      {
-        "name": "call2",
-        "equation": [
-          "TEST /*3*/ /*4*/"
-        ],
-        "descriptions": []
-      },
-      {
-        "name": "main",
-        "equation": [
-          "/*call1*/ && /*call2*/"
-        ],
-        "descriptions": [
-          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
-          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1_ex*/ and /*call2_ex*/ ended same"]},
-          {"condition": "/*RESULT*/ eq true ","description": ["both /*call1*/ and /*call2*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_orig*/ and /*call2_orig*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*call1_ex*/ and /*call2_ex*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*call1*/ and /*call2*/ ended same"]}
-        ]
-      }
-
-    ]
-  },
-
-
-  {
-    "id": "TEST",
-    "comments": [],
-    "equations": [
-      {
-        "name": "t1",
-        "equation": [
-          "a=/*1*/;",
-          "  a+L1"
-        ],
-        "descriptions": [
-          {"condition": "true","description": ["some title"]},
-          {"condition": "/*RESULT*/ > 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
-          {"condition": "/*RESULT*/ < 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
-          {"condition": "/*RESULT*/ == 0","description": ["first param was same as first arg, only oposite"]}
-        ]
-      },
-      {
-        "name": "t2",
-        "equation": [
-          "b=/*2*/;",
-          "  b+L2"
-        ],
-        "descriptions": [
-          {"condition": "false","description": ["no title"]},
-          {"condition": "/*RESULT*/ > 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
-          {"condition": "/*RESULT*/ < 0","description": ["/*CONDO*/ (/*RESULT*/)"]},
-          {"condition": "/*RESULT*/ == 0","description": ["second param was same as second arg, only oposite"]}
-        ]
-      },
-      {
-        "name": "main",
-        "equation": [
-          "/*t1*/ == /*t2*/"
-        ],
-        "descriptions": [
-          {"condition": "true","description": ["final title"]},
-          {"condition": "/*RESULT*/ eq true ","description": ["~both /*t1_orig*/ and /*t2_orig*/ ended same"]},
-          {"condition": "/*RESULT*/ eq true ","description": ["both /*t1_orig*/ and /*t2_orig*/ ended same"]},
-          {"condition": "/*RESULT*/ eq true ","description": ["both /*t1_ex*/ and /*t2_ex*/ ended same"]},
-          {"condition": "/*RESULT*/ eq false","description": ["~both /*t1_orig*/ and /*t2_orig*/ ended differently"]},
-          {"condition": "/*RESULT*/ eq false","description": ["both /*t1_orig*/ and /*t2_orig*/ ended differently"]},
-          {"condition": "/*RESULT*/ eq false ","description": ["both /*t1_ex*/ and /*t2_ex*/ ended differently"]}
+          "/*short_down_big_ok*/"
         ]
       }
     ]
