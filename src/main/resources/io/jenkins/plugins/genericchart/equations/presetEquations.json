@@ -512,27 +512,25 @@
     ],
     "equations": [
       {
-        "name": "immediate_calc",
+        "name": "immediate_down_ok",
         "equation": [
-          "IMMEDIATE_CALC"
+          "IMMEDIATE_DOWN_OK /*1*/"
         ]
       },{
-        "name": "short_calc",
+        "name": "short_down_ok",
         "equation": [
-          "SHORT_CALC"
+          "SHORT_DOWN_OK /*3*/"
         ]
       },
       {
         "name": "main",
         "equation": [
-          "thresholdA=/*1*/;",
-          "  /*immediate_calc*/ < -thresholdA",
+          "  /*immediate_down_ok*/",
           "  ||",
           "thresholdB=/*2*/;",
           "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
-          "thresholdC=/*3*/;",
-          "  /*short_calc*/ < -thresholdC"
+          "  /*short_down_ok*/"
         ]
       }
     ]
