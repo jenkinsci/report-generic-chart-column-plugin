@@ -443,13 +443,13 @@
         "name": "main",
         "equation": [
           "cut=/*1*/;thresholdA=/*2*/;",
-          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  (L1/(L0/100)-100) > thresholdA",
           "  ||",
           "thresholdB=/*3*/;",
-          "  -1*(avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
-          "  -1*(avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+          "  (avgN(cut,..L1)/(L0/100)-100) > thresholdC"
         ]
       }
     ]
@@ -491,13 +491,13 @@
         "name": "main",
         "equation": [
           "thresholdA=/*1*/;",
-          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  (L1/(L0/100)-100) > thresholdA",
           "  ||",
           "thresholdB=/*2*/;",
-          "  -1*(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*3*/;",
-          "  -1*(avg(..L1)/(L0/100)-100) < -thresholdC"
+          "  (avg(..L1)/(L0/100)-100) > thresholdC"
         ]
       }
     ]
@@ -550,13 +550,13 @@
         "name": "main",
         "equation": [
           "cut=/*1*/;thresholdA=/*2*/;",
-          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  (L1/(L0/100)-100) > thresholdA",
           "  ||",
           "thresholdB=/*3*/;",
-          "  -1*(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
+          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*4*/;",
-          "  -1*(geomN(cut,..L1)/(L0/100)-100) < -thresholdC"
+          "  (geomN(cut,..L1)/(L0/100)-100) > thresholdC"
         ]
       }
     ]
@@ -598,13 +598,13 @@
         "name": "main",
         "equation": [
           "thresholdA=/*1*/;",
-          "  -1*(L1/(L0/100)-100) < -thresholdA",
+          "  (L1/(L0/100)-100) > thresholdA",
           "  ||",
           "thresholdB=/*2*/;",
-          "  -1*(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
+          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
           "thresholdC=/*3*/;",
-          "  -1*(geom(..L1)/(L0/100)-100) < -thresholdC"
+          "  (geom(..L1)/(L0/100)-100) > thresholdC"
         ]
       }
     ]
