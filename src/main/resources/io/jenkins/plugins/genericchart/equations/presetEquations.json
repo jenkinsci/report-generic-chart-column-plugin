@@ -88,6 +88,55 @@
       ]
     }
   ]
+  },{
+  "id": "SHORT_CUT_CALC",
+  "comments": [
+    "computing the change (in %) against previous runs with extremes cut-off",
+    "is using avgN - average with cutting of N*2 - of previous points",
+    "one parameter, cut amount. 1 means cut of biggest and lowest member. 2 mens cut two biggest and 2 lowest. At least one (or two) members of array are persisted",
+    "eg: SHORT_UP_CUT_OK 1  from  24 -5 3 12 will calc avg from 3 and 12 as 24 and -5 will be cut away",
+    "eg: SHORT_UP_CUT_OK 100  from  same values will again lead to 3 and 12 as there is nothing more to remove",
+    "(avgN(cut,..L1)/(L0/100)-100)"
+  ],
+  "equations": [
+    {
+      "name": "cut-comment",
+      "equation": [
+        "cut=/*1*/;",
+        "  2*cut+1"
+      ]
+    },{
+      "name": "len",
+      "equation": [
+        "cut=/*1*/;",
+        "  max(0,MN-2*cut)"
+      ],
+      "descriptions": [
+        {"condition": "/*RESULT*/ <= 1 ","description": ["warning, not enough data values for safe calculation (MN). Should be at lest 2*/*1*/+1 (/*cut-comment*/)."]}
+      ]
+    },{
+      "name": "sort-comment",
+      "equation": [
+        "  sort(..L1)"
+      ]
+    },{
+      "name": "avgn",
+      "equation": [
+        "cut=/*1*/;",
+        "  avgN(cut,..L1)"
+      ]
+    },{
+      "name": "main",
+      "equation": [
+        "cut=/*1*/;",
+        "  (/*avgn*//(L0/100)-100)"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The /*avgn*/ is the average value (with /*1*/ lowest and /*1*/ biggest values removed) from: /*sort-comment*/"]},
+        {"condition": "true","description": ["The relative difference between this (L0) and filtered avg(/*avgn*/) of previous MN (after cut: /*len*/) values is: /*RESULT*/%"]}
+      ]
+    }
+  ]
 },
 
 
@@ -114,7 +163,7 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not bigger then threshold is:"]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is bigger then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
       ]
@@ -143,7 +192,7 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result, whether rise (in %) against previous run was not bigger then threshold is:"]},
+          { "condition": "true","description": ["The result, whether rise (in %) against previous run was not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
@@ -173,7 +222,7 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not bigger then threshold is:"]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is bigger then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
@@ -202,9 +251,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to threshold /*1*/%, that is bad."]}
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
       }
     ]
@@ -231,7 +280,7 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (geom) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not bigger then threshold is:"]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is bigger then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
@@ -260,9 +309,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is lower then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is bigger or equal to threshold /*1*/%, that is bad."]}
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
       }
     ]
@@ -277,10 +326,21 @@
     ],
     "equations": [
       {
+        "name": "short_cut_calc",
+        "equation": [
+          "SHORT_CUT_CALC /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/; threshold=/*2*/;",
-          "  (avgN(cut,..L1)/(L0/100)-100) >  threshold"
+          "threshold=/*2*/;",
+          "  /*short_cut_calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -295,10 +355,21 @@
     ],
     "equations": [
       {
+        "name": "short_cut_calc",
+        "equation": [
+          "SHORT_CUT_CALC /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/; threshold=/*2*/;",
-          "  (avgN(cut,..L1)/(L0/100)-100) < -threshold"
+          "threshold=/*2*/;",
+          "  /*short_cut_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
       }
     ]
@@ -498,6 +569,11 @@
           "IMMEDIATE_UP_OK /*2*/"
         ]
       },{
+        "name": "short_up_cut_ok",
+        "equation": [
+          "SHORT_UP_CUT_OK /*1*/ /*4*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_up_ok*/",
@@ -505,8 +581,7 @@
           "cut=/*1*/; thresholdB=/*3*/;",
           "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) > thresholdB",
           "  ||",
-          "thresholdC=/*4*/;",
-          "  (avgN(cut,..L1)/(L0/100)-100) > thresholdC"
+          "/*short_up_cut_ok*/"
         ]
       }
     ]
@@ -526,15 +601,19 @@
           "IMMEDIATE_DOWN_OK /*2*/"
         ]
       },{
+        "name": "short_down_cut_ok",
+        "equation": [
+          "SHORT_DOWN_CUT_OK /*1*/ /*4*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "  /*immediate_down_ok*/",
+          "/*immediate_down_ok*/",
           "  ||",
           "cut=/*1*/; thresholdB=/*3*/;",
           "  (avgN(cut,L{MN/2}..L{MN})/(avgN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
           "  ||",
-          "thresholdC=/*4*/;",
-          "  (avgN(cut,..L1)/(L0/100)-100) < -thresholdC"
+          "/*short_down_cut_ok*/"
         ]
       }
     ]
