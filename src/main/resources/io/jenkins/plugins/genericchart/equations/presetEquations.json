@@ -225,7 +225,50 @@
         "(/*avg1*//(/*avg2*//100)-100)"
       ],
       "descriptions": [
-        {"condition": "true","description": ["The relative difference between lower and upper half of original array is: /*RESULT*/%"]}
+        {"condition": "true","description": ["The relative difference between avgs of lower and upper half of original array is: /*RESULT*/%"]}
+      ]
+    }
+  ]
+},{
+  "id": "LONG_BIG_CALC",
+  "comments": [
+    "computing the change (in %) of newer half of builds against older half of builds is not bigger then threshold",
+    "is using geom - geometrical mean - of previous points",
+    "(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100)"
+  ],
+  "equations": [
+    {
+      "name": "len",
+      "equation": [
+        "MN/2"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["There is MN of values, each half will have /*len*/ members:  L{0}..L{MN}"]},
+        {"condition": "MN == 1","description": ["warning, only one member. Both halves are same."]}
+      ]
+    },{
+      "name": "geom1",
+      "equation": [
+        "geom(L{MN/2}..L{MN})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["/*geom1*/ is geometrical mean of upper half (/*len*/-MN) of: L{MN/2}..L{MN} "]}
+      ]
+    },{
+      "name": "geom2",
+      "equation": [
+        "geom(L0..L{MN/2})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["/*geom2*/ is geometrical mean of lower half (0-/*len*/) of: L{0}..L{MN/2} "]}
+      ]
+    },{
+      "name": "main",
+      "equation": [
+        "(/*geom1*//(/*geom2*//100)-100)"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The relative difference between geoms of lower and upper half of original array is: /*RESULT*/%"]}
       ]
     }
   ]
@@ -545,7 +588,7 @@
           "  /*long_calc*/ >  threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is bigger then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
@@ -574,7 +617,7 @@
           "  /*long_calc*/ < -threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is lower then threshold -/*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
@@ -586,16 +629,27 @@
     "id": "LONG_UP_BIG_OK",
     "comments": [
       "checking whether drop (in %) of newer half of builds against older half of builds is not bigger then threshold",
-      "is using geom - geometrical average - of previous points",
+      "is using geom - geometrical mean - of previous points",
       "one parameter, threshold number",
       "eg: LONG_UP_BIG_OK 5"
     ],
     "equations": [
       {
+        "name": "long_big_calc",
+        "equation": [
+          "LONG_BIG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) >  threshold"
+          "  /*long_big_calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -604,16 +658,27 @@
     "id": "LONG_DOWN_BIG_OK",
     "comments": [
       "checking whether rise (in %) of newer half of builds against older half of builds is not bigger then threshold",
-      "is using geom - geometrical average - of previous points",
+      "is using geom - geometrical mean - of previous points",
       "one parameter, threshold number",
       "eg: LONG_DOWN_BIG_OK 5"
     ],
     "equations": [
       {
+        "name": "long_big_calc",
+        "equation": [
+          "LONG_BIG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -threshold"
+          "  /*long_big_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -910,13 +975,17 @@
           "SHORT_UP_BIG_OK /*3*/"
         ]
       },{
+        "name": "long_up_big_ok",
+        "equation": [
+          "LONG_UP_BIG_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_up_ok*/",
-          "  ||",
-          "thresholdB=/*2*/;",
-          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) > thresholdB",
-          "  ||",
+          "  || ",
+          "/*long_up_big_ok*/",
+          "  || ",
           "/*short_up_big_ok*/"
         ]
       }
@@ -942,13 +1011,17 @@
           "SHORT_DOWN_BIG_OK /*3*/"
         ]
       },{
+        "name": "long_down_big_ok",
+        "equation": [
+          "LONG_DOWN_BIG_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_down_ok*/",
-          "  ||",
-          "thresholdB=/*2*/;",
-          "  (geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100) < -thresholdB",
-          "  ||",
+          "  || ",
+          "/*long_down_big_ok*/",
+          "  || ",
           "/*short_down_big_ok*/"
         ]
       }
