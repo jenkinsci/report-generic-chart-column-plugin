@@ -232,7 +232,7 @@
 },{
   "id": "LONG_BIG_CALC",
   "comments": [
-    "computing the change (in %) of newer half of builds against older half of builds is not bigger then threshold",
+    "computing the change (in %) of newer half of builds against older half of builds is not greater then threshold",
     "is using geom - geometrical mean - of previous points",
     "(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100)"
   ],
@@ -275,7 +275,7 @@
 },{
   "id": "LONG_CUT_CALC",
   "comments": [
-    "checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold",
+    "computing the change (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
     "is using avgN - average with cutting - of previous points",
     "one parameters, cut amount",
     "eg: LONG_CUT_CALC 1  from  24 -5 3 12 will calc avg from 3 and 12 as 24 and -5 will be cut away",
@@ -337,6 +337,71 @@
       ]
     }
   ]
+},{
+  "id": "LONG_BIG_CUT_CALC",
+  "comments": [
+    "computing the change  (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
+    "is using geomN - geometrical mean with cutting - of previous points",
+    "one parameters, cut amount",
+    "eg: LONG_BIG_CUT_CLAC 1  from  24 -5 3 12 will calc avg from 3 and 12 as 24 and -5 will be cut away",
+    "eg: LONG_BIG_CUT_CLAC 100  from  same values will again lead to 3 and 12 as there is nothing more to remove",
+    "(geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100)"
+  ],
+  "equations": [
+    {
+      "name": "cut-comment",
+      "equation": [
+        "cut=/*1*/;",
+        "  4*cut+1"
+      ]
+    },{
+      "name": "len",
+      "equation": [
+        "cut=/*1*/;",
+        "  max(0,MN-4*cut)"
+      ],
+      "descriptions": [
+        {"condition": "/*RESULT*/ <= 1 ","description": ["warning, not enough data values for safe calculation (MN). Should be at lest 4*/*1*/+1 (/*cut-comment*/)."]}
+      ]
+    },{
+      "name": "sort-comment1",
+      "equation": [
+        "  sort(L{MN/2}..L{MN})"
+      ]
+    },{
+      "name": "sort-comment2",
+      "equation": [
+        "  sort(L0..L{MN/2})"
+      ]
+    },{
+      "name": "geomn1",
+      "equation": [
+        "cut=/*1*/;",
+        "  geomN(cut,L{MN/2}..L{MN})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The /*geomn1*/ is the geometric mean (with /*1*/ lowest and /*1*/ biggest values removed) from: /*sort-comment1*/"]}
+      ]
+    },{
+      "name": "geomn2",
+      "equation": [
+        "cut=/*1*/;",
+        "  geomN(cut,L0..L{MN/2})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The /*geomn2*/ is the geometric mean of (with /*1*/ lowest and /*1*/ biggest values removed) from: /*sort-comment2*/"]}
+      ]
+    },{
+      "name": "main",
+      "equation": [
+        "cut=/*1*/;",
+        "  (/*geomn1*//(/*geomn2*//100)-100)"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The relative difference between filtered geoms of newer half of data (/*geomn1*/) and older half of data (/*geomn2*/) of original MN (after 2x cut of /*len*/) values is: /*RESULT*/%"]}
+      ]
+    }
+  ]
 },
 
 
@@ -344,7 +409,7 @@
   {
     "id": "IMMEDIATE_UP_OK",
     "comments": [
-      "checking whether drop (in %) against previous run was not bigger then threshold",
+      "checking whether drop (in %) against previous run was not greater then threshold",
       "one parameter, threshold number",
       "eg: IMMEDIATE_UP_OK 5"
     ],
@@ -363,8 +428,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing momentary performance regression."]}
       ]
       }
@@ -373,7 +438,7 @@
   {
     "id": "IMMEDIATE_DOWN_OK",
     "comments": [
-      "checking whether rise (in %) against previous run was not bigger then threshold",
+      "checking whether rise (in %) against previous run was not greater then threshold",
       "one parameter, threshold number",
       "eg: IMMEDIATE_DOWN_OK 5"
     ],
@@ -392,9 +457,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result, whether rise (in %) against previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result, whether rise (in %) against previous run was not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing momentary performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing momentary performance regression."]}
         ]
       }
     ]
@@ -402,7 +467,7 @@
   {
     "id": "SHORT_UP_OK",
     "comments": [
-      "checking whether drop (in %) against previous runs was not bigger then threshold",
+      "checking whether drop (in %) against previous runs was not greater then threshold",
       "is using avg of previous points",
       "one parameter, threshold number",
       "eg: SHORT_UP_OK 5"
@@ -422,8 +487,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
@@ -432,7 +497,7 @@
   {
     "id": "SHORT_DOWN_OK",
     "comments": [
-      "checking whether rise (in %) against previous runs was not bigger then threshold",
+      "checking whether rise (in %) against previous runs was not greater then threshold",
       "is using avg of previous points",
       "one parameter, threshold number",
       "eg: SHORT_DOWN_OK 5"
@@ -451,9 +516,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -461,7 +526,7 @@
   {
     "id": "SHORT_UP_BIG_OK",
     "comments": [
-      "checking whether drop (in %) against previous runs was not bigger then threshold",
+      "checking whether drop (in %) against previous runs was not greater then threshold",
       "is using geometrical mean of previous points",
       "one parameter, threshold number",
       "eg: SHORT_UP_BIG_OK 5"
@@ -480,8 +545,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (geom) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
@@ -490,7 +555,7 @@
   {
     "id": "SHORT_DOWN_BIG_OK",
     "comments": [
-      "checking whether rise (in %) against previous runs was not bigger then threshold",
+      "checking whether rise (in %) against previous runs was not greater then threshold",
       "is using geom of previous points",
       "one parameter, threshold number",
       "eg: SHORT_DOWN_BIG_OK 5"
@@ -509,9 +574,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -519,7 +584,7 @@
   {
     "id": "SHORT_UP_CUT_OK",
     "comments": [
-      "checking whether drop (in %) against previous runs with extremes cut-off was not bigger then threshold",
+      "checking whether drop (in %) against previous runs with extremes cut-off was not greater then threshold",
       "is using avgN - average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: SHORT_UP_CUT_OK 1 5"
@@ -538,8 +603,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against avg (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against avg (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
@@ -548,7 +613,7 @@
   {
     "id": "SHORT_DOWN_CUT_OK",
     "comments": [
-      "checking whether rise (in %) against previous runs with extremes cut-off was not bigger then threshold",
+      "checking whether rise (in %) against previous runs with extremes cut-off was not greater then threshold",
       "is using avgN - average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: SHORT_DOWN_CUT_OK 1 5"
@@ -567,9 +632,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against avg (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -577,7 +642,7 @@
   {
     "id": "SHORT_UP_BIG_CUT_OK",
     "comments": [
-      "checking whether drop (in %) against previous runs with extremes cut-off was not bigger then threshold",
+      "checking whether drop (in %) against previous runs with extremes cut-off was not greater then threshold",
       "is using geomN - geometrical average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: SHORT_UP_BIG_CUT_OK 1 5"
@@ -596,8 +661,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against geometrical mean (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) against geometrical mean (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
@@ -606,7 +671,7 @@
   {
     "id": "SHORT_DOWN_BIG_CUT_OK",
     "comments": [
-      "checking whether rise (in %) against previous runs with extremes cut-off was not bigger then threshold",
+      "checking whether rise (in %) against previous runs with extremes cut-off was not greater then threshold",
       "is using geomN - geometrical average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: SHORT_DOWN_BIG_CUT_OK 1 5"
@@ -625,9 +690,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against geometrical mean (with the removed extremes) of previous run was not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against geometrical mean (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -635,7 +700,7 @@
   {
     "id": "LONG_UP_OK",
     "comments": [
-      "checking whether drop (in %) of newer half of builds against older half of builds is not bigger then threshold",
+      "checking whether drop (in %) of newer half of builds against older half of builds is not greater then threshold",
       "is using avg - average - of previous points",
       "one parameter, threshold number",
       "eg: LONG_UP_OK 5"
@@ -654,8 +719,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
@@ -664,7 +729,7 @@
   {
     "id": "LONG_DOWN_OK",
     "comments": [
-      "checking whether rise (in %) of newer half of builds against older half of builds is not bigger then threshold",
+      "checking whether rise (in %) of newer half of builds against older half of builds is not greater then threshold",
       "is using avg - average - of previous points",
       "one parameter, threshold number",
       "eg: LONG_DOWN_OK 5"
@@ -683,9 +748,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -693,7 +758,7 @@
   {
     "id": "LONG_UP_BIG_OK",
     "comments": [
-      "checking whether drop (in %) of newer half of builds against older half of builds is not bigger then threshold",
+      "checking whether drop (in %) of newer half of builds against older half of builds is not greater then threshold",
       "is using geom - geometrical mean - of previous points",
       "one parameter, threshold number",
       "eg: LONG_UP_BIG_OK 5"
@@ -712,8 +777,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
@@ -722,7 +787,7 @@
   {
     "id": "LONG_DOWN_BIG_OK",
     "comments": [
-      "checking whether rise (in %) of newer half of builds against older half of builds is not bigger then threshold",
+      "checking whether rise (in %) of newer half of builds against older half of builds is not greater then threshold",
       "is using geom - geometrical mean - of previous points",
       "one parameter, threshold number",
       "eg: LONG_DOWN_BIG_OK 5"
@@ -741,9 +806,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -751,7 +816,7 @@
   {
     "id": "LONG_UP_CUT_OK",
     "comments": [
-      "checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold",
+      "checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
       "is using avgN - average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: LONG_UP_CUT_OK 1 5"
@@ -771,7 +836,7 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of avg of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
@@ -780,7 +845,7 @@
   {
     "id": "LONG_DOWN_CUT_OK",
     "comments": [
-      "checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold",
+      "checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
       "is using avgN - average with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: LONG_DOWN_CUT_OK 1 5"
@@ -801,7 +866,7 @@
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of avg of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is bigger or equal to threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -809,17 +874,28 @@
   {
     "id": "LONG_UP_BIG_CUT_OK",
     "comments": [
-      "checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold",
-      "is using geomN - geometrical average with cutting - of previous points",
+      "checking whether drop (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
+      "is using geomN - geometrical mean with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: LONG_UP_BIG_CUT_OK 1 5"
     ],
     "equations": [
       {
+        "name": "long_big_cut_calc",
+        "equation": [
+          "LONG_BIG_CUT_CALC /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/; threshold=/*2*/;",
-          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) >  threshold"
+          "threshold=/*2*/;",
+          "  /*long_big_cut_calc*/ > threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) of geom of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is lower then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is smaller or equal to threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -827,17 +903,28 @@
   {
     "id": "LONG_DOWN_BIG_CUT_OK",
     "comments": [
-      "checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not bigger then threshold",
-      "is using geomN - geometrical average with cutting - of previous points",
+      "checking whether rise (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
+      "is using geomN - geometrical mean with cutting - of previous points",
       "two parameters, cut amount and threshold number",
       "eg: LONG_DOWN_BIG_CUT_OK 1 5"
     ],
     "equations": [
       {
+        "name": "long_big_cut_calc",
+        "equation": [
+          "LONG_BIG_CUT_CALC /*1*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "cut=/*1*/; threshold=/*2*/;",
-          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -threshold"
+          "threshold=/*2*/;",
+          "  /*long_big_cut_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) of geom of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -1026,14 +1113,23 @@
           "SHORT_UP_BIG_CUT_OK /*1*/ /*3*/"
         ]
       },{
+        "name": "long_up_big_cut_ok",
+        "equation": [
+          "LONG_UP_BIG_CUT_OK /*1*/ /*4*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_up_ok*/",
-          "  ||",
-          "cut=/*1*/; thresholdB=/*4*/;",
-          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) > thresholdB",
-          "  ||",
-          "/*short_up_big_cut_ok*/"
+          "  || ",
+          "/*short_up_big_cut_ok*/",
+          "  || ",
+          "/*long_up_big_cut_ok*/"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["In combination `more is better` with cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1058,14 +1154,23 @@
           "SHORT_DOWN_BIG_CUT_OK /*1*/ /*3*/"
         ]
       },{
+        "name": "long_down_big_cut_ok",
+        "equation": [
+          "LONG_DOWN_BIG_CUT_OK /*1*/ /*4*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_down_ok*/",
           "  ||",
-          "cut=/*1*/; thresholdB=/*4*/;",
-          "  (geomN(cut,L{MN/2}..L{MN})/(geomN(cut,L0..L{MN/2})/100)-100) < -thresholdB",
-          "  ||",
-          "/*short_down_big_cut_ok*/"
+          "/*short_down_big_cut_ok*/",
+          "  || ",
+          "/*long_down_big_cut_ok*/"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["In combination `less is better` with cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
         ]
       }
     ]
