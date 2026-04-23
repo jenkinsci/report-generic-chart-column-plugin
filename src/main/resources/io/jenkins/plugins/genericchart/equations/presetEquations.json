@@ -186,6 +186,49 @@
       ]
     }
   ]
+},{
+  "id": "LONG_CALC",
+  "comments": [
+    "computing the change (in %) of newer half of builds against older half of builds",
+    "is using avg - average - on those two sets of points",
+    "(avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100)"
+  ],
+  "equations": [
+    {
+      "name": "len",
+      "equation": [
+        "MN/2"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["There is MN of values, each half will have /*len*/ members:  L{0}..L{MN}"]},
+        {"condition": "MN == 1","description": ["warning, only one member. Both halves are same."]}
+      ]
+    },{
+      "name": "avg1",
+      "equation": [
+        "avg(L{MN/2}..L{MN})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["/*avg1*/ is avg of upper half (/*len*/-MN) of: L{MN/2}..L{MN} "]}
+      ]
+    },{
+      "name": "avg2",
+      "equation": [
+        "avg(L0..L{MN/2})"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["/*avg2*/ is avg of lower half (0-/*len*/) of: L{0}..L{MN/2} "]}
+      ]
+    },{
+      "name": "main",
+      "equation": [
+        "(/*avg1*//(/*avg2*//100)-100)"
+      ],
+      "descriptions": [
+        {"condition": "true","description": ["The relative difference between lower and upper half of original array is: /*RESULT*/%"]}
+      ]
+    }
+  ]
 },
 
 
@@ -491,10 +534,21 @@
     ],
     "equations": [
       {
+        "name": "long_calc",
+        "equation": [
+          "LONG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) >  threshold"
+          "  /*long_calc*/ >  threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is bigger then threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is lower or equal to threshold /*1*/%, that is bad."]}
         ]
       }
     ]
@@ -509,10 +563,21 @@
     ],
     "equations": [
       {
+        "name": "long_calc",
+        "equation": [
+          "LONG_CALC"
+        ]
+      },{
         "name": "main",
         "equation": [
           "threshold=/*1*/;",
-          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -threshold"
+          "  /*long_calc*/ < -threshold"
+        ],
+        "descriptions": [
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between older half and newer half runs with tolerance of /*1*/%."]},
+          { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not bigger then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is lower then threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is bigger or equal to threshold -/*1*/%, that is bad."]}
         ]
       }
     ]
@@ -709,13 +774,17 @@
           "SHORT_UP_OK /*3*/"
         ]
       },{
+        "name": "long_up_ok",
+        "equation": [
+          "LONG_UP_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
           "/*immediate_up_ok*/",
-          "  ||",
-          "thresholdB=/*2*/;",
-          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) > thresholdB",
-          "  ||",
+          "  || ",
+          "/*long_up_ok*/",
+          "  || ",
           "/*short_up_ok*/"
         ]
       }
@@ -740,16 +809,19 @@
         "equation": [
           "SHORT_DOWN_OK /*3*/"
         ]
-      },
-      {
+      },{
+        "name": "long_down_ok",
+        "equation": [
+          "LONG_DOWN_OK /*2*/"
+        ]
+      },{
         "name": "main",
         "equation": [
-          "  /*immediate_down_ok*/",
-          "  ||",
-          "thresholdB=/*2*/;",
-          "  (avg(L{MN/2}..L{MN})/(avg(L0..L{MN/2})/100)-100) < -thresholdB",
-          "  ||",
-          "  /*short_down_ok*/"
+          "/*immediate_down_ok*/",
+          "  || ",
+          "/*long_down_ok*/",
+          "  || ",
+          "/*short_down_ok*/"
         ]
       }
     ]
