@@ -26,7 +26,7 @@ public class IncrementalSequentialEvaluator {
     }
 
     public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader, PresetEquationsManager manager) {
-        if (commetns != null) {
+        if (commetns != null && (System.getenv().containsKey("GCHE_COMMENTS") || System.getProperties().containsKey("gche_comments"))) {
             for(String comment : commetns){
                 descriptionReader.log(comment);
             }
