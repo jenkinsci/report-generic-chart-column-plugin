@@ -95,10 +95,11 @@ public class GenericChartPublisher extends Publisher {
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), eloger, s -> {
+                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef),
+                            new ExpressionLogger.InheritingExpressionLogger(eloger), new ExpressionLogger.InheritingExpressionLogger(s -> {
                             listener.getLogger().println(s);
                             replies.add(s);
-                    }, presets);
+                    }), presets);
                     //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
                     if (lep) {
                         build.setResult(Result.UNSTABLE);
