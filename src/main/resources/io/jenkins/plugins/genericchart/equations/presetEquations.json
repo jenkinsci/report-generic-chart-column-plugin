@@ -232,7 +232,7 @@
 },{
   "id": "LONG_BIG_CALC",
   "comments": [
-    "computing the change (in %) of newer half of builds against older half of builds is not greater then threshold",
+    "computing the change (in %) of newer half of builds against older half of builds",
     "is using geom - geometrical mean - of previous points",
     "(geom(L{MN/2}..L{MN})/(geom(L0..L{MN/2})/100)-100)"
   ],
@@ -275,7 +275,7 @@
 },{
   "id": "LONG_CUT_CALC",
   "comments": [
-    "computing the change (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
+    "computing the change (in %) of newer half of builds against older half of builds (both with extremes cut-off)",
     "is using avgN - average with cutting - of previous points",
     "one parameters, cut amount",
     "eg: LONG_CUT_CALC 1  from  24 -5 3 12 will calc avg from 3 and 12 as 24 and -5 will be cut away",
@@ -340,7 +340,7 @@
 },{
   "id": "LONG_BIG_CUT_CALC",
   "comments": [
-    "computing the change  (in %) of newer half of builds against older half of builds (both with extremes cut-off) is not greater then threshold",
+    "computing the change  (in %) of newer half of builds against older half of builds (both with extremes cut-off)",
     "is using geomN - geometrical mean with cutting - of previous points",
     "one parameters, cut amount",
     "eg: LONG_BIG_CUT_CLAC 1  from  24 -5 3 12 will calc avg from 3 and 12 as 24 and -5 will be cut away",
@@ -428,9 +428,9 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', on immediate scale with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether drop (in %) against previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing momentary performance regression."]}
+          { "condition": "true","description": ["The result, whether drop (in %) against previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is greater then threshold /*1*/%, that is bad. You are facing momentary performance regression."]}
       ]
       }
     ]
@@ -458,8 +458,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', on immediate scale with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result, whether rise (in %) against previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing momentary performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*immediate_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*immediate_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing momentary performance regression."]}
         ]
       }
     ]
@@ -488,8 +488,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (avg) previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is greater then threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -517,8 +517,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -546,8 +546,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all (geom) previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) against geom of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is lower or equal threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is greater then threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -575,8 +575,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is  lower then threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -604,8 +604,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) against avg (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is greater then threshold /*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -633,8 +633,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) against avg (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_cut_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_cut_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
       }
     ]
@@ -662,8 +662,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) against geometrical mean (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is lower or equal threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is greater then to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -691,8 +691,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all - with 2*/*1*/ extremes excluded - previous runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) against geometrical mean (with the removed extremes) of previous run was not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_cut_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -720,8 +720,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is lower or equal threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is greater then to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -749,8 +749,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between avgs of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -778,8 +778,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is greater then threshold /*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -807,8 +807,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between geoms of older half and newer half runs with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of newer half, against older half is not greater then threshold is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing long-term performance regression."]}
         ]
       }
     ]
@@ -836,8 +836,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of avg of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is greater then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is lower or equal to threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is greater then threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -865,8 +865,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of avg of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_cut_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_cut_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -894,8 +894,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'more is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether drop (in %) of geom of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is lower then threshold /*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is smaller or equal to threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is lower or equal to threshold /*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is greater then threshold /*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -923,8 +923,8 @@
         "descriptions": [
           { "condition": "true","description": ["This calculation is ensuring, that 'less is better', between newer half of data, and older half of data with (for each half) 2*/*1*/ extremes excluded with tolerance of /*1*/%."]},
           { "condition": "true","description": ["The result,  whether rise (in %) of geom of newer half (with the removed extremes) against older half (with extremes removed) is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is lower then threshold -/*1*/%, that is ok."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["The /*long_big_cut_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["The /*long_big_cut_calc*/% is lower then threshold -/*1*/%, that is bad. You are facing log-term performance regression."]}
         ]
       }
     ]
@@ -964,8 +964,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `more is better` with cutting of extremes calculated via average values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1005,8 +1005,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `less is better` with cutting of extremes calculated via average values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1046,8 +1046,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `more is better` without cutting of extremes calculated via average values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1087,8 +1087,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `less is better` without cutting of extremes calculated via average values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1128,8 +1128,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `more is better` with cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1169,8 +1169,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `less is better` with cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1210,8 +1210,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `more is better` without cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
@@ -1251,8 +1251,8 @@
         ],
         "descriptions": [
           { "condition": "true","description": ["In combination `less is better` without cutting of extremes calculated via geometrical mean values, the result is /*RESULT*/:"]},
-          { "condition": "/*RESULT*/ eq true  ","description": ["All passed. No performance regression noticed."]},
-          { "condition": "/*RESULT*/ eq false ","description": ["At least one of them (see above) failed , that is bad. Performance regression detected."]}
+          { "condition": "/*RESULT*/ eq false ","description": ["All passed (all checks are false). No performance regression noticed."]},
+          { "condition": "/*RESULT*/ eq true  ","description": ["At least one of them (see above) failed (is true), that is bad. Performance regression detected."]}
         ]
       }
     ]
