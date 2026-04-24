@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.jenkins.plugins.genericchart.ChartUtil;
 import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
 
@@ -26,7 +27,7 @@ public class IncrementalSequentialEvaluator {
     }
 
     public String solve(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionReader, PresetEquationsManager manager) {
-        if (commetns != null && (System.getenv().containsKey("GCHE_COMMENTS") || System.getProperties().containsKey("gche_comments"))) {
+        if (commetns != null && shouldCommentsLog()) {
             for(String comment : commetns){
                 descriptionReader.log(comment);
             }
@@ -101,6 +102,9 @@ public class IncrementalSequentialEvaluator {
         return lastResult;
     }
 
+    private static boolean shouldCommentsLog() {
+        return ChartUtil.getVarOrProp(ChartUtil.log_comments);
+    }
     public boolean evaluate(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionsReader, PresetEquationsManager manager) {
         return Boolean.parseBoolean(solve(dataValues, params, logger, descriptionsReader, manager));
     }
