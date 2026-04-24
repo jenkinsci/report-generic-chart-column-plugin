@@ -33,9 +33,9 @@ public class ChartPoint {
     private final String value;
     private final String pointColor;
 
-    public ChartPoint(String buildName, int buildNumber, String value, String pointColor) {
+    public ChartPoint(String buildName, String buildNameShortened, int buildNumber, String value, String pointColor) {
         this.buildName = buildName;
-        this.buildNameShortened = Chartjs.getShortName(buildName, buildNumber);
+        this.buildNameShortened = buildNameShortened;
         this.buildNumber = buildNumber;
         this.value = value;
         this.pointColor = pointColor;

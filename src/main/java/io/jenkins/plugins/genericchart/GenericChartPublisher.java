@@ -87,20 +87,22 @@ public class GenericChartPublisher extends Publisher {
                     List<ChartPoint> points = chart.getPoints();
                     List<String> replies = new ArrayList<>();
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
+                    ExpressionLogger eloger = s -> {};
+                    if (ChartUtil.getVarOrProp(ChartUtil.log_equation)) {
+                        eloger = s -> listener.getLogger().println(s);
+                    }
+
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), s -> listener.getLogger().println(s), new ExpressionLogger() {
-                        @Override
-                        public void log(String s) {
+                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), eloger, s -> {
                             listener.getLogger().println(s);
                             replies.add(s);
-                        }
                     }, presets);
                     //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
                     if (lep) {
                         build.setResult(Result.UNSTABLE);
-                        return true; //you can not go back, nothing is going worse here, so lets quit
+                        //better to calc all return true; //you can not go back, nothing is going worse here, so lets quit
                     }
                 }
             } catch (Exception ex) {
