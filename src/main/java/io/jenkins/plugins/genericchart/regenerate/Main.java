@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,6 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.genericchart.ChartPoint;
 import io.jenkins.plugins.genericchart.ChartUtil;
-import io.jenkins.plugins.genericchart.GenericChartGlobalConfig;
 import io.jenkins.plugins.genericchart.equations.IncrementalSequentialEvaluator;
 import io.jenkins.plugins.genericchart.equations.PresetEquationDefinition;
 import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
@@ -100,7 +98,7 @@ public class Main {
                 System.err.println("No equations detected in  " + buildPath.toString());
                 return;
             }
-            List<Map<String, String>> loadedCharts = new ArrayList<>();
+            List<LoadedChart> loadedCharts = new ArrayList<>();
             for (int i1 = 0; i1 < genericChartPublisherCharts.getLength(); i1++) {
                 Node chartModel = genericChartPublisherCharts.item(i1);
                 if (chartModel.getNodeType() == Node.ELEMENT_NODE) {
@@ -114,8 +112,11 @@ public class Main {
                             }
                         }
                     }
-                    if (currentChart != null && !currentChart.isEmpty()) {
-                        loadedCharts.add(currentChart);
+                    if (currentChart != null && !currentChart.isEmpty()
+                            && currentChart.get("unstableCondition") != null && !currentChart.get("unstableCondition").isBlank()
+                            && currentChart.get("fileNameGlob") != null && !currentChart.get("fileNameGlob").isBlank()
+                            && currentChart.get("key") != null && !currentChart.get("key").isBlank()) {
+                        loadedCharts.add(new LoadedChart(currentChart));
                     }
                 }
             }
@@ -123,26 +124,28 @@ public class Main {
             String jobName = buildPath.getParent().getParent().getFileName().toString();
             String displayName = ReportSummaryUtil.getDisplayName(buildPath, buildId);
             long[] times = ReportSummaryUtil.getTimeAndDuration(buildPath);
+            //there is all of them. Real limit is then set by individual charts
             List<Integer> dataHistory = new ArrayList<>();
             dataHistory.add(buildId);
             dataHistory.addAll(ReportSummaryUtil.getOldBuilds(buildPath, buildId));
             //this must be later transformed to displayname=value to match the chart
             //and also include it to report
             //don't forget the header and footer as in jtreg
-            System.out.println(loadedCharts.size() + " charts loaded for " + buildId + "/" + displayName + " " + jobName);
+            System.out.println(loadedCharts.size() + " valid charts with guarding equation loaded for " + buildId + "/" + displayName + " " + jobName);
             System.out.println(status + " took " + times[1] + ", started at " + times[0]);
             System.out.println("     have found builds to past  " + dataHistory.size() + ": " + dataHistory.toString());
-            for (Map<String, String> chart : loadedCharts) {
+            for (LoadedChart chart : loadedCharts) {
                 List<ChartPoint> oneChartAllData = new ArrayList<>();
-                System.out.println(chart.get("key") + " from " + chart.get("fileNameGlob"));
+                System.out.println(chart.getKey() + " from " + chart.getFileNameGlob());
                 for (Integer data : dataHistory) {
                     File currentHistoryDir = new File((buildPath.toFile().getParentFile()), "" + data);
-                    List<ChartPoint> chartPoint = ChartUtil.findPropertiesValues(currentHistoryDir.toPath(), chart.get("key"), chart.get("fileNameGlob"), displayName, displayName, buildId, chart.get("chartColor"));
+                    /*FIXME bad ones, all displayName, displayName, buildId,  are from this build not of its ownere. thats xpath call again */
+                    List<ChartPoint> chartPoint = ChartUtil.findPropertiesValues(currentHistoryDir.toPath(), chart.getKey(), chart.getFileNameGlob(), displayName, displayName, buildId, chart.getChartColor());
                     if (chartPoint.isEmpty()) {
-                        System.err.println("No data found for " + chart.get("key") + " in " + chart.get("fileNameGlob") + " of " + displayName + "/" + buildId);
+                        System.err.println("No data found for " + chart.getKey() + " in " + chart.getFileNameGlob() + " of " + displayName + "/" + buildId);
                     } else {
                         if (chartPoint.size() > 1) {
-                            System.err.println("To much data " + chartPoint.size() + " found for " + chart.get("key") + " in " + chart.get("fileNameGlob") + " of " + displayName + "/" + buildId);
+                            System.err.println("To much data " + chartPoint.size() + " found for " + chart.getKey() + " in " + chart.getFileNameGlob() + " of " + displayName + "/" + buildId);
                             System.err.println("using first");
                         }
                         ChartPoint point = chartPoint.get(0);
@@ -193,15 +196,14 @@ public class Main {
         List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
         ExpressionLogger eloger = s -> {
         };
-        //FIXME~!!! invert all conditions in te preset file
         //fixme links to the 1.9 r eadme (or new in tip?
-        //if (ChartUtil.getVarOrProp(ChartUtil.log_equation)) {
+        if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
             eloger = s -> System.out.println(s);
-        //}
-        String lep = expresion.solve(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), eloger, s -> {
+        }
+        String lep = expresion.solve(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), eloger, new ExpressionLogger.InheritingExpressionLogger(s -> {
             System.out.println(s);
             replies.add(s);
-        }, presets);
+        }), presets);
         //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
         if (Boolean.parseBoolean(lep)) {
             //build.setResult(Result.UNSTABLE);

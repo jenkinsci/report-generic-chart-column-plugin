@@ -103,7 +103,7 @@ public class IncrementalSequentialEvaluator {
     }
 
     private static boolean shouldCommentsLog() {
-        return ChartUtil.getVarOrProp(ChartUtil.log_comments);
+        return ChartUtil.isVarOrProp(ChartUtil.log_comments);
     }
     public boolean evaluate(List<String> dataValues, String[] params, ExpressionLogger logger, ExpressionLogger descriptionsReader, PresetEquationsManager manager) {
         return Boolean.parseBoolean(solve(dataValues, params, logger, descriptionsReader, manager));
