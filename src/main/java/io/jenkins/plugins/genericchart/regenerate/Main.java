@@ -55,6 +55,9 @@ public class Main {
     public static void main(String[] args) throws Exception {
         //must be run in builds to list all files, or in build dir
         //main thing is job/config.xml, which contains the equations
+        System.err.println("You can use " +  ChartUtil.log_comments.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.log_comments.toUpperCase() + " to print also equations definitions");
+        System.err.println("You can use " +  ChartUtil.log_equation.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.log_equation.toUpperCase() + "to print also equation steps");
+        System.err.println("You can use " +  ChartUtil.PRESET_DEFS.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.PRESET_DEFS.toUpperCase() + "to load another file/url or custom json definitions of preset definitions");
         new Main().work();
     }
 
@@ -175,9 +178,9 @@ public class Main {
         }
     }
 
-    private void calc(Map<String, String> chartDef, List<ChartPoint> points) throws IOException, URISyntaxException {
-        PresetEquationsManager presets = new PresetEquationsManager(/*todo, supply uri via cmdline, as there can be one in jenkins*/);
-        String equationNameOrDef = chartDef.get("unstableCondition");
+    private void calc(LoadedChart chartDef, List<ChartPoint> points) throws IOException, URISyntaxException {
+        PresetEquationsManager presets = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
+        String equationNameOrDef = chartDef.getUnstableCondition();
         PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
         IncrementalSequentialEvaluator expresion;
         if (isPreset != null) {

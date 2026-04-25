@@ -23,6 +23,7 @@
  */
 package io.jenkins.plugins.genericchart.equations;
 
+import io.jenkins.plugins.genericchart.ChartUtil;
 import parser.logical.ExpressionLogger;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class Main {
             printUsage();
             System.exit(0);
         }
-        PresetEquationsManager manager = new PresetEquationsManager();
+        PresetEquationsManager manager = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
         if (presetName.equalsIgnoreCase("--readme")) {
             System.err.println(manager.readReadme());
             System.exit(0);
@@ -119,11 +120,14 @@ public class Main {
         System.err.println("The preset equation will be expanded with parameters and evaluated with data.");
         System.err.println("All arguments after preset name are used as data values for evaluation.");
         System.err.println("If preset equation is not found, the first argument is evaluated as equation (with others as params) as expected.");
+        System.err.println("You can use " +  ChartUtil.log_comments.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.log_comments.toUpperCase() + " to print also equations definitions");
+        System.err.println("You can use " +  ChartUtil.log_equation.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.log_equation.toUpperCase() + "to print also equation steps");
+        System.err.println("You can use " +  ChartUtil.PRESET_DEFS.toLowerCase()+ " lower case property or uppercase variable " + ChartUtil.PRESET_DEFS.toUpperCase() + "to load another file/url or custom json definitions of preset definitions");
     }
     
     private static void listPresets() {
         try {
-            PresetEquationsManager manager = new PresetEquationsManager();
+            PresetEquationsManager manager = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
             System.err.println("Available Preset Equations:");
             System.err.println("===========================");
             System.err.println();
