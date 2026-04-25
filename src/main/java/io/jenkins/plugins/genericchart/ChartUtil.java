@@ -37,8 +37,9 @@ import java.util.stream.Stream;
 
 public class ChartUtil {
 
-    public static final String log_comments = "gche_comments";
-    public static final String log_equation = "gche_equation";
+    public static final String log_comments = "log_comments";
+    public static final String log_equation = "log_equation";
+    public static final String PRESET_DEFS = "preset_defs";
 
     private ChartUtil() {
     }
@@ -109,7 +110,19 @@ public class ChartUtil {
     }
 
 
-    public static boolean getVarOrProp(String key) {
+    public static boolean isVarOrProp(String key) {
         return System.getenv().containsKey(key.toUpperCase()) || System.getProperties().containsKey(key.toLowerCase());
     }
+
+    public static String getVarOrProp(String key) {
+        if (System.getProperties().containsKey(key.toLowerCase()) && !System.getProperty(key.toLowerCase()).isBlank()) {
+            return System.getProperties().getProperty(key.toLowerCase());
+        }
+        if (System.getenv().containsKey(key.toUpperCase()) && !System.getenv(key.toUpperCase()).isBlank()) {
+            return System.getenv(key.toUpperCase());
+        }
+        return null;
+    }
+
+
 }
