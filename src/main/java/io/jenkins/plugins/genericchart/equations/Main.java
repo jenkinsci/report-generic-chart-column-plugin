@@ -42,7 +42,6 @@ import java.util.List;
  */
 public class Main {
 
-    //FIXME when exeuted from job dir, the expressions must be read from config.xml, and data to the past jobs...
     public static void main(String[] args) throws Exception {
         System.err.println("jenkins-report-generic-chart-column Preset Equation Evaluator - for testing purposes only");
         System.err.println("=========================================================================================");

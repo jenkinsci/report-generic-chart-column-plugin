@@ -38,7 +38,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +64,7 @@ public class GenericChartPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
             try {
                 if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
@@ -88,7 +87,7 @@ public class GenericChartPublisher extends Publisher {
                     List<String> replies = new ArrayList<>();
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
                     ExpressionLogger eloger = s -> {};
-                    if (ChartUtil.getVarOrProp(ChartUtil.log_equation)) {
+                    if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
                         eloger = s -> listener.getLogger().println(s);
                     }
 

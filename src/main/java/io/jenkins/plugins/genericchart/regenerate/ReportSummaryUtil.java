@@ -30,11 +30,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -89,8 +94,18 @@ public class ReportSummaryUtil {
         return displayName;
     }
     static long[] getTimeAndDuration(Path buildPath) {
-        long timeStamp = Long.parseLong(findInXml(new File(buildPath.toFile(), "build.xml"), "/build/timestamp"));
-        long duration = Long.parseLong(findInXml(new File(buildPath.toFile(), "build.xml"), "/build/duration"));
+        long timeStamp;
+        try {
+            timeStamp = Long.parseLong(findInXml(new File(buildPath.toFile(), "build.xml"), "/build/timestamp"));
+        } catch (Exception ex){
+            timeStamp = -1;
+        }
+        long duration;
+        try {
+            duration = Long.parseLong(findInXml(new File(buildPath.toFile(), "build.xml"), "/build/duration"));
+        } catch (Exception ex){
+            duration = -1;
+        }
         return new long[]{timeStamp, duration};
     }
 
