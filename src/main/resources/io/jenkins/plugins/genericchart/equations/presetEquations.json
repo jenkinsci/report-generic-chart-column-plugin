@@ -573,8 +573,8 @@
           "   /*short_big_calc*/ < -threshold"
         ],
         "descriptions": [
-          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of /*1*/%."]},
-          { "condition": "true","description": ["The result,  whether rise (in %) against avg of previous run was not greater then threshold is /*RESULT*/:"]},
+          { "condition": "true","description": ["This calculation is ensuring, that 'less is better', against all (geom) previous runs with tolerance of /*1*/%." ]},
+          { "condition": "true","description": ["The result,  whether rise (in %) against geom of previous run was not greater then threshold is /*RESULT*/:" ]},
           { "condition": "/*RESULT*/ eq false ","description": ["The /*short_big_calc*/% is greater or equal to threshold -/*1*/%, that is ok."]},
           { "condition": "/*RESULT*/ eq true  ","description": ["The /*short_big_calc*/% is  lower then threshold -/*1*/%, that is bad. You are facing performance regression."]}
         ]
