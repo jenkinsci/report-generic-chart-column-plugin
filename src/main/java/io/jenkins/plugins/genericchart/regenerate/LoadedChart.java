@@ -71,6 +71,10 @@ public class LoadedChart {
         return title;
     }
 
+    public String getTitleLikeChart() {
+        return "" + getKey() + " from " + getFileNameGlob();
+    }
+
     public String getFileNameGlob() {
         return fileNameGlob;
     }

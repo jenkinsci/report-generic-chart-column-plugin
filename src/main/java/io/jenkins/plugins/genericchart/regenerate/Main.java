@@ -61,20 +61,20 @@ public class Main {
 
     void work() throws Exception {
         if (ReportSummaryUtil.isBuildDir(new File("."))) {
-            recreate(new File(".").getCanonicalFile().toPath());
+            recreateOneJob(new File(".").getCanonicalFile().toPath());
         } else {
             Path cwd = Paths.get(".").toAbsolutePath().normalize();
             if (cwd.resolve("builds").toFile().exists()) {
                 cwd = cwd.resolve("builds");
             }
             try (Stream<Path> dirsStream = Files.list(cwd)) {
-                dirsStream.sequential().filter(d -> !Files.isSymbolicLink(d)).forEach(this::recreate);
+                dirsStream.sequential().filter(d -> !Files.isSymbolicLink(d)).forEach(this::recreateOneJob);
             }
         }
     }
 
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "buildPath claims to have NPE, but I'm failing to see it")
-    private void recreate(Path buildPath) {
+    private void recreateOneJob(Path buildPath) {
         if (buildPath == null) {
             System.err.println("null build path");
             return;
@@ -127,20 +127,33 @@ public class Main {
             //there is all of them. Real limit is then set by individual charts
             List<Integer> dataHistory = new ArrayList<>();
             dataHistory.add(buildId);
+            //this is later transformed to displayname=value to match the chart
             dataHistory.addAll(ReportSummaryUtil.getOldBuilds(buildPath, buildId));
-            //this must be later transformed to displayname=value to match the chart
             //and also include it to report
             //don't forget the header and footer as in jtreg
             System.out.println(loadedCharts.size() + " valid charts with guarding equation loaded for " + buildId + "/" + displayName + " " + jobName);
+            if (loadedCharts.isEmpty()) {
+                System.out.println("No performance data found");
+                return;
+            }
             System.out.println(status + " took " + times[1] + ", started at " + times[0]);
             System.out.println("     have found builds to past  " + dataHistory.size() + ": " + dataHistory.toString());
+            int failures = 0;
+            int chartCounter = 0;
             for (LoadedChart chart : loadedCharts) {
+                chartCounter++;
                 List<ChartPoint> oneChartAllData = new ArrayList<>();
-                System.out.println(chart.getKey() + " from " + chart.getFileNameGlob());
+                System.out.println("### " + chartCounter + "/" + loadedCharts.size() + " " + chart.getTitleLikeChart());
+                int thisChartCounter = 0;
                 for (Integer data : dataHistory) {
+                    thisChartCounter++;
+                    if (thisChartCounter > chart.getLimit()) {
+                        break;
+                    }
                     File currentHistoryDir = new File((buildPath.toFile().getParentFile()), "" + data);
-                    /*FIXME bad ones, all displayName, displayName, buildId,  are from this build not of its ownere. thats xpath call again */
-                    List<ChartPoint> chartPoint = ChartUtil.findPropertiesValues(currentHistoryDir.toPath(), chart.getKey(), chart.getFileNameGlob(), displayName, displayName, buildId, chart.getChartColor());
+                    String thisHistoryBuildDisplayName = ReportSummaryUtil.getDisplayName(currentHistoryDir.toPath(), data);
+                    String thisHistoryBuildResult = ReportSummaryUtil.getBuildResult(currentHistoryDir);
+                    List<ChartPoint> chartPoint = ChartUtil.findPropertiesValues(currentHistoryDir.toPath(), chart.getKey(), chart.getFileNameGlob(), thisHistoryBuildDisplayName, thisHistoryBuildDisplayName, data, chart.getChartColor(), thisHistoryBuildResult);
                     if (chartPoint.isEmpty()) {
                         System.err.println("No data found for " + chart.getKey() + " in " + chart.getFileNameGlob() + " of " + displayName + "/" + buildId);
                     } else {
@@ -154,13 +167,22 @@ public class Main {
                 }
                 //the points in CHART logic are returned as first = oldest = 0, last == current == newest == N.
                 //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
-                //Collections.reverse(oneChartAllData);
                 //however here, in reverse search, they are in correct, expected order
-                //todo, there is mor ein chasrt point, print nice table!
-                //the reverse is missing here just for pretty printing, althouh prinmted oposite, it later correctly matches Upon:... as prinmtied in verbose mode
-                System.out.println("upon (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s->s.getValue()).collect(Collectors.joining(",")));
+                //Collections.reverse(oneChartAllData) is thus not needed
+
+                //the reverse is missing here just for pretty printing, although printed opposite, it later correctly matches Upon:... as printed in verbose mode
+                int i = -1;
+                for (ChartPoint chartPoint : oneChartAllData) {
+                    i++;
+                    System.out.println(chartPoint.getBuildName() + "/" + chartPoint.getBuildNumber() + ": " + chartPoint.getValue() + " " + chartPoint.getResult() + (i == 0 ? " (this)" : ""));
+                }
+                System.out.println("shortened values (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s -> s.getValue()).collect(Collectors.joining(",")));
                 try {
-                    calc(chart, oneChartAllData);
+                    boolean thicChartResult = calc(chart, oneChartAllData);
+                    if (thicChartResult) {
+                        System.out.println("Result of " + chart.getTitleLikeChart() + " is true, that is regression.");
+                        failures++;
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -176,12 +198,17 @@ public class Main {
                 //additional files.. like the original data?
                 //definitely build.xml? config.xml?
             }
+            if (failures == 0) {
+                System.out.println("Generic chart report from properties found no regression for " + displayName + "/" + buildId + " in " + jobName);
+            } else {
+                System.out.println("Generic chart report from properties found " + failures + " regression(s) for " + displayName + "/" + buildId + " in " + jobName);
+            }
         } else {
             System.err.println(buildPath.toString() + " is " + status + ", skipping");
         }
     }
 
-    private void calc(LoadedChart chartDef, List<ChartPoint> points) throws IOException, URISyntaxException {
+    private boolean calc(LoadedChart chartDef, List<ChartPoint> points) throws IOException, URISyntaxException {
         PresetEquationsManager presets = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
         String equationNameOrDef = chartDef.getUnstableCondition();
         PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
@@ -204,9 +231,10 @@ public class Main {
             System.out.println(s);
             replies.add(s);
         }), presets);
-        //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
         if (Boolean.parseBoolean(lep)) {
             //build.setResult(Result.UNSTABLE);
+            return true;
         }
+        return false;
     }
 }

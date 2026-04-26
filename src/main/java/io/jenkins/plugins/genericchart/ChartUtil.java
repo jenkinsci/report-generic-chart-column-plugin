@@ -85,12 +85,12 @@ public class ChartUtil {
         return index;
     }
 
-    public static List<ChartPoint> findPropertiesValues(Path rootDir, String key, String fileNameGlob, String displayName, String shortenedDisplayName, int buildNumber, String color) {
+    public static List<ChartPoint> findPropertiesValues(Path rootDir, String key, String fileNameGlob, String displayName, String shortenedDisplayName, int buildNumber, String color, String currentResult) {
         Predicate<String> lineValidator = ChartUtil.getValueKeyPredicate(key);
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + fileNameGlob);
         List<ChartPoint> list = new ArrayList<>();
         try (Stream<Path> filesStream = Files.walk(rootDir).sequential()) {
-            Optional<ChartPoint> optPoint = filesStream.filter((p) -> matcher.matches(p.getFileName())).map((p) -> pathToLine(p, lineValidator)).filter((o) -> o.isPresent()).map(o -> o.get()).map(s -> new ChartPoint(displayName, shortenedDisplayName, buildNumber, ChartUtil.extractValue(s), color)).findFirst();
+            Optional<ChartPoint> optPoint = filesStream.filter((p) -> matcher.matches(p.getFileName())).map((p) -> pathToLine(p, lineValidator)).filter((o) -> o.isPresent()).map(o -> o.get()).map(s -> new ChartPoint(displayName, shortenedDisplayName, buildNumber, ChartUtil.extractValue(s), color, currentResult)).findFirst();
             if (optPoint.isPresent()) {
                 list.add(optPoint.get());
             }

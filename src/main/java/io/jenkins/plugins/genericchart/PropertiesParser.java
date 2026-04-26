@@ -194,7 +194,8 @@ public class PropertiesParser {
                 run.getDisplayName(),
                 Chartjs.getShortName(run.getDisplayName(), run.getNumber()),
                 run.getNumber(),
-                chart.getPointColor(pointsInRangeOfwhitelisted.contains(run.getDisplayName())));
+                chart.getPointColor(pointsInRangeOfwhitelisted.contains(run.getDisplayName())),
+                run.getResult().toString());
     }
 
 }

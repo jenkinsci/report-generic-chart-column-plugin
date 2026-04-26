@@ -65,6 +65,7 @@ public class GenericChartPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+        int failures = 0;
         for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
             try {
                 if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
@@ -90,7 +91,6 @@ public class GenericChartPublisher extends Publisher {
                     if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
                         eloger = s -> listener.getLogger().println(s);
                     }
-
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
@@ -99,15 +99,21 @@ public class GenericChartPublisher extends Publisher {
                             listener.getLogger().println(s);
                             replies.add(s);
                     }), presets);
-                    //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
+                    //todo, generate reprt as in regenerate/Main
                     if (lep) {
+                        listener.getLogger().println("Result of " + chart.getTitle() + " is true, that is regression.");
                         build.setResult(Result.UNSTABLE);
-                        //better to calc all return true; //you can not go back, nothing is going worse here, so lets quit
+                        failures++;
                     }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+        if (failures == 0) {
+            listener.getLogger().println("Generic chart report from properties found no regression");
+        } else {
+            listener.getLogger().println("Generic chart report from properties found " + failures+ " regression(s)");
         }
         return true;
     }
