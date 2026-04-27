@@ -187,7 +187,13 @@ public class PropertiesParser {
         return new ChartPointsWithBlacklist(list, blacklisted, whitelisted, whiteListSizeWithoutSurroundings);
     }
 
+
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "run.getResult() claims to have NPE, but I'm failing to see it")
     private static List<ChartPoint> findPropertiesValues(Run run, ChartModel chart, List<String> pointsInRangeOfwhitelisted) {
+        if (run == null) {
+            throw new NullPointerException("run is null");
+        }
         return ChartUtil.findPropertiesValues(run.getRootDir().toPath(),
                 chart.getKey().trim(),
                 chart.getFileNameGlob(),
@@ -195,7 +201,7 @@ public class PropertiesParser {
                 Chartjs.getShortName(run.getDisplayName(), run.getNumber()),
                 run.getNumber(),
                 chart.getPointColor(pointsInRangeOfwhitelisted.contains(run.getDisplayName())),
-                run.getResult().toString());
+                run.getResult() !=null ? run.getResult().toString():"UNKNOWN");
     }
 
 }

@@ -185,7 +185,7 @@ public class Main {
                     //additional files.. like the original data?
                     //definitely build.xml? config.xml?
                 }
-                out.closeAllCharts(failures, displayName, buildId, jobName);
+                out.closeAllCharts(failures, displayName, buildId, jobName, s -> {});
                 out.footer(jobName, displayName, buildId, times[0], ChartUtil.getVarOrProp(ChartUtil.JENKINS_URL));
             }
         } else {
