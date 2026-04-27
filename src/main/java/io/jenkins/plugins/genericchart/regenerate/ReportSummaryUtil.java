@@ -30,13 +30,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,75 +198,6 @@ public class ReportSummaryUtil {
             }
         }
         return found;
-    }
-
-
-    /**
-     * Writes the common header for all report types.
-     */
-    private static void writeHeader(BufferedWriter writer, String jobName, String buildName, int buildNumber, String url, long buildtime, long duration) throws IOException {
-        writer.write("=" .repeat(80) + "\n");
-        writer.write(String.format("Performance Report for %s%n", jobName));
-        writer.write(String.format("Build name: %s (ID %d)%n", buildName, buildNumber));
-        writer.write(String.format("Build timestamp: %s ms%n", toKnown(buildtime, false, false)));
-        writer.write(String.format("Build duration: %s ms%n", toKnown(duration, false, false)));
-        writer.write("=".repeat(80) + "\n\n");
-        introduction(writer, jobName, buildName, buildNumber, url, buildtime, duration);
-
-    }
-
-    private static void introduction(BufferedWriter writer, String jobName, String buildName, int buildNumber, String url, long buildtime, long duration) throws IOException {
-        String s = "This results are related to build of " + buildName + "/" + buildNumber + " in test of " + jobName + ". It started at " + toKnown(buildtime, true, false) + " and had duration of " + toKnown(duration, true, true) + ".";
-        writer.write(s + "\n\n");
-    }
-
-    private static void footerr(BufferedWriter writer, String jobName, String buildName, int buildNumber, String url, long buildtime, long duration) throws IOException {
-        {
-            writer.write("=".repeat(80) + "\\n");
-            String s = "This results are related to build of " + buildName + "/" + buildNumber + " in test of " + jobName + "." + "It started at " + toKnown(buildtime, true, true) + " and had duration of " + toKnown(duration, true, true) + ".";
-            writer.write(s + "\n\n");
-            writer.write("=".repeat(80) + "\n\n\n");
-        }
-    }
-
-
-    private static String toKnown(long time, boolean port, boolean duration) {
-        if (time <= 0) {
-            return "unknown";
-        } else {
-            if (!port) {
-                return "" + time;
-            } else {
-                if (duration) {
-                    return Duration.ofMillis(time).toString();
-                } else {
-                    return new Date(time).toInstant().toString();
-                }
-            }
-        }
-    }
-
-    private static void footer(BufferedWriter writer, String jobName, String buildName, int buildNumber, String url, String testType, String date) throws IOException {
-        if (url != null) {
-            writer.write("=".repeat(80) + "\n\n");
-            String page = url + "/job/" + jobName;
-            writer.write("You can see the job page at: " + page + "\n");
-            String build = page + "/" + buildNumber;
-            writer.write("You can see the build  page at: " + build + "\n");
-            writer.write("You can see the build artifacts at: " + build + "/artifact" + "\n");
-            writer.write("You can see the build log at: " + build + "/console" + "\n");
-            writer.write("You can see the build full log at: " + build + "/consoleFull" + "\n");
-        }
-        writer.write("\n" + "=".repeat(80) + "\n\n");
-        writer.write("End of " + testType + " of build " + buildName + "/" + buildNumber + " in job " + jobName + " from " + date + ".\n");
-        writer.write("\n" + "=".repeat(80) + "\n\n");
-    }
-
-    /**
-     * Returns "s" for plural or empty string for singular.
-     */
-    private static String pluralize(int count) {
-        return count == 1 ? "" : "s";
     }
 
 
