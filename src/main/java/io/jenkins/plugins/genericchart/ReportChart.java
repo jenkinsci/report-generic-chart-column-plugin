@@ -24,6 +24,7 @@
 package io.jenkins.plugins.genericchart;
 
 import hudson.model.Job;
+import io.jenkins.plugins.genericchart.regenerate.LoadedChart;
 
 import java.util.List;
 
@@ -37,8 +38,11 @@ public class ReportChart {
     private final int rangeAroundWlist;
     private final int whiteListSizeWithoutSurroundings;
     private final String unstableCondition;
+    private final String fileGlob;
+    private final String key;
 
-    private ReportChart(String title, String color, String unstableCondition, List<ChartPoint> points, List<String> blist, List<String> wlist, int rangeAroundWlist, int whiteListSizeWithoutSurroundings) {
+    private ReportChart(String title, String color, String unstableCondition, List<ChartPoint> points, List<String> blist, List<String> wlist,
+            int rangeAroundWlist, int whiteListSizeWithoutSurroundings, String fileGlob, String key) {
         this.blist = blist;
         this.title = title;
         this.color = color;
@@ -47,6 +51,8 @@ public class ReportChart {
         this.wlist = wlist;
         this.rangeAroundWlist = rangeAroundWlist;
         this.whiteListSizeWithoutSurroundings = whiteListSizeWithoutSurroundings;
+        this.fileGlob = fileGlob;
+        this.key = key;
     }
 
     public static ReportChart createReportChart(ChartModel m, PropertiesParser parser, Job<?, ?> job) {
@@ -59,11 +65,17 @@ public class ReportChart {
                 points.getBlacklist(),
                 points.getWhitelist(),
                 m.getRangeAroundAlist(),
-                points.getWhiteListSizeWithoutSurroundings());
+                points.getWhiteListSizeWithoutSurroundings(),
+                m.getFileNameGlob(),
+                m.getKey());
     }
 
     public String getTitle() {
         return title + " (dennied " + blist.size() + ")" + " (allowed " + whiteListSizeWithoutSurroundings + "+" + Integer.toString(wlist.size() - whiteListSizeWithoutSurroundings) + ")";
+    }
+
+    public String getRawTitle() {
+        return title;
     }
 
     public String getColor() {
@@ -84,5 +96,25 @@ public class ReportChart {
 
     public String getUnstableCondition() {
         return unstableCondition;
+    }
+
+    public LoadedChart toLoadedChart() {
+        return new LoadedChart(
+                color,
+                fileGlob,
+                key,
+                points.size(),
+                rangeAroundWlist,"","",
+                title, unstableCondition
+
+        );
+    }
+
+    public String getFileGlob() {
+        return fileGlob;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

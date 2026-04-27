@@ -67,9 +67,9 @@ public class GenericChartPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
-        int failures = 0;
+        GenericChartProjectAction chrs = new GenericChartProjectAction(build.getProject(), charts);
         List<ReportChart> chartsWithEquations = new ArrayList<>();
-        for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
+        for (ReportChart chart : chrs.getCharts()) {
             if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isBlank()) {
                 chartsWithEquations.add(chart);
             }
@@ -78,49 +78,33 @@ public class GenericChartPublisher extends Publisher {
             listener.getLogger().println("No equation definitions found. Not touching result from generic chart report plugin.");
             return true;
         }
+        listener.getLogger().println("Performance Report by generic chart report plugin:");
         //job.getDuration() is set once job finishes (so does getTime...)
         long duration =  System.currentTimeMillis() - build.getStartTimeInMillis();
+        int failures = 0;
+        int chartCounter = 0;
         try(PlaintextWriter out = new PlaintextWriter(build.getRootDir())) {
             out.writeHeader(build.getProject().getName(), build.getDisplayName(), build.getNumber(), Jenkins.get().getRootUrl(), build.getStartTimeInMillis(), duration);
             out.introductionChartsCount(chartsWithEquations.size(),  build.getNumber(), build.getDisplayName(), build.getProject().getName());
             for (ReportChart chart : chartsWithEquations) {
+                chartCounter++;
                 try {
-                    String equationNameOrDef = chart.getUnstableCondition().trim();
-                    PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
-                    IncrementalSequentialEvaluator expresion;
-                    if (equationNameOrDef.trim().equals("LIST_INTERNALS")) {
-                        presets.print(listener.getLogger());
-                        expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator("Internal expressions printed");
-                    } else {
-                        PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
-                        if (isPreset != null) {
-                            listener.getLogger().println(equationNameOrDef + " found as preset queue:");
-                            expresion = isPreset.getExpressions();
-                        } else {
-                            expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator(equationNameOrDef);
-                        }
-                    }
+                    out.singleChartTitle(chart.toLoadedChart(), chartCounter, chartsWithEquations.size());
                     List<ChartPoint> points = chart.getPoints();
-                    List<String> replies = new ArrayList<>();
-                    List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
-                    ExpressionLogger eloger = s -> {
-                    };
-                    if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
-                        eloger = s -> listener.getLogger().println(s);
-                    }
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
-                    Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), new ExpressionLogger.InheritingExpressionLogger(eloger), new ExpressionLogger.InheritingExpressionLogger(s -> {
+                    //we revert already ehre to sync nice outputs with values
+                    Collections.reverse(points);
+                    ExpressionLogger dualOutputController = s -> {
                         listener.getLogger().println(s);
-                        replies.add(s);
-                    }), presets);
-                    //todo, generate report as in regenerate/Main
-                    if (lep) {
-                        listener.getLogger().println("Result of " + chart.getTitle() + " is true, that is regression.");
+                        out.println(s);
+                    };
+                    out.allUsedPastBuilds(points, dualOutputController, true);
+                    if (out.calcSingleChartAndResolve(chart.toLoadedChart(), points, dualOutputController)) {
                         build.setResult(Result.UNSTABLE);
                         failures++;
                     }
+
                 } catch (Throwable ex) {
                     ex.printStackTrace();
                 }

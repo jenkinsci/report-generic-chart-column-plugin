@@ -112,4 +112,13 @@ public class IncrementalSequentialEvaluator {
     public static IncrementalSequentialEvaluator getUserDefIncrementalSequentialEvaluator(String presetName) {
         return new IncrementalSequentialEvaluator(Arrays.asList(new NamedEquationDefinition("userDef", Arrays.asList(presetName), null)), null);
     }
+
+    public boolean hasAnswers() {
+        for (NamedEquationDefinition def : equations) {
+            if (def.getDescriptions()!=null && def.getDescriptions().size() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

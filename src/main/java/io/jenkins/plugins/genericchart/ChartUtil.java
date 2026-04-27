@@ -24,6 +24,7 @@
 
 package io.jenkins.plugins.genericchart;
 
+/*No imports from hudson here! This is reused elsewhere!*/
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;

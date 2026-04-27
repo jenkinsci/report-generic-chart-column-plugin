@@ -40,6 +40,17 @@ public class LoadedChart {
     private int rangeAroundAlist;
     private String unstableCondition;
 
+    public LoadedChart(String chartColor, String fileNameGlob, String key, int limit, int rangeAroundAlist, String resultAllowList, String resultDenyList, String title, String unstableCondition) {
+        this.chartColor = chartColor;
+        this.fileNameGlob = fileNameGlob;
+        this.key = key;
+        this.limit = limit;
+        this.rangeAroundAlist = rangeAroundAlist;
+        this.resultAllowList = resultAllowList;
+        this.resultDenyList = resultDenyList;
+        this.title = title;
+        this.unstableCondition = unstableCondition;
+    }
 
     public LoadedChart(Map<String, String> map) {
         this.unstableCondition = map.get("unstableCondition");
