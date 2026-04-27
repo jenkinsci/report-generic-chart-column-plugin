@@ -39,6 +39,7 @@ public class ReportChart {
     private final int whiteListSizeWithoutSurroundings;
     private final String unstableCondition;
     private final String fileGlob;
+    @SuppressWarnings({"lgtm[jenkins/plaintext-storage]", "This is not a password, it is key in properties file"})
     private final String key;
 
     private ReportChart(String title, String color, String unstableCondition, List<ChartPoint> points, List<String> blist, List<String> wlist,
