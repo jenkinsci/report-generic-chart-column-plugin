@@ -40,6 +40,7 @@ public class ChartUtil {
     public static final String log_comments = "log_comments";
     public static final String log_equation = "log_equation";
     public static final String PRESET_DEFS = "preset_defs";
+    public static final String JENKINS_URL = "jenkins_url";
 
     private ChartUtil() {
     }
