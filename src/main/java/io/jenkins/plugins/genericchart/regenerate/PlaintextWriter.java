@@ -79,13 +79,17 @@ public class PlaintextWriter implements AutoCloseable {
         println("### " + chartCounter + "/" + loadedChartsCount + " " + chart.getTitleLikeChart());
     }
 
-    public void allUsedPastBuilds(List<ChartPoint> oneChartAllData) throws IOException {
+    public void allUsedPastBuilds(List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate, boolean running) throws IOException {
         int i = -1;
         for (ChartPoint chartPoint : oneChartAllData) {
             i++;
-            println(chartPoint.getBuildName() + "/" + chartPoint.getBuildNumber() + ": " + chartPoint.getValue() + " " + chartPoint.getResult() + (i == 0 ? " (this)" : ""));
+            String result = chartPoint.getResult() + (i == 0 ? " (this)" : "");
+            if (running) {
+                result =  (i == 0 ? " RUNNING" : " " + chartPoint.getResult());
+            }
+            outputControlCandidate.log(chartPoint.getBuildName() + "/" + chartPoint.getBuildNumber() + ": " + chartPoint.getValue() + " " + result);
         }
-        println("shortened values (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s -> s.getValue()).collect(Collectors.joining(",")));
+        outputControlCandidate.log("shortened values (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s -> s.getValue()).collect(Collectors.joining(",")));
     }
 
 
@@ -128,32 +132,29 @@ public class PlaintextWriter implements AutoCloseable {
     }
 
 
-    public boolean calcSingleChartAndResolve(LoadedChart chart, List<ChartPoint> oneChartAllData) throws IOException{
+    public boolean calcSingleChartAndResolve(LoadedChart chart, List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate) throws IOException{
         try {
-            boolean thicChartResult = calc(chart, oneChartAllData);
+            boolean thicChartResult = calc(chart, oneChartAllData, outputControlCandidate);
             if (thicChartResult) {
-                println("Result of " + chart.getTitleLikeChart() + " is true, that is regression.");
-
-
+                outputControlCandidate.log("Result of " + chart.getTitleLikeChart() + " is true, that is regression.");
             } else {
-                println("Result of " + chart.getTitleLikeChart() + " is false, that is ok.");
+                outputControlCandidate.log("Result of " + chart.getTitleLikeChart() + " is false, that is ok.");
             }
             return thicChartResult;
         } catch (Exception ex) {
             ex.printStackTrace();
-            println(ex.toString());
-            println("Failed to calculate" + chart.getTitleLikeChart() + ", considering it as regression.");
+            outputControlCandidate.log(ex.toString());
+            outputControlCandidate.log("Failed to calculate" + chart.getTitleLikeChart() + ", considering it as regression.");
+            return true;
         }
-        return true;
     }
 
-    private boolean calc(LoadedChart chartDef, List<ChartPoint> points) throws IOException, URISyntaxException, IOException{
+    private boolean calc(LoadedChart chartDef, List<ChartPoint> points, ExpressionLogger outputControlCandidate) throws IOException, URISyntaxException, IOException{
         PresetEquationsManager presets = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
         String equationNameOrDef = chartDef.getUnstableCondition();
         PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
         IncrementalSequentialEvaluator expresion;
         if (isPreset != null) {
-            //System.err.print(equationNameOrDef + " found as preset queue");
             expresion = isPreset.getExpressions();
         } else {
             expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator(equationNameOrDef);
@@ -161,15 +162,13 @@ public class PlaintextWriter implements AutoCloseable {
         List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
         ExpressionLogger eloger = s -> {
         };
-        //fixme links to the 1.9 r eadme (or new in tip?
-        if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
-            eloger = s -> println(s);
+        if (ChartUtil.isVarOrProp(ChartUtil.log_equation) || !expresion.hasAnswers()) {
+            eloger = s -> outputControlCandidate.log(s);
         }
         String lep = expresion.solve(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), eloger, new ExpressionLogger.InheritingExpressionLogger(s -> {
-            println(s);
+            outputControlCandidate.log(s);
         }), presets);
         if (Boolean.parseBoolean(lep)) {
-            //build.setResult(Result.UNSTABLE);
             return true;
         }
         return false;

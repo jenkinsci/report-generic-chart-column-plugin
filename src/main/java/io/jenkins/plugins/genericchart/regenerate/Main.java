@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.genericchart.ChartPoint;
 import io.jenkins.plugins.genericchart.ChartUtil;
+import parser.logical.ExpressionLogger;
 
 public class Main {
 
@@ -139,8 +140,6 @@ public class Main {
                 dataHistory.add(buildId);
                 //this is later transformed to displayname=value to match the chart
                 dataHistory.addAll(ReportSummaryUtil.getOldBuilds(buildPath, buildId));
-                //and also include it to report
-                //don't forget the header and footer as in jtreg
                 out.introductionChartsCount(loadedCharts.size(), buildId, displayName, jobName);
                 System.err.println("     have found builds to past  " + dataHistory.size() + ": " + dataHistory.toString());
                 int failures = 0;
@@ -174,10 +173,10 @@ public class Main {
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     //however here, in reverse search, they are in correct, expected order
                     //Collections.reverse(oneChartAllData) is thus not needed
-
                     //the reverse is missing here just for pretty printing, although printed opposite, it later correctly matches Upon:... as printed in verbose mode
-                    out.allUsedPastBuilds(oneChartAllData);
-                    if (out.calcSingleChartAndResolve(chart, oneChartAllData)) {
+                    ExpressionLogger outputControlCandidate = s -> out.println(s);
+                    out.allUsedPastBuilds(oneChartAllData, outputControlCandidate, false);
+                    if (out.calcSingleChartAndResolve(chart, oneChartAllData, outputControlCandidate)) {
                         failures++;
                     }
                     //todo, upload to magical dirs
