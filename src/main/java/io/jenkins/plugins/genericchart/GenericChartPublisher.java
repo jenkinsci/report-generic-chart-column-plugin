@@ -38,12 +38,14 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.jenkins.plugins.genericchart.regenerate.PlaintextWriter;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -64,11 +66,25 @@ public class GenericChartPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
         int failures = 0;
+        List<ReportChart> chartsWithEquations = new ArrayList<>();
         for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
-            try {
-                if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
+            if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isBlank()) {
+                chartsWithEquations.add(chart);
+            }
+        }
+        if  (chartsWithEquations.isEmpty()) {
+            listener.getLogger().println("No equation definitions found. Not touching result from generic chart report plugin.");
+            return true;
+        }
+        //job.getDuration() is set once job finishes (so does getTime...)
+        long duration =  System.currentTimeMillis() - build.getStartTimeInMillis();
+        try(PlaintextWriter out = new PlaintextWriter(build.getRootDir())) {
+            out.writeHeader(build.getProject().getName(), build.getDisplayName(), build.getNumber(), Jenkins.get().getRootUrl(), build.getStartTimeInMillis(), duration);
+            out.introductionChartsCount(chartsWithEquations.size(),  build.getNumber(), build.getDisplayName(), build.getProject().getName());
+            for (ReportChart chart : chartsWithEquations) {
+                try {
                     String equationNameOrDef = chart.getUnstableCondition().trim();
                     PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
                     IncrementalSequentialEvaluator expresion;
@@ -87,33 +103,30 @@ public class GenericChartPublisher extends Publisher {
                     List<ChartPoint> points = chart.getPoints();
                     List<String> replies = new ArrayList<>();
                     List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
-                    ExpressionLogger eloger = s -> {};
+                    ExpressionLogger eloger = s -> {
+                    };
                     if (ChartUtil.isVarOrProp(ChartUtil.log_equation)) {
                         eloger = s -> listener.getLogger().println(s);
                     }
                     //the points are returned as first = oldest = 0, last == current == newest == N.
                     //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
                     Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef),
-                            new ExpressionLogger.InheritingExpressionLogger(eloger), new ExpressionLogger.InheritingExpressionLogger(s -> {
-                            listener.getLogger().println(s);
-                            replies.add(s);
+                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), new ExpressionLogger.InheritingExpressionLogger(eloger), new ExpressionLogger.InheritingExpressionLogger(s -> {
+                        listener.getLogger().println(s);
+                        replies.add(s);
                     }), presets);
-                    //todo, generate reprt as in regenerate/Main
+                    //todo, generate report as in regenerate/Main
                     if (lep) {
                         listener.getLogger().println("Result of " + chart.getTitle() + " is true, that is regression.");
                         build.setResult(Result.UNSTABLE);
                         failures++;
                     }
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
-        }
-        if (failures == 0) {
-            listener.getLogger().println("Generic chart report from properties found no regression");
-        } else {
-            listener.getLogger().println("Generic chart report from properties found " + failures+ " regression(s)");
+            out.closeAllCharts(failures, build.getDisplayName(), build.getNumber(), build.getProject().getName(), s -> listener.getLogger().println(s));
+            out.footer(build.getProject().getName(), build.getDisplayName(), build.getNumber(), build.getStartTimeInMillis(), Jenkins.get().getRootUrl());
         }
         return true;
     }

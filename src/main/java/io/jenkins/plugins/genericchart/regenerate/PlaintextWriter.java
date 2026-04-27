@@ -114,12 +114,16 @@ public class PlaintextWriter implements AutoCloseable {
         writer.write("\n" + "=".repeat(80) + "\n\n");
     }
 
-    public void closeAllCharts(int failures, String displayName, int buildId, String jobName) {
+    public void closeAllCharts(int failures, String displayName, int buildId, String jobName, ExpressionLogger ex) {
         println("=".repeat(80) + "");
         if (failures == 0) {
-            println("Generic chart report from properties found no regression for " + displayName + "/" + buildId + " in " + jobName);
+            String s = "Generic chart report from properties found no regression for " + displayName + "/" + buildId + " in " + jobName;
+            println(s);
+            ex.log(s);
         } else {
-            println("Generic chart report from properties found " + failures + " regression(s) for " + displayName + "/" + buildId + " in " + jobName);
+            String s =  "Generic chart report from properties found " + failures + " regression(s) for " + displayName + "/" + buildId + " in " + jobName;
+            println(s);
+            ex.log(s);
         }
     }
 
