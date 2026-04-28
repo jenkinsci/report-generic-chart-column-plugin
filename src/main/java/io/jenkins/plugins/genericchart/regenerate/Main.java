@@ -52,6 +52,11 @@ public class Main {
         System.err.println("You can use " + ChartUtil.log_equation.toLowerCase() + " lower case property or uppercase variable " + ChartUtil.log_equation.toUpperCase() + " to print also equation steps");
         System.err.println("You can use " + ChartUtil.PRESET_DEFS.toLowerCase() + " lower case property or uppercase variable " + ChartUtil.PRESET_DEFS.toUpperCase() + " to load another file/url or custom json definitions of preset definitions");
         System.err.println("You can use " + ChartUtil.JENKINS_URL.toLowerCase() + " lower case property or uppercase variable " + ChartUtil.JENKINS_URL.toUpperCase() + " to set jenkins url, so the links to the job will beincluded");
+        System.err.println("You can use " + DirArgs.out_dir + " variable to single export dir for single build");
+        System.err.println("You can use " + DirArgs.nvr_dir + " variable to export to nvr/job dir structure");
+        System.err.println("You can use " + DirArgs.job_dir + "  variable to export to job/nvr dir structure");
+        System.err.println("You can use " + DirArgs.add_files + " variable to declare coma separated additional files to export like `build.xml,../../coonfig.xml/,archive/some.properties` if needed");
+        System.err.println("Last three are substitued by config if called from jenkins via plugin");
         new Main().work();
     }
 
@@ -129,11 +134,11 @@ public class Main {
             } else {
                 System.err.println("Found   " + loadedCharts.size() + " equations in  " + buildPath.toString());
             }
+            int buildId = Integer.parseInt(buildPath.getFileName().toString());
+            String jobName = buildPath.getParent().getParent().getFileName().toString();
+            String displayName = ReportSummaryUtil.getDisplayName(buildPath, buildId);
+            long[] times = ReportSummaryUtil.getTimeAndDuration(buildPath);
             try (PlaintextWriter out = new PlaintextWriter(buildPath.toFile())) {
-                int buildId = Integer.parseInt(buildPath.getFileName().toString());
-                String jobName = buildPath.getParent().getParent().getFileName().toString();
-                String displayName = ReportSummaryUtil.getDisplayName(buildPath, buildId);
-                long[] times = ReportSummaryUtil.getTimeAndDuration(buildPath);
                 out.writeHeader(jobName, displayName, buildId, ChartUtil.getVarOrProp(ChartUtil.JENKINS_URL), times[0], times[1]);
                 //there is all of them. Real limit is then set by individual charts
                 List<Integer> dataHistory = new ArrayList<>();
@@ -187,6 +192,7 @@ public class Main {
                 out.closeAllCharts(failures, displayName, buildId, jobName, s -> {});
                 out.footer(jobName, displayName, buildId, times[0], ChartUtil.getVarOrProp(ChartUtil.JENKINS_URL));
             }
+            DirArgs.export(buildPath, new DirArgs(), displayName, buildId, jobName);
         } else {
             System.err.println(buildPath.toString() + " is " + status + ", skipping");
         }

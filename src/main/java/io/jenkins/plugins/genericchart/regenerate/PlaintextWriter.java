@@ -19,11 +19,12 @@ import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
 import parser.logical.ExpressionLogger;
 
 public class PlaintextWriter implements AutoCloseable {
+    public static final String GENERIC_CHART_RESULTS_TXT = "generic-chart-results.txt";
     private final BufferedWriter writer;
     private final File file;
 
     public PlaintextWriter(File targetDir) throws IOException {
-        this.file = new File(targetDir, "generic-chart-results.txt");
+        this.file = new File(targetDir, GENERIC_CHART_RESULTS_TXT);
         this.writer = new BufferedWriter(new FileWriter(file, Charset.defaultCharset()));
     }
 
