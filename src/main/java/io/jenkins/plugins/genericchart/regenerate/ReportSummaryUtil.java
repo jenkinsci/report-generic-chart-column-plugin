@@ -106,7 +106,7 @@ public class ReportSummaryUtil {
         return new long[]{timeStamp, duration};
     }
 
-    static String getBuildResult(File oldDir) {
+    public static String getBuildResult(File oldDir) {
         String resultOld = findInXml(new File(oldDir, "build.xml"), "/build/result");
         return resultOld;
     }

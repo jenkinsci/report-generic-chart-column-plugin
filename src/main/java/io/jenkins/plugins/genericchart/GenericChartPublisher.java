@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.jenkins.plugins.genericchart.regenerate.DirArgs;
 import io.jenkins.plugins.genericchart.regenerate.PlaintextWriter;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -112,6 +113,7 @@ public class GenericChartPublisher extends Publisher {
             out.closeAllCharts(failures, build.getDisplayName(), build.getNumber(), build.getProject().getName(), s -> listener.getLogger().println(s));
             out.footer(build.getProject().getName(), build.getDisplayName(), build.getNumber(), build.getStartTimeInMillis(), Jenkins.get().getRootUrl());
         }
+        DirArgs.export(build.getRootDir().toPath(), new DirArgs(/*fixme, repalce by implementation reading jenkins config*/), build.getDisplayName(), build.getNumber(), build.getProject().getName());
         return true;
     }
 
