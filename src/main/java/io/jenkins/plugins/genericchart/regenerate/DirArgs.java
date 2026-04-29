@@ -41,7 +41,7 @@ public class DirArgs {
     public static final String add_files = "ADD_FILES";
 
 
-    private String sanitize(String a) {
+    protected String sanitize(String a) {
         if (a == null) {
             return null;
         }
@@ -64,8 +64,10 @@ public class DirArgs {
     }
 
 
-    private List<String> getAdditionalFiles() {
-        String all = System.getenv(add_files);
+    protected List<String> getAdditionalFiles() {
+        return getAdditionalFilesImpl(System.getenv(add_files));
+    }
+    protected List<String> getAdditionalFilesImpl(String all) {
         if (all == null) {
             return null;
         }
