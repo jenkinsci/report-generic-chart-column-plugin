@@ -23,8 +23,6 @@
  */
 package io.jenkins.plugins.genericchart;
 
-import io.jenkins.plugins.chartjs.Chartjs;
-
 public class ChartPoint {
 
     private final String buildName;
@@ -32,13 +30,15 @@ public class ChartPoint {
     private final int buildNumber;
     private final String value;
     private final String pointColor;
+    private final String result;
 
-    public ChartPoint(String buildName, int buildNumber, String value, String pointColor) {
+    public ChartPoint(String buildName, String buildNameShortened, int buildNumber, String value, String pointColor, String result) {
         this.buildName = buildName;
-        this.buildNameShortened = Chartjs.getShortName(buildName, buildNumber);
+        this.buildNameShortened = buildNameShortened;
         this.buildNumber = buildNumber;
         this.value = value;
         this.pointColor = pointColor;
+        this.result = result;
     }
 
     public String getBuildName() {
@@ -61,4 +61,7 @@ public class ChartPoint {
         return pointColor;
     }
 
+    public String getResult() {
+        return result;
+    }
 }

@@ -1,0 +1,25 @@
+<div>
+    <p>
+        Specify the target folders where additional files should be copied.
+    </p>
+    <p>
+        This field accepts a comma-separated list of directory paths where the files specified in
+        "Additional files to copy" will be copied to. The paths can be absolute or relative to the
+        build directory.
+    </p>
+    <p>
+        <strong>Examples:</strong>
+    </p>
+    <ul>
+        <li><code>/var/reports</code> - Copy to an absolute path</li>
+        <li><code>archive/reports</code> - Copy to a relative path within the build directory</li>
+        <li><code>/backup, /archive</code> - Copy to multiple target folders</li>
+    </ul>
+    <p>
+        <strong>Note:</strong> The number of target folders should match the number of file patterns
+        in "Additional files to copy", or specify a single target folder to copy all files to the same location.
+    </p>
+    <p>
+        Leave empty if no additional files need to be copied.
+    </p>
+</div>

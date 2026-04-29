@@ -189,30 +189,37 @@ class PresetEquationsManagerTest {
         final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
         Assertions.assertTrue(ids.size() > 5);
-        StringBuilder sbAll = new StringBuilder();
+        StringBuilder sbAllCalcs = new StringBuilder();
+        StringBuilder sbAllAnswers = new StringBuilder();
         for (String id : ids) {
             System.out.println(id);
             String setup = id + " 2 5 5 5 5 7";
-            StringBuilder sbOne = new StringBuilder();
+            StringBuilder sbCalcs = new StringBuilder();
+            StringBuilder sbAnswers = new StringBuilder();
             PresetEquationDefinition preset = p1.getFromCommandString(setup);
             IncrementalSequentialEvaluator exs = preset.getExpressions();
-            evaluateNw(sbAll, sbOne, exs, PresetEquationsManager.getParamsFromParams(setup));
-            checkNoError(sbOne);
+            evaluateNw(sbCalcs, sbAnswers, exs, PresetEquationsManager.getParamsFromParams(setup));
+            checkNoError(sbCalcs);
+            sbAllCalcs.append(sbCalcs);
+            sbAllAnswers.append(sbAnswers);
         }
-        checkNoError(sbAll);
+        checkNoError(sbAllCalcs);
     }
 
-    private boolean evaluateNw(StringBuilder sbAll, StringBuilder sbOne, IncrementalSequentialEvaluator e, String[] params) throws IOException, URISyntaxException {
-        ExpressionLogger el = new ExpressionLogger() {
+    private boolean evaluateNw(StringBuilder sbAllCalcs, StringBuilder sbAllAnswers,  IncrementalSequentialEvaluator e, String[] params) throws IOException, URISyntaxException {
+        ExpressionLogger els = new ExpressionLogger() {
             @Override
             public void log(String s) {
-                if (sbAll != null) {
-                    sbAll.append(s).append("\n");
-                }
-                sbOne.append(s).append("\n");
+                    sbAllCalcs.append(s).append("\n");
             }
         };
-        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, el, el, new PresetEquationsManager(null));
+        ExpressionLogger ans = new ExpressionLogger() {
+            @Override
+            public void log(String s) {
+                    sbAllAnswers.append(s).append("\n");
+            }
+        };
+        return e.evaluate(Arrays.asList("10", "10", "10", "10", "10", "10"), params, els, ans, new PresetEquationsManager(null));
     }
 
     private boolean evaluate(StringBuilder sbAll, StringBuilder sbOne, PresetEquation e) {

@@ -31,9 +31,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import io.jenkins.plugins.genericchart.equations.IncrementalSequentialEvaluator;
-import io.jenkins.plugins.genericchart.equations.PresetEquationDefinition;
-import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -43,8 +40,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import io.jenkins.plugins.genericchart.regenerate.DirArgs;
+import io.jenkins.plugins.genericchart.regenerate.PlaintextWriter;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -65,48 +63,74 @@ public class GenericChartPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        for (ReportChart chart : new GenericChartProjectAction(build.getProject(), charts).getCharts()) {
-            try {
-                if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isEmpty()) {
-                    String equationNameOrDef = chart.getUnstableCondition().trim();
-                    PresetEquationsManager presets = new PresetEquationsManager(GenericChartGlobalConfig.getInstance().getCustomEmbeddedFunctions());
-                    IncrementalSequentialEvaluator expresion;
-                    if (equationNameOrDef.trim().equals("LIST_INTERNALS")) {
-                        presets.print(listener.getLogger());
-                        expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator("Internal expressions printed");
-                    } else {
-                        PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
-                        if (isPreset != null) {
-                            listener.getLogger().println(equationNameOrDef + " found as preset queue:");
-                            expresion = isPreset.getExpressions();
-                        } else {
-                            expresion = IncrementalSequentialEvaluator.getUserDefIncrementalSequentialEvaluator(equationNameOrDef);
-                        }
-                    }
-                    List<ChartPoint> points = chart.getPoints();
-                    List<String> replies = new ArrayList<>();
-                    List<String> pointsValues = points.stream().map(a -> a.getValue()).collect(Collectors.toList());
-                    //the points are returned as first = oldest = 0, last == current == newest == N.
-                    //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
-                    Collections.reverse(pointsValues);
-                    boolean lep = expresion.evaluate(pointsValues, PresetEquationsManager.getParamsFromParams(equationNameOrDef), s -> listener.getLogger().println(s), new ExpressionLogger() {
-                        @Override
-                        public void log(String s) {
-                            listener.getLogger().println(s);
-                            replies.add(s);
-                        }
-                    }, presets);
-                    //maybe save replies toi file, or simialrly>? Togehter with jobname and other details as om jtreg report?
-                    if (lep) {
-                        build.setResult(Result.UNSTABLE);
-                        return true; //you can not go back, nothing is going worse here, so lets quit
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
+        // Print global configuration values for future usage
+        //FIXME remove once all are used
+        GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
+        String additionalFiles = null;
+        String targetFolders = null;
+        String additionalPresetEquations = null;
+        if (globalConfig != null) {
+            listener.getLogger().println("=== Generic Chart Global Configuration ===");
+            additionalFiles = globalConfig.getAdditionalFilesToCopy();
+            targetFolders = globalConfig.getTargetFolders();
+            additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
+
+            listener.getLogger().println("Additional files to copy: " +
+                (additionalFiles != null && !additionalFiles.trim().isEmpty() ? additionalFiles : "(not set)"));
+            listener.getLogger().println("Target folders: " +
+                (targetFolders != null && !targetFolders.trim().isEmpty() ? targetFolders : "(not set)"));
+            listener.getLogger().println("Additional preset equations JSON/URL: " +
+                (additionalPresetEquations != null && !additionalPresetEquations.trim().isEmpty() ? additionalPresetEquations : "(not set)"));
+            listener.getLogger().println("==========================================");
+        }
+        
+        GenericChartProjectAction chrs = new GenericChartProjectAction(build.getProject(), charts);
+        List<ReportChart> chartsWithEquations = new ArrayList<>();
+        for (ReportChart chart : chrs.getCharts()) {
+            if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isBlank()) {
+                chartsWithEquations.add(chart);
             }
         }
+        if  (chartsWithEquations.isEmpty()) {
+            listener.getLogger().println("No equation definitions found. Not touching result from generic chart report plugin.");
+            return true;
+        }
+        listener.getLogger().println("Performance Report by generic chart report plugin:");
+        //job.getDuration() is set once job finishes (so does getTime...)
+        long duration =  System.currentTimeMillis() - build.getStartTimeInMillis();
+        int failures = 0;
+        int chartCounter = 0;
+        try(PlaintextWriter out = new PlaintextWriter(build.getRootDir())) {
+            out.writeHeader(build.getProject().getName(), build.getDisplayName(), build.getNumber(), Jenkins.get().getRootUrl(), build.getStartTimeInMillis(), duration);
+            out.introductionChartsCount(chartsWithEquations.size(),  build.getNumber(), build.getDisplayName(), build.getProject().getName());
+            for (ReportChart chart : chartsWithEquations) {
+                chartCounter++;
+                try {
+                    out.singleChartTitle(chart.toLoadedChart(), chartCounter, chartsWithEquations.size());
+                    List<ChartPoint> points = chart.getPoints();
+                    //the points are returned as first = oldest = 0, last == current == newest == N.
+                    //to prevent constant recalculations, lets revert it, so 0 is latest (as notations of L in help-unstableCondition.html says
+                    //we revert already ehre to sync nice outputs with values
+                    Collections.reverse(points);
+                    ExpressionLogger dualOutputController = s -> {
+                        listener.getLogger().println(s);
+                        out.println(s);
+                    };
+                    out.allUsedPastBuilds(points, dualOutputController, true, chart.getKey(), chart.getFileGlob());
+                    if (out.calcSingleChartAndResolve(chart.toLoadedChart(), points, dualOutputController, additionalPresetEquations )) {
+                        build.setResult(Result.UNSTABLE);
+                        failures++;
+                    }
+
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }
+            out.closeAllCharts(failures, build.getDisplayName(), build.getNumber(), build.getProject().getName(), s -> listener.getLogger().println(s));
+            out.footer(build.getProject().getName(), build.getDisplayName(), build.getNumber(), build.getStartTimeInMillis(), Jenkins.get().getRootUrl());
+        }
+        DirArgs.export(build.getRootDir().toPath(), new DirArgs(/*fixme, repalce by implementation reading jenkins config*/), build.getDisplayName(), build.getNumber(), build.getProject().getName());
         return true;
     }
 

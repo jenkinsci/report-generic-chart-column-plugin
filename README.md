@@ -82,7 +82,7 @@ or
 ```
 VALUES_PNG="1 2 3" java  -cp jenkins-report-generic-chart-column.jar:parser-ng-0.1.8.jar  io/jenkins/plugins/genericchart/math/ExpandingExpression "sum(..L0) < avg(..L0)"
 ```
-Currently all necessary changes were  moved to ParserNG, including the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you can run it simply as java -jar:
+Currently all necessary changes were  moved to ParserNG, including the `VALUES_PNG` variable. [ParserNG have powerfull CLI](https://github.com/gbenroscience/ParserNG/tree/v0.1.9#using-parserng-as-commandline-tool) and since `0.1.9` this expanding parser is here, so you can run it simply as java -jar:
 ```
 VALUES_PNG='235000 232500 233000 236000 210000' java parser-ng-0.1.9.jar -e " echo(L{MN}..L0) " 
 ```
@@ -233,14 +233,278 @@ The preset equations are defined in JSON format:
       "equation": [
         "variable=/*1*/;",
         "expression with /*1*/ /*2*/ ... /*9*/ as placeholders"
-      ]
+      ],
+        "descriptions": [
+          { "condition": "true","description": ["always shown description" ]},
+          { "condition": "/*RESULT*/ eq false ","description": ["answer printed if equation is false"]},
+          { "condition": "/*RESULT*/ < 42 ","description": ["descripitpion based on mathematical instead of logical equation. Those may be usefull for intermediate results, but for usage in jenkins, the final result of equations must be true/false"]}
+        ]
     }
   ]
 }
 ```
 You can then call `EQUATION_NAME arg1 arg2 ...` in your unstable condition.
 
-See [examples](https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations.json) and don't forget you can set up your own in global settings (also in JSON format).
+#### Testing named queries
+`java -jar target/report-generic-chart-column-4.2-SNAPSHOT-with-deps.jar --list` will list the queries. You can use this main method to run them. Eg.: ` java -jar target/report-generic-chart-column-4.2-SNAPSHOT-with-deps.jar  "FINAL_DOWN_OK  5 5 5"  12 10 15 2 18` (mind the quotes. First parametr is preset equation with its parameters, all others are the data) 
+<details>
+
+```
+jenkins-report-generic-chart-column Preset Equation Evaluator - for testing purposes only
+=========================================================================================
+Evaluating preset equation...
+Data values: [12, 10, 15, 2, 18]
+params: 5, 5, 5
+name: FINAL_DOWN_OK
+
+Subcall: IMMEDIATE_DOWN_OK 5
+  Subcall: IMMEDIATE_CALC
+    Expression : MN
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: 5
+    is: 5
+    Expression : (L1/(L0/100)-100)
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: (10/(12/100)-100)
+    is: -16.666666666666657
+The relative difference between this (12) and previous (10, from total of 5) is: -16.666666666666657%
+  Subcall end: IMMEDIATE_CALC
+  Expression : threshold=5;   -16.666666666666657 < -threshold
+  Upon       : 18,2,15,10,12
+  As         : Ln...L1,L0
+  MN         = 5
+  Expanded as: threshold=5;   -16.666666666666657 < -threshold
+    brackets: threshold=5;   -16.666666666666657 < -threshold
+        evaluating logical: threshold=5;   -16.666666666666657 < -threshold
+          evaluating comparison: threshold=5;   -16.666666666666657 < -threshold
+            evaluating math: threshold=5;   -16.666666666666657
+            is: -16.666666666666657
+            evaluating math: -threshold
+            is: -5
+          ... -16.666666666666657 < -5
+          is: true
+        is: true
+    true
+  is: true
+This calculation is ensuring, that 'less is better', on immediate scale with tolerance of 5%.
+The result, whether rise (in %) against previous run was not greater then threshold is true:
+The -16.666666666666657% is lower then threshold -5%, that is bad. You are facing momentary performance regression.
+Subcall end: IMMEDIATE_DOWN_OK 5
+Subcall: SHORT_DOWN_OK 5
+  Subcall: SHORT_CALC
+    Expression : MN-1
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: 5-1
+    is: 4.0
+    Expression : avg(..L1)
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: avg(18,2,15,10)
+    is: 11.25
+    Expression : (11.25/(L0/100)-100)
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: (11.25/(12/100)-100)
+    is: -6.25
+The 11.25 is the avg of:18,2,15,10
+The relative difference between this (12) and avg(11.25) of previous(4.0) values is: -6.25%
+  Subcall end: SHORT_CALC
+  Expression : threshold=5;   -6.25 < -threshold
+  Upon       : 18,2,15,10,12
+  As         : Ln...L1,L0
+  MN         = 5
+  Expanded as: threshold=5;   -6.25 < -threshold
+    brackets: threshold=5;   -6.25 < -threshold
+        evaluating logical: threshold=5;   -6.25 < -threshold
+          evaluating comparison: threshold=5;   -6.25 < -threshold
+            evaluating math: threshold=5;   -6.25
+            is: -6.25
+            evaluating math: -threshold
+            is: -5
+          ... -6.25 < -5
+          is: true
+        is: true
+    true
+  is: true
+This calculation is ensuring, that 'less is better', against all (avg) previous runs with tolerance of 5%.
+The result,  whether rise (in %) against avg of previous run was not greater then threshold is true:
+The -6.25% is lower then threshold -5%, that is bad. You are facing performance regression.
+Subcall end: SHORT_DOWN_OK 5
+Subcall: LONG_DOWN_OK 5
+  Subcall: LONG_CALC
+    Expression : MN/2
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: 5/2
+    is: 2.5
+There is 5 of values, each half will have 2.5 members:  12,10,15,2,18 
+    Expression : avg(L{MN/2}..L{MN})
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+      L indexes brackets: avg(L{5/2}..L{5})
+        Expression : 5/2
+        Expanded as: 5/2
+        is: 2.5
+        5/2 = 2 (2.5)
+      to: avg(L 2 ..L{5})
+        Expression : 5
+        Expanded as: 5
+        is: 5
+        5 = 5 (5)
+      to: avg(L 2 ..L 5 )
+    Expanded as: avg(15,2,18 )
+    is: 11.66666667
+11.66666667 is avg of upper half (2.5-5) of: 15,2,18  
+    Expression : avg(L0..L{MN/2})
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+      L indexes brackets: avg(L0..L{5/2})
+        Expression : 5/2
+        Expanded as: 5/2
+        is: 2.5
+        5/2 = 2 (2.5)
+      to: avg(L0..L 2 )
+    Expanded as: avg(12,10,15 )
+    is: 12.33333333
+12.33333333 is avg of lower half (0-2.5) of: 12,10,15  
+    Expression : (11.66666667/(12.33333333/100)-100)
+    Upon       : 18,2,15,10,12
+    As         : Ln...L1,L0
+    MN         = 5
+    Expanded as: (11.66666667/(12.33333333/100)-100)
+    is: -5.405405352812281
+The relative difference between avgs of lower and upper half of original array is: -5.405405352812281%
+  Subcall end: LONG_CALC
+  Expression : threshold=5;   -5.405405352812281 < -threshold
+  Upon       : 18,2,15,10,12
+  As         : Ln...L1,L0
+  MN         = 5
+  Expanded as: threshold=5;   -5.405405352812281 < -threshold
+    brackets: threshold=5;   -5.405405352812281 < -threshold
+        evaluating logical: threshold=5;   -5.405405352812281 < -threshold
+          evaluating comparison: threshold=5;   -5.405405352812281 < -threshold
+            evaluating math: threshold=5;   -5.405405352812281
+            is: -5.405405352812281
+            evaluating math: -threshold
+            is: -5
+          ... -5.405405352812281 < -5
+          is: true
+        is: true
+    true
+  is: true
+This calculation is ensuring, that 'less is better', between avgs of older half and newer half runs with tolerance of 5%.
+The result,  whether rise (in %) of newer half, against older half is not greater then threshold is true:
+The -5.405405352812281% is lower then threshold -5%, that is bad. You are facing long-term performance regression.
+Subcall end: LONG_DOWN_OK 5
+Expression : true   ||  true   ||  true
+Upon       : 18,2,15,10,12
+As         : Ln...L1,L0
+MN         = 5
+Expanded as: true   ||  true   ||  true
+  brackets: true   ||  true   ||  true
+      evaluating logical: true   ||  true   ||  true
+        evaluating comparison: true
+        is: true
+        evaluating comparison: true
+        is: true
+      ... true | true
+        evaluating comparison: true
+        is: true
+      ... true | true
+      is: true
+  true
+is: true
+In combination `less is better` without cutting of extremes calculated via average values, the result is true:
+At least one of them (see above) failed (is true), that is bad. Performance regression detected.
+Evaluation result: true
+
+```
+
+Note that calculation is going to stderr so you can move it away by plain rediraction. 
+</details>
+
+Since v5.0, equations can give answeres. This is highly reocmended way of usage. If there are answers, the computation itself is not printed. See the difference:
+
+<details>
+
+
+```
+### 5/6 eshop-scale.hf.geom from totals.properties
+jdk.21.0.11.7-1.ojdk21~u~upstream/7: 591 SUCCESS (this)
+jdk.21.0.8.7-0.ojdk21~u~upstream/6: 599 SUCCESS
+jdk.21.0.7.4-0.ojdk21~u~upstream/5: 594 UNSTABLE
+jdk.21.0.6.6-0.ojdk21~u~upstream/4: 570 UNSTABLE
+jdk.21.0.4.6-0.ojdk21~u~upstream/3: 596 UNSTABLE
+jdk.21.0.4.5-0.ojdk21~u~upstream/2: 612 SUCCESS
+shortened values (shown reverted, newest->oldest): 591,599,594,570,596,612
+  The relative difference between this (591) and previous (599, from total of 6) is: 1.3536379018612479%
+  This calculation is ensuring, that 'more is better', on immediate scale with tolerance of 5%.
+  The result, whether drop (in %) against previous run was not greater then threshold is false:
+  The 1.3536379018612479% is lower or equal to threshold 5%, that is ok.
+  The 596.3333333 is the average value (with 2 lowest and 2 biggest values removed) from: [570, 594, 596, 599, 612]
+  The relative difference between this (591) and filtered avg(596.3333333) of original 6 (after cut: 2.0) values is: 0.902425262267343%
+  This calculation is ensuring, that 'more is better', against all - with 2*2 extremes excluded - previous runs with tolerance of 2%.
+  The result,  whether drop (in %) against avg (with the removed extremes) of previous run was not greater then threshold is false:
+  The 0.902425262267343% is lower or equal to threshold 2%, that is ok.
+  warning, not enough data values for safe calculation (6). Should be at lest 4*2+1 (9.0).
+  The 592.6666667 is the average value (with 2 lowest and 2 biggest values removed) from: [570, 596, 612]
+  The 592.5 is the average value (with 2 lowest and 2 biggest values removed) from: [570, 591, 594, 599]
+  The relative difference between filtered avgs of newer half of data (592.6666667) and older half of data (592.5) of original 6 (after 2x cut of 0.0) values is: 0.028129400843880603%
+  This calculation is ensuring, that 'more is better', between newer half of data, and older half of data with (for each half) 2*2 extremes excluded with tolerance of 2%.
+  The result,  whether drop (in %) of avg of newer half (with the removed extremes) against older half (with extremes removed) is false:
+  The 0.028129400843880603% is lower or equal to threshold 2%, that is ok.
+  In combination `more is better` with cutting of extremes calculated via average values, the result is false:
+  All passed (all checks are false). No performance regression noticed.
+Result of eshop-scale.hf.geom from totals.properties is false, that is ok.
+
+### 6/6 random-urls.hf.geom from totals.properties
+jdk.21.0.11.7-1.ojdk21~u~upstream/7: 1598 SUCCESS (this)
+jdk.21.0.8.7-0.ojdk21~u~upstream/6: 1196 SUCCESS
+jdk.21.0.7.4-0.ojdk21~u~upstream/5: 1073 UNSTABLE
+jdk.21.0.6.6-0.ojdk21~u~upstream/4: 1259 UNSTABLE
+jdk.21.0.4.6-0.ojdk21~u~upstream/3: 1196 UNSTABLE
+jdk.21.0.4.5-0.ojdk21~u~upstream/2: 1137 SUCCESS
+shortened values (shown reverted, newest->oldest): 1598,1196,1073,1259,1196,1137
+Expression : L1+L2 ltL3 
+Upon       : 1137,1196,1259,1073,1196,1598
+As         : Ln...L1,L0
+MN         = 6
+Expanded as: 1196+1073 lt 1259 
+  brackets: 1196+1073 lt 1259 
+      evaluating logical: 1196+1073 lt 1259 
+        evaluating comparison: 1196+1073 lt 1259 
+          evaluating math: 1196+1073
+          is: 2269.0
+          evaluating math: 1259 
+          is: 1259
+        ... 2269.0 lt 1259
+        is: false
+      is: false
+  false
+is: false
+```
+
+5/6 have answers set. 6/6 is plain definition.
+</details>
+
+Id you still need equations evalutaions printed, you may use property/var `log_equation/LOG_EQUATION` to force it. You can use `log_comments/LOG_COMMENTS` to print also hints to to the preset functions. 
+
+You can declare the json or even url and point jenkins/tools to them via `preset_defs/PRESET_DEFS`.
+
+See https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/equations/README.md for more info about how to create custom preset definitions
+
+See [examples](https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/equations/presetEquations.json) and don't forget you can set up your own in global settings (also in JSON format).
 
 ## Denylist and Allowlist
 you could noted, that the graphs are scaled.  If you have run, which escapes the normality, the scale get corrupted, and you can easily miss regression. To fix this, you have denylist (and allowlist). This is list of regexes,  which filters (first) out and (second) in the (un)desired builds. It works both with custom_built_name and `#build_number` (note the hash). Empty denylist/allowlist means it is not used at all.

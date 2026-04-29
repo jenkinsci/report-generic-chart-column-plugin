@@ -27,17 +27,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
+import io.jenkins.plugins.chartjs.Chartjs;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+
 
 public class PropertiesParser {
 
@@ -160,27 +155,6 @@ public class PropertiesParser {
             justification = "run.getResult().isWorseThan(Result.UNSTABLE) claims to have NPE, but I'm failing to see it")
     public ChartPointsWithBlacklist getReportPointsWithBlacklist(Job<?, ?> job, ChartModel chart) {
         List<ChartPoint> list = new ArrayList<>();
-
-        Predicate<String> lineValidator = str -> {
-            if (str == null || str.trim().isEmpty()) {
-                return false;
-            }
-            int index = getBestDelimiterIndex(str);
-            if (index == Integer.MAX_VALUE) {
-                return false;
-            }
-            if (!str.substring(0, index).trim().equals(chart.getKey().trim())) {
-                return false;
-            }
-            try {
-                Double.parseDouble(str.substring(index + 1).trim());
-                return true;
-            } catch (Exception ignore) {
-            }
-            return false;
-        };
-
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + chart.getFileNameGlob());
         List<String> blacklisted = getBlacklisted(job, chart);
         List<String> whitelisted = getWhitelisted(job, chart);
         List<String> whiteListWithoutSurroundings = getWhiteListWithoutSurroundings(job, chart);
@@ -200,24 +174,9 @@ public class PropertiesParser {
                 continue;
             }
 
-            try (Stream<Path> filesStream = Files.walk(run.getRootDir().toPath()).sequential()) {
-                Optional<ChartPoint> optPoint = filesStream
-                        .filter((p) -> matcher.matches(p.getFileName()))
-                        .map((p) -> pathToLine(p, lineValidator))
-                        .filter((o) -> o.isPresent())
-                        .map(o -> o.get())
-                        .map(s -> new ChartPoint(
-                                run.getDisplayName(),
-                                run.getNumber(),
-                                extractValue(s),
-                                chart.getPointColor(pointsInRangeOfwhitelisted.contains(run.getDisplayName()))))
-                        .findFirst();
-                if (optPoint.isPresent()) {
-                    list.add(optPoint.get());
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            List<ChartPoint> sublist = findPropertiesValues(run, chart, pointsInRangeOfwhitelisted);
+            list.addAll(sublist);
+
             if (list.size() == chart.getLimit()) {
                 break;
             }
@@ -228,29 +187,21 @@ public class PropertiesParser {
         return new ChartPointsWithBlacklist(list, blacklisted, whitelisted, whiteListSizeWithoutSurroundings);
     }
 
-    private int getBestDelimiterIndex(String str) {
-        int index1 = str.indexOf('=');
-        int index2 = str.indexOf(':');
-        if (index1 < 0) {
-            index1 = Integer.MAX_VALUE;
+
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "run.getResult() claims to have NPE, but I'm failing to see it")
+    private static List<ChartPoint> findPropertiesValues(Run run, ChartModel chart, List<String> pointsInRangeOfwhitelisted) {
+        if (run == null) {
+            throw new NullPointerException("run is null");
         }
-        if (index2 < 0) {
-            index2 = Integer.MAX_VALUE;
-        }
-        int index = Math.min(index1, index2);
-        return index;
+        return ChartUtil.findPropertiesValues(run.getRootDir().toPath(),
+                chart.getKey().trim(),
+                chart.getFileNameGlob(),
+                run.getDisplayName(),
+                Chartjs.getShortName(run.getDisplayName(), run.getNumber()),
+                run.getNumber(),
+                chart.getPointColor(pointsInRangeOfwhitelisted.contains(run.getDisplayName())),
+                run.getResult() !=null ? run.getResult().toString():"UNKNOWN");
     }
 
-    private Optional<String> pathToLine(Path path, Predicate<String> lineValidator) {
-        try (Stream<String> stream = Files.lines(path)) {
-            return stream.filter(lineValidator).findFirst();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
-    private String extractValue(String s) {
-        return s.substring(getBestDelimiterIndex(s) + 1).trim();
-    }
 }
