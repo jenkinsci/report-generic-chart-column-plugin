@@ -9,6 +9,8 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import io.jenkins.plugins.genericchart.ChartPoint;
@@ -20,18 +22,56 @@ import parser.logical.ExpressionLogger;
 
 public class PlaintextWriter implements AutoCloseable {
     public static final String GENERIC_CHART_RESULTS_TXT = "generic-chart-results.txt";
+    public static final String GENERIC_CHART_RESULTS_PROPS = "generic-chart-values.properties";
+    public static final String GENERIC_CHART_RESULTS_HISTORY = "generic-chart-history.properties";
     private final BufferedWriter writer;
     private final File file;
+    private final Map<String, String> values = new TreeMap<>();
+    private final Map<String, String> history = new TreeMap<>();
 
     public PlaintextWriter(File targetDir) throws IOException {
         this.file = new File(targetDir, GENERIC_CHART_RESULTS_TXT);
         this.writer = new BufferedWriter(new FileWriter(file, Charset.defaultCharset()));
     }
 
+    private static void writeAllProperties(File dir, Map<String, String> values, Map<String, String> history) {
+        writeProperties(dir,values);
+        writeHistory(dir,history);
+    }
+
+    private static void writeProperties(File dir, Map<String, String> values) {
+        try {
+            writePropertiesImpl(new File(dir, GENERIC_CHART_RESULTS_PROPS), values);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private static void writeHistory(File dir, Map<String, String> values) {
+        try {
+            writePropertiesImpl(new File(dir, GENERIC_CHART_RESULTS_HISTORY), values);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private static void writePropertiesImpl(File file, Map<String, String> values) throws IOException {
+        try (BufferedWriter propwriter = new BufferedWriter(new FileWriter(file, Charset.defaultCharset()))) {
+            for (Map.Entry<String, String> entry : values.entrySet()) {
+                propwriter.write(entry.getKey() + "=" + entry.getValue());
+                propwriter.newLine();
+            }
+        }
+
+    }
+
     @Override
     public void close() throws IOException {
         writer.close();
         System.err.println("Closed : " + this.file.getAbsolutePath());
+        writeAllProperties(file.getParentFile(), values, history);
     }
 
     public void println(String s) throws RuntimeException {
@@ -80,7 +120,7 @@ public class PlaintextWriter implements AutoCloseable {
         println("### " + chartCounter + "/" + loadedChartsCount + " " + chart.getTitleLikeChart());
     }
 
-    public void allUsedPastBuilds(List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate, boolean running) throws IOException {
+    public void allUsedPastBuilds(List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate, boolean running, String pkey, String glob) throws IOException {
         int i = -1;
         for (ChartPoint chartPoint : oneChartAllData) {
             i++;
@@ -88,6 +128,15 @@ public class PlaintextWriter implements AutoCloseable {
             if (running) {
                 result =  (i == 0 ? " RUNNING" : " " + chartPoint.getResult());
             }
+
+            String mkey=glob+"~"+pkey;
+            if (i==0){
+                values.put(mkey, chartPoint.getValue());
+            }
+            String historyValues = history.getOrDefault(mkey, "");
+            historyValues = historyValues + chartPoint.getValue() + " ";
+            history.put(mkey, historyValues);
+
             outputControlCandidate.log(chartPoint.getBuildName() + "/" + chartPoint.getBuildNumber() + ": " + chartPoint.getValue() + " " + result);
         }
         outputControlCandidate.log("shortened values (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s -> s.getValue()).collect(Collectors.joining(",")));

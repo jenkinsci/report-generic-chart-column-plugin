@@ -81,6 +81,8 @@ public class DirArgs {
             sources.addAll(getAdditionalFiles());
         }
         sources.add(PlaintextWriter.GENERIC_CHART_RESULTS_TXT);
+        sources.add(PlaintextWriter.GENERIC_CHART_RESULTS_PROPS);
+        sources.add(PlaintextWriter.GENERIC_CHART_RESULTS_HISTORY);
         return sources;
     }
 

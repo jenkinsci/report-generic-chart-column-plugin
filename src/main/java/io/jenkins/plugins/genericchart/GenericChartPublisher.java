@@ -100,7 +100,7 @@ public class GenericChartPublisher extends Publisher {
                         listener.getLogger().println(s);
                         out.println(s);
                     };
-                    out.allUsedPastBuilds(points, dualOutputController, true);
+                    out.allUsedPastBuilds(points, dualOutputController, true, chart.getKey(), chart.getFileGlob());
                     if (out.calcSingleChartAndResolve(chart.toLoadedChart(), points, dualOutputController)) {
                         build.setResult(Result.UNSTABLE);
                         failures++;

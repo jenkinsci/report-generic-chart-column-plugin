@@ -23,8 +23,6 @@
  */
 package io.jenkins.plugins.genericchart;
 
-import io.jenkins.plugins.chartjs.Chartjs;
-
 public class ChartPoint {
 
     private final String buildName;
