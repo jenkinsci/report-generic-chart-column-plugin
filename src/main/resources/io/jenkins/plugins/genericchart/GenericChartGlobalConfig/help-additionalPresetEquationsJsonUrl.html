@@ -1,0 +1,42 @@
+<div>
+    <p>
+        Specify additional preset equations in JSON format or provide a URL to a JSON file containing preset equations.
+    </p>
+    <p>
+        This field accepts either:
+    </p>
+    <ul>
+        <li><strong>Direct JSON content:</strong> Paste the JSON definition of preset equations directly into this field</li>
+        <li><strong>URL to JSON file:</strong> Provide a URL (http://, https://, or file://) pointing to a JSON file containing preset equations</li>
+    </ul>
+    <p>
+        The JSON format should follow the same structure as the built-in preset equations. These additional equations
+        will be merged with the default preset equations, allowing you to extend or override the built-in definitions.
+    </p>
+    <p>
+        <strong>Example JSON structure:</strong>
+    </p>
+    <pre><code>{
+  "equations": [
+    {
+      "name": "custom_threshold",
+      "description": "Custom threshold check",
+      "equation": "L[0] > 100",
+      "category": "custom"
+    }
+  ]
+}</code></pre>
+    <p>
+        <strong>Example URL:</strong>
+    </p>
+    <ul>
+        <li><code>https://example.com/preset-equations.json</code></li>
+        <li><code>file:///var/jenkins/custom-equations.json</code></li>
+    </ul>
+    <p>
+        Leave empty to use only the built-in preset equations.
+    </p>
+    <p>
+        <strong>Note:</strong> When this field is modified, the preset equations cache will be reset and reloaded.
+    </p>
+</div>

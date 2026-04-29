@@ -31,9 +31,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
-import io.jenkins.plugins.genericchart.equations.IncrementalSequentialEvaluator;
-import io.jenkins.plugins.genericchart.equations.PresetEquationDefinition;
-import io.jenkins.plugins.genericchart.equations.PresetEquationsManager;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -43,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.jenkins.plugins.genericchart.regenerate.DirArgs;
 import io.jenkins.plugins.genericchart.regenerate.PlaintextWriter;
@@ -68,6 +64,23 @@ public class GenericChartPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
+        // Print global configuration values
+        GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
+        if (globalConfig != null) {
+            listener.getLogger().println("=== Generic Chart Global Configuration ===");
+            String additionalFiles = globalConfig.getAdditionalFilesToCopy();
+            String targetFolders = globalConfig.getTargetFolders();
+            String additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
+            
+            listener.getLogger().println("Additional files to copy: " +
+                (additionalFiles != null && !additionalFiles.trim().isEmpty() ? additionalFiles : "(not set)"));
+            listener.getLogger().println("Target folders: " +
+                (targetFolders != null && !targetFolders.trim().isEmpty() ? targetFolders : "(not set)"));
+            listener.getLogger().println("Additional preset equations JSON/URL: " +
+                (additionalPresetEquations != null && !additionalPresetEquations.trim().isEmpty() ? additionalPresetEquations : "(not set)"));
+            listener.getLogger().println("==========================================");
+        }
+        
         GenericChartProjectAction chrs = new GenericChartProjectAction(build.getProject(), charts);
         List<ReportChart> chartsWithEquations = new ArrayList<>();
         for (ReportChart chart : chrs.getCharts()) {
