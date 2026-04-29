@@ -27,12 +27,16 @@ public class PresetEquationsManager {
         this(null);
     }
 
-    public PresetEquationsManager(String anotherUrlOrBody) throws IOException, URISyntaxException {
+    public PresetEquationsManager(String...  anotherUrlOrBody) throws IOException, URISyntaxException {
         synchronized (lock) {
             if (internals == null) {
                 internals = readInternals();
-                if (anotherUrlOrBody != null && !anotherUrlOrBody.trim().isEmpty()) {
-                    internals.addAll(readExternals(anotherUrlOrBody));
+                if (anotherUrlOrBody != null) {
+                    for(String urlOrBody : anotherUrlOrBody) {
+                        if (urlOrBody !=null  && !urlOrBody.trim().isEmpty()) {
+                            internals.addAll(readExternals(urlOrBody));
+                        }
+                    }
                 }
             }
         }
@@ -46,7 +50,13 @@ public class PresetEquationsManager {
 
     private List<PresetEquationDefinition> readExternals(String bodyOrUrl) throws IOException, URISyntaxException {
         synchronized (lock) {
+            if (bodyOrUrl == null) {
+                return new ArrayList<>();
+            }
             String trimmed = bodyOrUrl.trim();
+            if (trimmed.isEmpty()) {
+                return new ArrayList<>();
+            }
             // Check if it's JSON (starts with [ or {) or multi-line text
             if (trimmed.startsWith("[") || trimmed.startsWith("{") || bodyOrUrl.split("\n").length > 1) {
                 return readFromStream(new ByteArrayInputStream(bodyOrUrl.getBytes(StandardCharsets.UTF_8)));

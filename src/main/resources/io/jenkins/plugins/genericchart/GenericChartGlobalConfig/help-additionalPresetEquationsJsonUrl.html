@@ -7,44 +7,78 @@
     </p>
     <ul>
         <li><strong>Single line URL:</strong> A URL pointing to a file with definitions, e.g.:<br/>
-            <code>https://raw.githubusercontent.com/judovana/jenkins-report-generic-chart-column/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations</code>
+            <code>https://raw.githubusercontent.com/jenkinsci/report-generic-chart-column-plugin/master/src/main/resources/io/jenkins/plugins/genericchart/equations/presetEquations.json</code>
+            or
+            <code>file:///my/local/file.json</code>
         </li>
-        <li><strong>Direct JSON content:</strong> Paste the JSON definition of preset equations directly into this field (multi-line supported)</li>
+        <li><strong>Direct JSON content:</strong> Paste the JSON definition of preset equations directly into this field (multi-line supported). e.g.:<br/>
+            <code>
+[
+  {
+    "id": "HAAH",
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "(L0+L1)"
+        ],
+        "descriptions": [
+          {"condition": "/*RESULT*/ == 4","description": ["42"]},
+		  {"condition": "/*RESULT*/ != 4","description": [" meaning of life is just /*RESULT*/"]}
+        ]
+      }
+    ]
+  }
+]
+            </code>
+        </li>
     </ul>
     <p>
         The JSON format should follow the same structure as the built-in preset equations. These additional equations
         will be merged with the default preset equations, allowing you to extend or override the built-in definitions.
     </p>
     <p>
-        See <a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">examples</a>.
+        See <a href="https://github.com/jenkinsci/report-generic-chart-column-plugin/masters/src/main/resources/io/jenkins/plugins/genericchart/equations/presetEquations.json">examples</a>.
         Note that <code>id</code> is mandatory. See
-        <a href="https://github.com/judovana/jenkins-report-generic-chart-column/tree/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#preset_equations">more info</a>.
+        <a href="https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#preset_equations">more info</a>.
     </p>
     <p>
         <strong>Syntax rules:</strong>
     </p>
     <ul>
-        <li>Empty lines are ignored</li>
-        <li>Behind hash (#) are comments and examples</li>
-        <li>First comment is mandatory and serves as the ID</li>
-        <li>After comments follows the expression itself following
-            <a href="https://github.com/gbenroscience/ParserNG/#using-parserng-as-commandline-tool">ParserNG rules</a>
+        <li>it is json array</li>
+        <li>comments  and descriptions are optional. But both do really great job</li>
+        <li>id and at least one equation is mandatory</li>
+        <li>aexpressions syntax is as following
+            <a href="https://github.com/gbenroscience/ParserNG/blob/master/src/main/java/com/github/gbenroscience/README.md#using-parserng-as-commandline-tool">ParserNG rules</a>
         </li>
-        <li>Expressions can be multi-lined for readability (as ParserNG's --trim)</li>
+        <li>Expressions can be multi-lined for readability and named ones can call each other via /*name*/</li>
         <li>Parameters are substituted into expressions via <code>/*1*/</code> for first param, <code>/*2*/</code> for second, and so on</li>
+        <li>full desciption at <a href="https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/overhaul_equations/src/main/resources/io/jenkins/plugins/genericchart/equations/README.md">here</a></li>
     </ul>
     <p>
         <strong>Example JSON structure:</strong>
     </p>
-    <pre><code>{
-  "equations": [
-    {
-      "name": "custom_threshold",
-      "description": "Custom threshold check",
-      "equation": "L[0] > 100",
-      "category": "custom"
-    }
-  ]
+    <pre><code>
+  {
+    "id": "HAAH",
+     "comments": [
+      "computing nonsense",
+    ],
+    "equations": [
+      {
+        "name": "main",
+        "equation": [
+          "(L0+L1)"
+        ],
+        "descriptions": [
+          {"condition": "/*RESULT*/ == 4","description": ["42"]},
+		  {"condition": "/*RESULT*/ != 4","description": [" meaning of life is just /*RESULT*/"]}
+        ]
+      }
+    ]
+  }
+
 }</code></pre>
     <p>
         <strong>Example URLs:</strong>
@@ -54,7 +88,7 @@
         <li><code>file:///var/jenkins/custom-equations.json</code></li>
     </ul>
     <p>
-        Leave empty to use only the built-in preset equations.
+        Leave empty to use only the built-in preset equations and own formulas
     </p>
     <p>
         <strong>Note:</strong> When this field is modified, the preset equations cache will be reset and reloaded.
