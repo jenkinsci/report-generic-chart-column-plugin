@@ -181,7 +181,7 @@ public class Main {
                     //the reverse is missing here just for pretty printing, although printed opposite, it later correctly matches Upon:... as printed in verbose mode
                     ExpressionLogger outputControlCandidate = s -> out.println(s);
                     out.allUsedPastBuilds(oneChartAllData, outputControlCandidate, false, chart.getKey(), chart.getFileNameGlob());
-                    if (out.calcSingleChartAndResolve(chart, oneChartAllData, outputControlCandidate)) {
+                    if (out.calcSingleChartAndResolve(chart, oneChartAllData, outputControlCandidate, null)) {
                         failures++;
                     }
                     //todo, upload to magical dirs

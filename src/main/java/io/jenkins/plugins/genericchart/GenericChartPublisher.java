@@ -64,14 +64,18 @@ public class GenericChartPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
-        // Print global configuration values
+        // Print global configuration values for future usage
+        //FIXME remove once all are used
         GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
+        String additionalFiles = null;
+        String targetFolders = null;
+        String additionalPresetEquations = null;
         if (globalConfig != null) {
             listener.getLogger().println("=== Generic Chart Global Configuration ===");
-            String additionalFiles = globalConfig.getAdditionalFilesToCopy();
-            String targetFolders = globalConfig.getTargetFolders();
-            String additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
-            
+            additionalFiles = globalConfig.getAdditionalFilesToCopy();
+            targetFolders = globalConfig.getTargetFolders();
+            additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
+
             listener.getLogger().println("Additional files to copy: " +
                 (additionalFiles != null && !additionalFiles.trim().isEmpty() ? additionalFiles : "(not set)"));
             listener.getLogger().println("Target folders: " +
@@ -114,7 +118,7 @@ public class GenericChartPublisher extends Publisher {
                         out.println(s);
                     };
                     out.allUsedPastBuilds(points, dualOutputController, true, chart.getKey(), chart.getFileGlob());
-                    if (out.calcSingleChartAndResolve(chart.toLoadedChart(), points, dualOutputController)) {
+                    if (out.calcSingleChartAndResolve(chart.toLoadedChart(), points, dualOutputController, additionalPresetEquations )) {
                         build.setResult(Result.UNSTABLE);
                         failures++;
                     }

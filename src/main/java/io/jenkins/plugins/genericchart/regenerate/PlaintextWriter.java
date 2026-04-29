@@ -189,9 +189,9 @@ public class PlaintextWriter implements AutoCloseable {
     }
 
 
-    public boolean calcSingleChartAndResolve(LoadedChart chart, List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate) throws IOException{
+    public boolean calcSingleChartAndResolve(LoadedChart chart, List<ChartPoint> oneChartAllData, ExpressionLogger outputControlCandidate, String anotherUrlOrBody) throws IOException {
         try {
-            boolean thicChartResult = calc(chart, oneChartAllData, outputControlCandidate);
+            boolean thicChartResult = calc(chart, oneChartAllData, outputControlCandidate, anotherUrlOrBody);
             if (thicChartResult) {
                 outputControlCandidate.log("Result of " + chart.getTitleLikeChart() + " is true, that is regression.");
             } else {
@@ -206,8 +206,8 @@ public class PlaintextWriter implements AutoCloseable {
         }
     }
 
-    private boolean calc(LoadedChart chartDef, List<ChartPoint> points, ExpressionLogger outputControlCandidate) throws IOException, URISyntaxException, IOException{
-        PresetEquationsManager presets = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS));
+    private boolean calc(LoadedChart chartDef, List<ChartPoint> points, ExpressionLogger outputControlCandidate, String anotherUrlOrBody) throws IOException, URISyntaxException, IOException{
+        PresetEquationsManager presets = new PresetEquationsManager(ChartUtil.getVarOrProp(ChartUtil.PRESET_DEFS), anotherUrlOrBody);
         String equationNameOrDef = chartDef.getUnstableCondition();
         PresetEquationDefinition isPreset = presets.getFromCommandString(equationNameOrDef);
         IncrementalSequentialEvaluator expresion;
