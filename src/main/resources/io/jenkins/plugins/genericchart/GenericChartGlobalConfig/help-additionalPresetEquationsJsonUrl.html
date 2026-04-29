@@ -6,13 +6,33 @@
         This field accepts either:
     </p>
     <ul>
-        <li><strong>Direct JSON content:</strong> Paste the JSON definition of preset equations directly into this field</li>
-        <li><strong>URL to JSON file:</strong> Provide a URL (http://, https://, or file://) pointing to a JSON file containing preset equations</li>
+        <li><strong>Single line URL:</strong> A URL pointing to a file with definitions, e.g.:<br/>
+            <code>https://raw.githubusercontent.com/judovana/jenkins-report-generic-chart-column/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations</code>
+        </li>
+        <li><strong>Direct JSON content:</strong> Paste the JSON definition of preset equations directly into this field (multi-line supported)</li>
     </ul>
     <p>
         The JSON format should follow the same structure as the built-in preset equations. These additional equations
         will be merged with the default preset equations, allowing you to extend or override the built-in definitions.
     </p>
+    <p>
+        See <a href="https://github.com/judovana/jenkins-report-generic-chart-column/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations">examples</a>.
+        Note that <code>id</code> is mandatory. See
+        <a href="https://github.com/judovana/jenkins-report-generic-chart-column/tree/master/src/main/resources/io/jenkins/plugins/genericchart/ChartModel/help-unstableCondition.html#preset_equations">more info</a>.
+    </p>
+    <p>
+        <strong>Syntax rules:</strong>
+    </p>
+    <ul>
+        <li>Empty lines are ignored</li>
+        <li>Behind hash (#) are comments and examples</li>
+        <li>First comment is mandatory and serves as the ID</li>
+        <li>After comments follows the expression itself following
+            <a href="https://github.com/gbenroscience/ParserNG/#using-parserng-as-commandline-tool">ParserNG rules</a>
+        </li>
+        <li>Expressions can be multi-lined for readability (as ParserNG's --trim)</li>
+        <li>Parameters are substituted into expressions via <code>/*1*/</code> for first param, <code>/*2*/</code> for second, and so on</li>
+    </ul>
     <p>
         <strong>Example JSON structure:</strong>
     </p>
@@ -27,7 +47,7 @@
   ]
 }</code></pre>
     <p>
-        <strong>Example URL:</strong>
+        <strong>Example URLs:</strong>
     </p>
     <ul>
         <li><code>https://example.com/preset-equations.json</code></li>
