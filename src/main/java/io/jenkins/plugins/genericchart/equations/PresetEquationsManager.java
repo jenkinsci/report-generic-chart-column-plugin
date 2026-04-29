@@ -34,7 +34,11 @@ public class PresetEquationsManager {
                 if (anotherUrlOrBody != null) {
                     for(String urlOrBody : anotherUrlOrBody) {
                         if (urlOrBody !=null  && !urlOrBody.trim().isEmpty()) {
-                            internals.addAll(readExternals(urlOrBody));
+                            try {
+                                internals.addAll(readExternals(urlOrBody));
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

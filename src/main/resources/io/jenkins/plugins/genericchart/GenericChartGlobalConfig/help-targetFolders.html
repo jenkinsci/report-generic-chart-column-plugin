@@ -1,23 +1,22 @@
 <div>
     <p>
-        Specify the target folders where additional files should be copied.
+        Specify the target folders where the files of this plugin should be exported.
     </p>
     <p>
-        This field accepts a comma-separated list of directory paths where the files specified in
-        "Additional files to copy" will be copied to. The paths can be absolute or relative to the
-        build directory.
+        This field accepts a comma-separated list of directory paths where the files this plugin generates will be exported (together with additional files if set).
+        If only one target is specified, two subdirs are created. If more, then you must ditinguish them via prefixees:. There is nvr-db:,job-db: and out_dir: prefixes.
+        The last oen do not have much use and ias there jsut for sake of completeness.
     </p>
     <p>
         <strong>Examples:</strong>
     </p>
     <ul>
-        <li><code>/var/reports</code> - Copy to an absolute path</li>
-        <li><code>archive/reports</code> - Copy to a relative path within the build directory</li>
-        <li><code>/backup, /archive</code> - Copy to multiple target folders</li>
+        <li><code>/my/db</code> - two subdirs /my/db/nvr-db and /my/db/job-db will be created, and content will be copied to them</li>
+        <li><code>nvr-db:/my/nvrdb,job-db:/my/jobdb</code>  will copy to two dirs as per destination/li>
     </ul>
     <p>
-        <strong>Note:</strong> The number of target folders should match the number of file patterns
-        in "Additional files to copy", or specify a single target folder to copy all files to the same location.
+        The exported files are flattened and saved as diplayName/jobname/status/id/files for nvr-db and  jobname/diplayName/status/id/files for job-db.
+        Those folders are targeted for AI crawlers. The out-dir is for debugging only.
     </p>
     <p>
         Leave empty if no additional files need to be copied.
