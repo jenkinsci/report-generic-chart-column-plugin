@@ -4,5 +4,14 @@
         <f:entry title="custom embedded functions" field="customEmbeddedFunctions">
             <f:textarea/>
         </f:entry>
+        <f:entry title="Additional files to copy" field="additionalFilesToCopy">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="Target folders" field="targetFolders">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="Additional preset equations JSON/URL" field="additionalPresetEquationsJsonUrl">
+            <f:textarea/>
+        </f:entry>
     </f:section>
 </j:jelly>

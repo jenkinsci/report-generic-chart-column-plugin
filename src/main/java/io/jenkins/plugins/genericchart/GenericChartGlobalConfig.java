@@ -17,6 +17,9 @@ public class GenericChartGlobalConfig extends GlobalConfiguration {
     private static Logger logger = Logger.getLogger(GenericChartGlobalConfig.class.getName());
 
     String customEmbeddedFunctions;
+    String additionalFilesToCopy;
+    String targetFolders;
+    String additionalPresetEquationsJsonUrl;
 
     public static GenericChartGlobalConfig getInstance() {
         return GlobalConfiguration.all().get(GenericChartGlobalConfig.class);
@@ -34,6 +37,34 @@ public class GenericChartGlobalConfig extends GlobalConfiguration {
     public void setCustomEmbeddedFunctions(String customEmbeddedFunctions) {
         PresetEquationsManager.resetCached();
         this.customEmbeddedFunctions = customEmbeddedFunctions;
+    }
+
+    public String getAdditionalFilesToCopy() {
+        return additionalFilesToCopy;
+    }
+
+    @DataBoundSetter
+    public void setAdditionalFilesToCopy(String additionalFilesToCopy) {
+        this.additionalFilesToCopy = additionalFilesToCopy;
+    }
+
+    public String getTargetFolders() {
+        return targetFolders;
+    }
+
+    @DataBoundSetter
+    public void setTargetFolders(String targetFolders) {
+        this.targetFolders = targetFolders;
+    }
+
+    public String getAdditionalPresetEquationsJsonUrl() {
+        return additionalPresetEquationsJsonUrl;
+    }
+
+    @DataBoundSetter
+    public void setAdditionalPresetEquationsJsonUrl(String additionalPresetEquationsJsonUrl) {
+        PresetEquationsManager.resetCached();
+        this.additionalPresetEquationsJsonUrl = additionalPresetEquationsJsonUrl;
     }
 
     @DataBoundConstructor
