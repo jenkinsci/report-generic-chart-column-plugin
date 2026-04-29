@@ -95,6 +95,13 @@ public class PlaintextWriter implements AutoCloseable {
         writer.write(String.format("Build duration: %s ms%n", toKnown(duration, false, false)));
         writer.write("=".repeat(80) + "\n\n");
         introduction(jobName, buildName, buildNumber, url, buildtime, duration);
+        history.put("generic-chart-plugin~displayName", buildName);
+        history.put("generic-chart-plugin~buildNumber", buildNumber + "");
+        history.put("generic-chart-plugin~job", jobName);
+        history.put("generic-chart-plugin~timestamp", toKnown(buildtime, false, false));
+        history.put("generic-chart-plugin~duration", toKnown(duration, false, false));
+        history.put("generic-chart-plugin~timestampNice", toKnown(buildtime, true, false));
+        history.put("generic-chart-plugin~durationNice", toKnown(duration, true, true));
 
     }
 
