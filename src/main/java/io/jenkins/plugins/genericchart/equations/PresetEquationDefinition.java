@@ -12,7 +12,11 @@ public class PresetEquationDefinition {
 
     public PresetEquationDefinition(String id, List<String> comments, List<NamedEquation> equations) {
         this.id = id;
-        this.comments = Collections.unmodifiableList(comments);
+        if (comments == null || comments.isEmpty()) {
+            this.comments = Collections.emptyList();
+        } else {
+            this.comments = Collections.unmodifiableList(comments);
+        }
         // Convert NamedEquation (JSON) to NamedEquationDefinition (immutable)
         List<NamedEquationDefinition> eqList = new ArrayList<>();
         for (NamedEquation eq : equations) {
