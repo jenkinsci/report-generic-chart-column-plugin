@@ -16,27 +16,12 @@ import jenkins.model.GlobalConfiguration;
 public class GenericChartGlobalConfig extends GlobalConfiguration {
     private static Logger logger = Logger.getLogger(GenericChartGlobalConfig.class.getName());
 
-    String customEmbeddedFunctions;
     String additionalFilesToCopy;
     String targetFolders;
     String additionalPresetEquationsJsonUrl;
 
     public static GenericChartGlobalConfig getInstance() {
         return GlobalConfiguration.all().get(GenericChartGlobalConfig.class);
-    }
-
-    public boolean isDiffToolUrlSet() {
-        return customEmbeddedFunctions != null && !customEmbeddedFunctions.trim().isEmpty();
-    }
-
-    public String getCustomEmbeddedFunctions() {
-        return customEmbeddedFunctions;
-    }
-
-    @DataBoundSetter
-    public void setCustomEmbeddedFunctions(String customEmbeddedFunctions) {
-        PresetEquationsManager.resetCached();
-        this.customEmbeddedFunctions = customEmbeddedFunctions;
     }
 
     public String getAdditionalFilesToCopy() {
@@ -68,14 +53,9 @@ public class GenericChartGlobalConfig extends GlobalConfiguration {
     }
 
     @DataBoundConstructor
-    public GenericChartGlobalConfig(String diffToolUrl) {
-        this.customEmbeddedFunctions = diffToolUrl;
-    }
-
     public GenericChartGlobalConfig() {
         load();
     }
-
 
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
