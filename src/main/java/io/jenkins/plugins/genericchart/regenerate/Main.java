@@ -192,7 +192,7 @@ public class Main {
                 out.closeAllCharts(failures, displayName, buildId, jobName, s -> {});
                 out.footer(jobName, displayName, buildId, times[0], ChartUtil.getVarOrProp(ChartUtil.JENKINS_URL));
             }
-            DirArgs.export(buildPath, new DirArgs(), displayName, buildId, jobName);
+            DirArgs.export(buildPath, new DirArgs(), displayName, buildId, jobName, null);
         } else {
             System.err.println(buildPath.toString() + " is " + status + ", skipping");
         }

@@ -23,6 +23,7 @@
  */
 package io.jenkins.plugins.genericchart;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
@@ -63,9 +64,8 @@ public class GenericChartPublisher extends Publisher {
     }
 
     @Override
+    @SuppressFBWarnings(value = {"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"}, justification = " npe of spotbugs sucks")
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException {
-        // Print global configuration values for future usage
-        //FIXME remove once all are used
         GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
         String additionalFiles = null;
         String targetFolders = null;
@@ -126,7 +126,8 @@ public class GenericChartPublisher extends Publisher {
                 new GenericChartPublisherDirArgs(targetFolders, additionalFiles),
                 build.getDisplayName(),
                 build.getNumber(),
-                build.getProject().getName());
+                build.getProject().getName(),
+                build.getResult() == null?"UNKNOWN":build.getResult().toString());
         return true;
     }
 

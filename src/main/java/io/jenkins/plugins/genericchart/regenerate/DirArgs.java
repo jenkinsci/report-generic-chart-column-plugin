@@ -23,7 +23,6 @@
  */
 package io.jenkins.plugins.genericchart.regenerate;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -89,13 +88,17 @@ public class DirArgs {
         return sources;
     }
 
-
-    public static void export(Path buildPath, DirArgs params, String displayName, int buildId, String jobName) throws IOException {
+    public static void export(Path buildPath, DirArgs params, String displayName, int buildId, String jobName, String result) throws IOException {
         List<Path> allFiles = params.getAllSource().stream().map(s -> new File(buildPath.toFile(), s).getAbsoluteFile().toPath()).toList();
-        String result = "UNKNOWN";
-        File buildXml = new File(buildPath.toFile(), "build.xml");
-        if (buildXml.exists()) {
-            result = ReportSummaryUtil.getBuildResult(buildPath.toFile());
+        if (result == null) {
+            result = "UNKNOWN";
+            File buildXml = new File(buildPath.toFile(), "build.xml");
+            if (buildXml.exists()) {
+                String nwResult =  ReportSummaryUtil.getBuildResult(buildPath.toFile());
+                if (nwResult!=null) {
+                    result = nwResult;
+                }
+            }
         }
         if (params.getOut() != null) {
             copyWithOverwrite(allFiles, new File(params.getOut()).toPath());
