@@ -42,6 +42,12 @@ public class ChartUtil {
     public static final String log_equation = "log_equation";
     public static final String PRESET_DEFS = "preset_defs";
     public static final String JENKINS_URL = "jenkins_url";
+    //when stablke/usntable was printed to log of values, ot had quite an ipact.
+    // And was actually missleading, as readr though "if all jobs are unstable, then the job is unstable",
+    // where it actually meant that it is correctly showing severe long term degradin of eassured values
+    //so ti is currently disbaled, and reader should focus on numbers.
+    //by setting this proeprty/VAR can be enabled again
+    public static final String force_result_statuses = "force_result_statuses";
 
     private ChartUtil() {
     }

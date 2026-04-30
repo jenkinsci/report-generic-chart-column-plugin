@@ -131,11 +131,15 @@ public class PlaintextWriter implements AutoCloseable {
         int i = -1;
         for (ChartPoint chartPoint : oneChartAllData) {
             i++;
-            String result = chartPoint.getResult() + (i == 0 ? " (this)" : "");
-            if (running) {
-                result =  (i == 0 ? " RUNNING" : " " + chartPoint.getResult());
+            String result = "";
+            if (includeStatus()) {
+                result = chartPoint.getResult() + (i == 0 ? " (this)" : "");
+                if (running) {
+                    result = (i == 0 ? " RUNNING" : " " + chartPoint.getResult());
+                }
+            } else {
+                result =  (i == 0 ? " (this)" : "");
             }
-
             String mkey=glob+"~"+pkey;
             if (i==0){
                 values.put(mkey, chartPoint.getValue());
@@ -147,6 +151,10 @@ public class PlaintextWriter implements AutoCloseable {
             outputControlCandidate.log(chartPoint.getBuildName() + "/" + chartPoint.getBuildNumber() + ": " + chartPoint.getValue() + " " + result);
         }
         outputControlCandidate.log("shortened values (shown reverted, newest->oldest): " + oneChartAllData.stream().map(s -> s.getValue()).collect(Collectors.joining(",")));
+    }
+
+    private boolean includeStatus() {
+        return ChartUtil.isVarOrProp(ChartUtil.force_result_statuses);
     }
 
 
