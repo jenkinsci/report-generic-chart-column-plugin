@@ -37,7 +37,6 @@ import hudson.tasks.Publisher;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -72,18 +71,9 @@ public class GenericChartPublisher extends Publisher {
         String targetFolders = null;
         String additionalPresetEquations = null;
         if (globalConfig != null) {
-            listener.getLogger().println("=== Generic Chart Global Configuration ===");
             additionalFiles = globalConfig.getAdditionalFilesToCopy();
             targetFolders = globalConfig.getTargetFolders();
             additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
-
-            listener.getLogger().println("Additional files to copy: " +
-                (additionalFiles != null && !additionalFiles.trim().isEmpty() ? additionalFiles : "(not set)"));
-            listener.getLogger().println("Target folders: " +
-                (targetFolders != null && !targetFolders.trim().isEmpty() ? targetFolders : "(not set)"));
-            listener.getLogger().println("Additional preset equations JSON/URL: " +
-                (additionalPresetEquations != null && !additionalPresetEquations.trim().isEmpty() ? additionalPresetEquations : "(not set)"));
-            listener.getLogger().println("==========================================");
         }
         
         GenericChartProjectAction chrs = new GenericChartProjectAction(build.getProject(), charts);
@@ -131,63 +121,12 @@ public class GenericChartPublisher extends Publisher {
             out.closeAllCharts(failures, build.getDisplayName(), build.getNumber(), build.getProject().getName(), s -> listener.getLogger().println(s));
             out.footer(build.getProject().getName(), build.getDisplayName(), build.getNumber(), build.getStartTimeInMillis(), Jenkins.get().getRootUrl());
         }
-        final String[] passerBy = new String[]{targetFolders, additionalFiles};
-        DirArgs.export(build.getRootDir().toPath(), new DirArgs() {
-
-            @Override
-            public String getOut() {
-                List<String> count = getAdditionalFilesImpl(passerBy[0]);
-                for (String c : count) {
-                    if (c.startsWith("out-dir:")) {
-                        return c.substring("out-dir:".length());
-                    }
-                }
-                return null;
-
-            }
-
-            @Override
-            public String getNvrDb() {
-                if (sanitize(passerBy[0]) == null) {
-                    return null;
-                }
-                List<String> count = getAdditionalFilesImpl(passerBy[0]);
-                if (count.size() == 1) {
-                    return passerBy[0] + "/nvr-db";
-                } else {
-                    for (String c : count) {
-                        if (c.startsWith("nvr-db:")) {
-                            return c.substring("nvr-db:".length());
-                        }
-                    }
-                    return null;
-                }
-            }
-
-            @Override
-            public String getJobDb() {
-                if (sanitize(passerBy[0]) == null) {
-                    return null;
-                }
-                List<String> count = getAdditionalFilesImpl(passerBy[0]);
-                if (count.size() == 1) {
-                    return passerBy[0] + "/job-db";
-                } else {
-                    for (String c : count) {
-                        if (c.startsWith("job-db:")) {
-                            return c.substring("job-db:".length());
-                        }
-                    }
-                    return null;
-                }
-            }
-
-            @Override
-            protected List<String> getAdditionalFiles() {
-                return getAdditionalFilesImpl(passerBy[1]);
-            }
-
-        }, build.getDisplayName(), build.getNumber(), build.getProject().getName());
+        DirArgs.export(
+                build.getRootDir().toPath(),
+                new GenericChartPublisherDirArgs(targetFolders, additionalFiles),
+                build.getDisplayName(),
+                build.getNumber(),
+                build.getProject().getName());
         return true;
     }
 
