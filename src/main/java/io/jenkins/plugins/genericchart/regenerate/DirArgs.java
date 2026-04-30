@@ -67,6 +67,7 @@ public class DirArgs {
     protected List<String> getAdditionalFiles() {
         return getAdditionalFilesImpl(System.getenv(add_files));
     }
+
     protected List<String> getAdditionalFilesImpl(String all) {
         if (all == null) {
             return null;
