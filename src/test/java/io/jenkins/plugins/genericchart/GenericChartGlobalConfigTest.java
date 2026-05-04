@@ -140,11 +140,9 @@ public class GenericChartGlobalConfigTest {
     @Test
     public void testValidatorWithExistingFile(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
-        // Create a temporary file
         Path testFile = tempDir.resolve("test-equations.json");
         Files.writeString(testFile, "{\"test\": \"data\"}");
-
-        String fileUrl = "file://" + testFile.toAbsolutePath().toString();
+        String fileUrl = testFile.toUri().toString();
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(fileUrl);
         assertEquals(FormValidation.Kind.OK, result.kind);
         assertTrue(result.getMessage().contains("Valid file URL"));
@@ -163,11 +161,9 @@ public class GenericChartGlobalConfigTest {
     @Test
     public void testValidatorWithDirectory(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
-        // Create a temporary directory
         Path testDir = tempDir.resolve("test-dir");
         Files.createDirectory(testDir);
-
-        String fileUrl = "file://" + testDir.toAbsolutePath().toString();
+        String fileUrl = testDir.toUri().toString();
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(fileUrl);
         assertEquals(FormValidation.Kind.WARNING, result.kind);
         assertTrue(result.getMessage().contains("directory"));
