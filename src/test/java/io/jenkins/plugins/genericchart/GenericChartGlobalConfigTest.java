@@ -1,8 +1,6 @@
 package io.jenkins.plugins.genericchart;
 
 import hudson.util.FormValidation;
-
-import org.junit.Assume;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -13,13 +11,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WithJenkins
-public class GenericChartGlobalConfigTest {
+class GenericChartGlobalConfigTest {
 
     @TempDir
-    Path tempDir;
+    private Path tempDir;
 
 
       /**
@@ -31,21 +30,21 @@ public class GenericChartGlobalConfigTest {
 
     // Test empty/null values
     @Test
-    public void testValidatorWithNull(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithNull(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(null);
         assertEquals(FormValidation.Kind.OK, result.kind);
     }
 
     @Test
-    public void testValidatorWithEmptyString(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithEmptyString(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl("");
         assertEquals(FormValidation.Kind.OK, result.kind);
     }
 
     @Test
-    public void testValidatorWithWhitespace(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithWhitespace(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl("   ");
         assertEquals(FormValidation.Kind.OK, result.kind);
@@ -53,7 +52,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test valid JSON
     @Test
-    public void testValidatorWithValidJsonObject(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithValidJsonObject(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String validJson = "{\"equations\": [{\"id\": \"test\", \"expression\": \"L[0] > 100\"}]}";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(validJson);
@@ -62,7 +61,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithValidJsonArray(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithValidJsonArray(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String validJson = "[{\"id\": \"test\", \"expression\": \"L[0] > 100\"}]";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(validJson);
@@ -71,7 +70,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithMultilineJson(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithMultilineJson(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String validJson = "{\n  \"equations\": [\n    {\"id\": \"test\"}\n  ]\n}";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(validJson);
@@ -81,7 +80,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test invalid JSON
     @Test
-    public void testValidatorWithInvalidJson(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithInvalidJson(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String invalidJson = "{\"equations\": [invalid json}";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(invalidJson);
@@ -90,7 +89,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithInvalidJsonArray(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithInvalidJsonArray(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String invalidJson = "[{\"id\": \"test\", }]";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(invalidJson);
@@ -100,7 +99,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test valid URLs
     @Test
-    public void testValidatorWithValidHttpUrl(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithValidHttpUrl(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String validUrl = "https://example.com/preset-equations.json";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(validUrl);
@@ -109,7 +108,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithValidHttpsUrl(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithValidHttpsUrl(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String validUrl = "https://raw.githubusercontent.com/user/repo/master/file.json";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(validUrl);
@@ -119,7 +118,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test invalid URLs
     @Test
-    public void testValidatorWithInvalidUrl(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithInvalidUrl(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String invalidUrl = "not a valid url";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(invalidUrl);
@@ -129,7 +128,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithMalformedUrl(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithMalformedUrl(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String malformedUrl = "http://[invalid";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(malformedUrl);
@@ -138,7 +137,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test file:// URLs
     @Test
-    public void testValidatorWithExistingFile(JenkinsRule r) throws IOException {
+    void testValidatorWithExistingFile(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
         Path testFile = tempDir.resolve("test-equations.json");
         Files.writeString(testFile, "{\"test\": \"data\"}");
@@ -150,7 +149,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithNonExistingFile(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithNonExistingFile(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String fileUrl = "file:///tmp/non-existing-file-" + System.currentTimeMillis() + ".json";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(fileUrl);
@@ -159,7 +158,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithDirectory(JenkinsRule r) throws IOException {
+    void testValidatorWithDirectory(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
         Path testDir = tempDir.resolve("test-dir");
         Files.createDirectory(testDir);
@@ -170,7 +169,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithUnreadableFile(JenkinsRule r) throws IOException {
+    void testValidatorWithUnreadableFile(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
         // Create a temporary file and make it unreadable
         Path testFile = tempDir.resolve("unreadable-file.json");
@@ -193,7 +192,7 @@ public class GenericChartGlobalConfigTest {
 
     // Test edge cases
     @Test
-    public void testValidatorWithFileUrlWithSpaces(JenkinsRule r) throws IOException {
+    void testValidatorWithFileUrlWithSpaces(JenkinsRule r) throws IOException {
         GenericChartGlobalConfig config = createConfig();
         // Create a file with spaces in the name
         Path testFile = tempDir.resolve("test file with spaces.json");
@@ -209,7 +208,7 @@ public class GenericChartGlobalConfigTest {
     }
 
     @Test
-    public void testValidatorWithOtherProtocol(JenkinsRule r) { Assume.assumeNotNull(r);
+    void testValidatorWithOtherProtocol(JenkinsRule r) {
         GenericChartGlobalConfig config = createConfig();
         String ftpUrl = "ftp://example.com/file.json";
         FormValidation result = config.doCheckAdditionalPresetEquationsJsonUrl(ftpUrl);

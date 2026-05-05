@@ -1,6 +1,5 @@
 package io.jenkins.plugins.genericchart;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,9 @@ import parser.expanding.ExpandingExpressionParser;
 import parser.logical.ExpressionLogger;
 
 import java.io.ByteArrayOutputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
@@ -23,12 +25,12 @@ import java.util.List;
 class PresetEquationsManagerTest {
 
     @BeforeEach
-    public void cleanCaches(){
+    void cleanCaches(){
         PresetEquationsManager.resetCached();
     }
 
     @Test
-    public void listTest() throws IOException, URISyntaxException {
+    void listTest() throws IOException, URISyntaxException {
         final ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
         final PresetEquationsManager p1 = new PresetEquationsManager();
         try (PrintStream ps = new PrintStream(baos1, true, StandardCharsets.UTF_8)) {
@@ -42,7 +44,7 @@ class PresetEquationsManagerTest {
             p2.print(ps);
         }
         String listing2 = baos2.toString(StandardCharsets.UTF_8);
-        Assertions.assertEquals(listing1, listing2); //cahe was not reload
+        assertEquals(listing1, listing2); //cahe was not reload
 
         PresetEquationsManager.resetCached();
         baos2 = new ByteArrayOutputStream();
@@ -51,27 +53,27 @@ class PresetEquationsManagerTest {
             p2.print(ps);
         }
          listing2 = baos2.toString(StandardCharsets.UTF_8);
-         Assertions.assertNotEquals(listing1, listing2);
+         assertNotEquals(listing1, listing2);
     }
 
     @Test
-    public void getTest() throws IOException, URISyntaxException {
+    void getTest() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         PresetEquation e0 = legacyWrapper(p1, "weird_id weird_params");
-        Assertions.assertNull(e0);
+        assertNull(e0);
         PresetEquation e1 = legacyWrapper(p1, "someID");
-        Assertions.assertEquals("1+1", e1.getExpression());
-        Assertions.assertEquals("1+1", e1.getOriginal());
+        assertEquals("1+1", e1.getExpression());
+        assertEquals("1+1", e1.getOriginal());
         PresetEquation e2 = legacyWrapper(p1, "someID uselessParam");
-        Assertions.assertEquals("1+1", e2.getExpression());
-        Assertions.assertEquals("1+1", e2.getOriginal());
+        assertEquals("1+1", e2.getExpression());
+        assertEquals("1+1", e2.getOriginal());
         PresetEquation e3 = legacyWrapper(p1, "IMMEDIATE_UP_OK 1 ");
-        Assertions.assertNotEquals(e3.getExpression(), e3.getOriginal());
+        assertNotEquals(e3.getExpression(), e3.getOriginal());
         PresetEquation e4 = legacyWrapper(p1, "IMMEDIATE_UP_OK 1 2 3");
-        Assertions.assertNotEquals(e4.getExpression(), e4.getOriginal());
-        Assertions.assertEquals(e3.getOriginal(), e4.getOriginal());
+        assertNotEquals(e4.getExpression(), e4.getOriginal());
+        assertEquals(e3.getOriginal(), e4.getOriginal());
         //also params are now evaluated alter
-        Assertions.assertEquals(e3.getExpression(), e4.getExpression());
+        assertEquals(e3.getExpression(), e4.getExpression());
     }
 
     private static PresetEquation legacyWrapper(PresetEquationsManager p, String params) {
@@ -84,57 +86,57 @@ class PresetEquationsManagerTest {
     }
 
     @Test
-    public void noDupes() throws IOException, URISyntaxException {
+    void noDupes() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
-        Assertions.assertTrue(ids.size() == new HashSet<>(ids).size());
-        Assertions.assertTrue(ids.size() > 5);
+        assertEquals(ids.size(), new HashSet<>(ids).size());
+        assertTrue(ids.size() > 5);
         for (String id1 : ids) {
             PresetEquation e1 = legacyWrapper(p1, id1 + " 2 5 5 5 5");
             for (String id2 : ids) {
                 PresetEquation e2 = legacyWrapper(p1, id2 + " 2 5 5 5 5");
                 if (!id1.equals(id2)) {
-                    Assertions.assertNotEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have same equation!");
-                    Assertions.assertNotEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have same equation!");
+                    assertNotEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have same equation!");
+                    assertNotEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have same equation!");
                 } else {
-                    Assertions.assertEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have NOT same equation!");
-                    Assertions.assertEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have NOT same equation!");
+                    assertEquals(e1.getExpression(), e2.getExpression(), id1+ " and " + id2 + " have NOT same equation!");
+                    assertEquals(e1.getOriginal(), e2.getOriginal(), id1+ " and " + id2 + " have NOT same equation!");
                 }
             }
         }
     }
 
     @Test
-    public void buggyIsCought() throws IOException, URISyntaxException {
+    void buggyIsCought() throws IOException, URISyntaxException {
         PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"blah=/*1*/; avg(blah\"]}]}]"); //missing bracket
         StringBuilder sbOne = new StringBuilder();
         PresetEquation e = legacyWrapper(p1, "someID 10");
-        Assertions.assertNotNull(e);
+        assertNotNull(e);
         evaluate(null, sbOne, e);
         checkError(sbOne);
 
         p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"/*1*/+/*2*/\"]}]}]"); //unexpanded /*2*/
         sbOne = new StringBuilder();
         e = legacyWrapper(p1, "someID 10");
-        Assertions.assertNotNull(e);
+        assertNotNull(e);
         evaluate(null, sbOne, e);
         checkError(sbOne);
 
         p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"blah=/*1*/; avg(blah)\"]}]}]"); //unexpanded /**/ in variable
         sbOne = new StringBuilder();
         e = legacyWrapper(p1, "someID");
-        Assertions.assertNotNull(e);
+        assertNotNull(e);
         Exception ex = null;
         try {
             evaluate(null, sbOne, e);
         } catch (Exception eex) {
             ex = eex;
         }
-        Assertions.assertNotNull(ex);
+        assertNotNull(ex);
     }
 
     @Test
-    public void descriptionsAreParsed() throws IOException, URISyntaxException {
+    void descriptionsAreParsed() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("""
                 [
                   {
@@ -168,27 +170,27 @@ class PresetEquationsManagerTest {
                 ]
                 """);
         PresetEquationDefinition preset = p1.getFromCommandString("withDescriptions 1");
-        Assertions.assertNotNull(preset);
-        Assertions.assertEquals(2, preset.getEquations().size());
+        assertNotNull(preset);
+        assertEquals(2, preset.getEquations().size());
 
-        Assertions.assertEquals("main1", preset.getEquations().get(0).getName());
-        Assertions.assertEquals(3, preset.getEquations().get(0).getDescriptions().size());
-        Assertions.assertEquals("true", preset.getEquations().get(0).getDescriptions().get(0).getCondition());
-        Assertions.assertEquals(Arrays.asList("this is title"), preset.getEquations().get(0).getDescriptions().get(0).getDescriptionLines());
-        Assertions.assertEquals("/*RESULT*/ == 2", preset.getEquations().get(0).getDescriptions().get(1).getCondition());
-        Assertions.assertEquals(Arrays.asList("ok"), preset.getEquations().get(0).getDescriptions().get(1).getDescriptionLines());
-        Assertions.assertEquals("/*RESULT*/ != 2", preset.getEquations().get(0).getDescriptions().get(2).getCondition());
-        Assertions.assertEquals(Arrays.asList("fail"), preset.getEquations().get(0).getDescriptions().get(2).getDescriptionLines());
+        assertEquals("main1", preset.getEquations().get(0).getName());
+        assertEquals(3, preset.getEquations().get(0).getDescriptions().size());
+        assertEquals("true", preset.getEquations().get(0).getDescriptions().get(0).getCondition());
+        assertEquals(Arrays.asList("this is title"), preset.getEquations().get(0).getDescriptions().get(0).getDescriptionLines());
+        assertEquals("/*RESULT*/ == 2", preset.getEquations().get(0).getDescriptions().get(1).getCondition());
+        assertEquals(Arrays.asList("ok"), preset.getEquations().get(0).getDescriptions().get(1).getDescriptionLines());
+        assertEquals("/*RESULT*/ != 2", preset.getEquations().get(0).getDescriptions().get(2).getCondition());
+        assertEquals(Arrays.asList("fail"), preset.getEquations().get(0).getDescriptions().get(2).getDescriptionLines());
 
-        Assertions.assertEquals("main2", preset.getEquations().get(1).getName());
-        Assertions.assertTrue(preset.getEquations().get(1).getDescriptions().isEmpty());
+        assertEquals("main2", preset.getEquations().get(1).getName());
+        assertTrue(preset.getEquations().get(1).getDescriptions().isEmpty());
     }
 
     @Test
-    public void allValuates() throws IOException, URISyntaxException {
+    void allValuates() throws IOException, URISyntaxException {
         final PresetEquationsManager p1 = new PresetEquationsManager("[{\"id\":\"someID\",\"comments\":[\"some comment\"],\"equations\":[{\"name\":\"main\",\"equation\":[\"1+1\"]}]}]");
         List<String> ids = p1.getIds();
-        Assertions.assertTrue(ids.size() > 5);
+        assertTrue(ids.size() > 5);
         StringBuilder sbAllCalcs = new StringBuilder();
         StringBuilder sbAllAnswers = new StringBuilder();
         for (String id : ids) {
@@ -236,13 +238,13 @@ class PresetEquationsManagerTest {
     }
 
     private void checkNoError(StringBuilder sbOne) {
-        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("error"));
-        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("fail"));
-        Assertions.assertFalse(sbOne.toString().toLowerCase().contains("exception"));
+        assertFalse(sbOne.toString().toLowerCase().contains("error"));
+        assertFalse(sbOne.toString().toLowerCase().contains("fail"));
+        assertFalse(sbOne.toString().toLowerCase().contains("exception"));
     }
 
     private void checkError(StringBuilder sbOne) {
-        Assertions.assertTrue(
+        assertTrue(
                 sbOne.toString().toLowerCase().contains("error")
                         || sbOne.toString().toLowerCase().contains("fail")
                         || sbOne.toString().toLowerCase().contains("exception"));
