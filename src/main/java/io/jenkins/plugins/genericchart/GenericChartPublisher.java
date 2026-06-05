@@ -90,13 +90,18 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
         // This ensures the chart is visible on the job's main page for Pipeline jobs
         // Do this FIRST before any early returns
         synchronized (job) {
-            GenericChartProjectAction existingAction = job.getAction(GenericChartProjectAction.class);
-            if (existingAction != null) {
-                // Remove the old action so we can add a new one with updated charts
-                job.removeAction(existingAction);
+            //Mandatory for pipeline-like not working in freestyle-like ones
+            try {
+                GenericChartProjectAction existingAction = job.getAction(GenericChartProjectAction.class);
+                if (existingAction != null) {
+                    // Remove the old action so we can add a new one with updated charts
+                    job.removeAction(existingAction);
+                }
+                // Always add a new action with the current charts configuration.
+                job.addAction(new GenericChartProjectAction(job, charts));
+            }catch (Throwable e){
+                e.printStackTrace();
             }
-            // Always add a new action with the current charts configuration
-            job.addAction(new GenericChartProjectAction(job, charts));
         }
         
         GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
