@@ -92,13 +92,8 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
         synchronized (job) {
             //Mandatory for pipeline-like not working in freestyle-like ones
             try {
-                GenericChartProjectAction existingAction = job.getAction(GenericChartProjectAction.class);
-                if (existingAction != null) {
-                    // Remove the old action so we can add a new one with updated charts
-                    job.removeAction(existingAction);
-                }
                 // Always add a new action with the current charts configuration.
-                job.addAction(new GenericChartProjectAction(job, charts));
+                job.replaceAction(new GenericChartProjectAction(job, charts));
             } catch (Throwable e){
                 listener.getLogger().println("[Generic Chart Plugin] Failed to register chart action: " + e.getMessage());
                 e.printStackTrace();
@@ -176,12 +171,13 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
 
     // For pipeline support - SimpleBuildStep.getProjectActions
     public Collection<? extends Action> getProjectActions(Job<?, ?> job) {
-        if (/* getAction(Class) produces a StackOverflowError */!Util.filter(
-                        job.getActions(), GenericChartProjectAction.class).isEmpty()) {
-            // JENKINS-26077: someone like XUnitPublisher already added one
-            return Collections.emptySet();
+        synchronized (job) {
+            if (/* getAction(Class) produces a StackOverflowError */!Util.filter(job.getActions(), GenericChartProjectAction.class).isEmpty()) {
+                // JENKINS-26077: someone like XUnitPublisher already added one
+                return Collections.emptySet();
+            }
+            return Collections.singleton(new GenericChartProjectAction(job, charts));
         }
-        return Collections.singleton(new GenericChartProjectAction(job, charts));
     }
 
     public List<ChartModel> getCharts() {
