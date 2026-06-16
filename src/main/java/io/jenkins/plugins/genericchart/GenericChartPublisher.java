@@ -99,7 +99,8 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
                 }
                 // Always add a new action with the current charts configuration.
                 job.addAction(new GenericChartProjectAction(job, charts));
-            }catch (Throwable e){
+            } catch (Throwable e){
+                listener.getLogger().println("[Generic Chart Plugin] Failed to register chart action: " + e.getMessage());
                 e.printStackTrace();
             }
         }
