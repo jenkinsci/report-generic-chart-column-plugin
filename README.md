@@ -4,6 +4,7 @@ Generic reusable plugin that will show a chart in column based on properties fil
 The plugin reads properties file in your archive, specified by glob, and use one value, defined by key, to draw a chart for both project and view. The plugin was originally designed to show results of benchmarks, but can be misused for anything key-number what desire chart. Eg total and failed tests summaries, watching over size of package and so on. The graph is scaled, so you will never miss smallest change.
 
 * [Properties file](#properties-file)
+* [Pipelines](#pipelines)
 * [Project summary](#project-summary)
 * [View summary](#view-summary)
 * [Changing build result](#changing-build-result)
@@ -33,6 +34,19 @@ jbb2015.result.SLA-100000-jOPS = 13791
 other garbage
 ```
 The parser is quite forgiving, and will skip garabge. Supports both : and = delimiters.
+
+## Pipelines
+```
+      stage('charts1') {
+        steps {
+         genericChartPublisher(charts: [
+[chartColor: '#AABBCC', fileNameGlob: 'file.props', key: 'a', limit: 10, resultAllowList: '', resultDenyList: '', title: 'a', unstableCondition: ' L0 <= 10'],
+[chartColor: '#FF6384', fileNameGlob: 'anotherOrSamefile.props', key: 'b', limit: 10, resultAllowList: '', resultDenyList: '', title: 'b']])
+
+        }
+    }
+```
+
 
 ## Project summary
 Hugest graphs are shown in project summary.  You can have as much graphs as you wish, and have detailed tool-tip:

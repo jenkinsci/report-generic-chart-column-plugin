@@ -18,6 +18,9 @@ class GenericChartPublisherDirArgs extends DirArgs {
     @Override
     public String getOut() {
         List<String> count = getAdditionalFilesImpl(targetFolders);
+        if (count == null) {
+            return null;
+        }
         for (String c : count) {
             if (c.startsWith("out-dir:")) {
                 return c.substring("out-dir:".length());
