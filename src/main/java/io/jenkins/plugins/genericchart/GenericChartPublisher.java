@@ -85,24 +85,25 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
     @SuppressFBWarnings(value = {"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"}, justification = " npe of spotbugs sucks")
     private void performInternal(Run<?, ?> run, TaskListener listener) throws IOException {
         Job<?, ?> job = run.getParent();
-
-        // Create the action once and reuse it for both job registration and chart processing
-        GenericChartProjectAction chrs = new GenericChartProjectAction(job, charts);
-
-        // Register the action on the job before any early returns.
-        // Essential for pipeline jobs where getProjectActions is not reliably called.
+        
+        // Add or update the GenericChartProjectAction to the job
+        // This ensures the chart is visible on the job's main page for Pipeline jobs
+        // Do this FIRST before any early returns
         synchronized (job) {
+            //Mandatory for pipeline-like not working in freestyle-like ones
             try {
                 GenericChartProjectAction existingAction = job.getAction(GenericChartProjectAction.class);
                 if (existingAction != null) {
+                    // Remove the old action so we can add a new one with updated charts
                     job.removeAction(existingAction);
                 }
-                job.addAction(chrs);
-            } catch (Throwable e) {
+                // Always add a new action with the current charts configuration.
+                job.addAction(new GenericChartProjectAction(job, charts));
+            }catch (Throwable e){
                 e.printStackTrace();
             }
         }
-
+        
         GenericChartGlobalConfig globalConfig = GenericChartGlobalConfig.getInstance();
         String additionalFiles = null;
         String targetFolders = null;
@@ -112,6 +113,8 @@ public class GenericChartPublisher extends Recorder implements SimpleBuildStep {
             targetFolders = globalConfig.getTargetFolders();
             additionalPresetEquations = globalConfig.getAdditionalPresetEquationsJsonUrl();
         }
+        
+        GenericChartProjectAction chrs = new GenericChartProjectAction(job, charts);
         List<ReportChart> chartsWithEquations = new ArrayList<>();
         for (ReportChart chart : chrs.getCharts()) {
             if (chart.getUnstableCondition() != null && !chart.getUnstableCondition().trim().isBlank()) {
