@@ -230,7 +230,7 @@ Is what yoy usually end with
 #### Named queries
 As it maybe boring and error-prone to keep repeating complex equations, you can set the equation in the global settings and then just call it via its name - even with different parameters.
  
-There are same named queries already embedded: https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/presetEquations.json
+There are same named queries already embedded: https://github.com/jenkinsci/report-generic-chart-column-plugin/blob/master/src/main/resources/io/jenkins/plugins/genericchart/equations/presetEquations.json
  
 The preset equations are defined in JSON format:
 ```json
